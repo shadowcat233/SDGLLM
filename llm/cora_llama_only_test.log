@@ -1,0 +1,2171 @@
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.23s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.92s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.12s/it]
+  0:  predict label: Rule Learning  |  true label: Rule Learning
+  1:  predict label: Neural Networks  |  true label: Neural Networks
+  2:  predict label: Rule Learning  |  true label: Case-Based
+  3:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+  4:  predict label: Neural Networks  |  true label: Neural Networks
+  5:  predict label: Theory  |  true label: Case-Based
+  6:  predict label: Theory  |  true label: Case-Based
+  7:  predict label: Theory  |  true label: Theory
+  8:  predict label: Reinforcement Learning  |  true label: Theory
+  9:  predict label: Rule Learning  |  true label: Rule Learning
+ 10:  predict label: Rule Learning  |  true label: Theory
+ 11:  predict label: Rule Learning  |  true label: Theory
+ 12:  predict label: Rule Learning  |  true label: Theory
+ 13:  predict label: Theory  |  true label: Theory
+ 14:  predict label: Rule Learning  |  true label: Theory
+ 15:  predict label: Rule Learning  |  true label: Case-Based
+ 16:  predict label: Rule Learning  |  true label: Theory
+ 17:  predict label: Theory  |  true label: Genetic Algorithms
+ 18:  predict label: Case-Based  |  true label: Case-Based
+ 19:  predict label: Rule Learning  |  true label: Theory
+ 20:  predict label: Theory  |  true label: Genetic Algorithms
+ 21:  predict label: Reinforcement Learning  |  true label: Theory
+ 22:  predict label: Theory  |  true label: Theory
+ 23:  predict label: Artificial Neural Networks (ANN)  |  true label: Neural Networks
+ 24:  predict label: Rule Learning.  |  true label: Neural Networks
+ 25:  predict label: Neural Networks  |  true label: Neural Networks
+ 26:  predict label: Theory  |  true label: Genetic Algorithms
+ 27:  predict label: Rule Learning  |  true label: Genetic Algorithms
+ 28:  predict label: Theory  |  true label: Neural Networks
+ 29:  predict label: Reinforcement Learning  |  true label: Neural Networks
+ 30:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+ 31:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+ 32:  predict label: Case-Based  |  true label: Case-Based
+ 33:  predict label: Case-Based  |  true label: Case-Based
+ 34:  predict label: Theory  |  true label: Case-Based
+ 35:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 36:  predict label: Theory  |  true label: Probabilistic Methods
+ 37:  predict label: Rule Learning  |  true label: Case-Based
+ 38:  predict label: Rule Learning  |  true label: Case-Based
+ 39:  predict label: Theory  |  true label: Theory
+ 40:  predict label: Rule Learning  |  true label: Theory
+ 41:  predict label: Rule Learning  |  true label: Genetic Algorithms
+ 42:  predict label: Rule Learning  |  true label: Neural Networks
+ 43:  predict label: Rule Learning  |  true label: Neural Networks
+ 44:  predict label: Reinforcement Learning  |  true label: Neural Networks
+ 45:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 46:  predict label: Rule Learning  |  true label: Theory
+ 47:  predict label: Reinforcement Learning  |  true label: Rule Learning
+ 48:  predict label: Rule Learning  |  true label: Neural Networks
+ 49:  predict label: Theory  |  true label: Probabilistic Methods
+ 50:  predict label: Rule Learning  |  true label: Theory
+ 51:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+ 52:  predict label: Theory  |  true label: Theory
+ 53:  predict label: Theory  |  true label: Theory
+ 54:  predict label: Reinforcement Learning  |  true label: Neural Networks
+ 55:  predict label: Rule Learning  |  true label: Theory
+ 56:  predict label: Rule Learning  |  true label: Case-Based
+ 57:  predict label: Rule Learning  |  true label: Case-Based
+ 58:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+ 59:  predict label: Probabilistic Methods  |  true label: Probabilistic Methods
+ 60:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 61:  predict label: Probabilistic Methods  |  true label: Probabilistic Methods
+ 62:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 63:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 64:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 65:  predict label: Reinforcement Learning  |  true label: Neural Networks
+ 66:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+ 67:  predict label: Case-Based  |  true label: Case-Based
+ 68:  predict label: Rule Learning  |  true label: Case-Based
+ 69:  predict label: Case-Based  |  true label: Case-Based
+ 70:  predict label: Theory  |  true label: Probabilistic Methods
+ 71:  predict label: Rule Learning  |  true label: Theory
+ 72:  predict label: Rule Learning  |  true label: Neural Networks
+ 73:  predict label: Rule Learning  |  true label: Theory
+ 74:  predict label: Rule Learning  |  true label: Case-Based
+ 75:  predict label: Rule Learning  |  true label: Genetic Algorithms
+ 76:  predict label: Rule Learning  |  true label: Case-Based
+ 77:  predict label: Rule Learning  |  true label: Case-Based
+ 78:  predict label: Rule Learning  |  true label: Neural Networks
+ 79:  predict label: Rule Learning  |  true label: Theory
+ 80:  predict label: Theory  |  true label: Case-Based
+ 81:  predict label: Rule Learning  |  true label: Rule Learning
+ 82:  predict label: Theory  |  true label: Neural Networks
+ 83:  predict label: Rule Learning  |  true label: Neural Networks
+ 84:  predict label: Theory  |  true label: Neural Networks
+ 85:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 86:  predict label: Rule Learning  |  true label: Case-Based
+ 87:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+ 88:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+ 89:  predict label: Rule Learning  |  true label: Genetic Algorithms
+ 90:  predict label: Rule Learning  |  true label: Case-Based
+ 91:  predict label: Rule Learning  |  true label: Probabilistic Methods
+ 92:  predict label: Theory  |  true label: Theory
+ 93:  predict label: Rule Learning  |  true label: Neural Networks
+ 94:  predict label: Rule Learning  |  true label: Theory
+ 95:  predict label: Rule Learning  |  true label: Genetic Algorithms
+ 96:  predict label: Theory  |  true label: Probabilistic Methods
+ 97:  predict label: Theory  |  true label: Neural Networks
+ 98:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+ 99:  predict label: Rule Learning  |  true label: Theory
+100:  predict label: Rule Learning  |  true label: Case-Based
+101:  predict label: Rule Learning  |  true label: Theory
+102:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+103:  predict label: Rule Learning  |  true label: Neural Networks
+104:  predict label: Theory  |  true label: Neural Networks
+105:  predict label: Rule Learning  |  true label: Theory
+106:  predict label: Rule Learning  |  true label: Probabilistic Methods
+107:  predict label: Theory  |  true label: Neural Networks
+108:  predict label: Theory  |  true label: Probabilistic Methods
+109:  predict label: Reinforcement Learning  |  true label: Neural Networks
+110:  predict label: Theory  |  true label: Neural Networks
+111:  predict label: Rule Learning  |  true label: Genetic Algorithms
+112:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+113:  predict label: Rule Learning  |  true label: Probabilistic Methods
+114:  predict label: Rule Learning  |  true label: Neural Networks
+115:  predict label: Theory  |  true label: Neural Networks
+116:  predict label: Theory  |  true label: Theory
+117:  predict label: Reinforcement Learning  |  true label: Theory
+118:  predict label: Theory  |  true label: Genetic Algorithms
+119:  predict label: 1. Theory  |  true label: Probabilistic Methods
+120:  predict label: Rule Learning  |  true label: Reinforcement Learning
+121:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+122:  predict label: Rule Learning  |  true label: Probabilistic Methods
+123:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+124:  predict label: Rule Learning  |  true label: Genetic Algorithms
+125:  predict label: Theory  |  true label: Genetic Algorithms
+126:  predict label: Theory  |  true label: Neural Networks
+127:  predict label: Reinforcement Learning  |  true label: Rule Learning
+128:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+129:  predict label: Reinforcement Learning  |  true label: Rule Learning
+130:  predict label: Rule Learning  |  true label: Probabilistic Methods
+131:  predict label: Theory  |  true label: Theory
+132:  predict label: Rule Learning  |  true label: Neural Networks
+133:  predict label: Theory  |  true label: Neural Networks
+134:  predict label: Theory  |  true label: Probabilistic Methods
+135:  predict label: Rule Learning  |  true label: Neural Networks
+136:  predict label: Rule Learning  |  true label: Neural Networks
+137:  predict label: Statistical Mechanics and Complex Systems  |  true label: Neural Networks
+138:  predict label: Rule Learning  |  true label: Neural Networks
+139:  predict label: TECHNICAL REPORT  |  true label: Probabilistic Methods
+140:  predict label: Rule Learning  |  true label: Neural Networks
+141:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+142:  predict label: Rule Learning  |  true label: Case-Based
+143:  predict label: Rule Learning  |  true label: Probabilistic Methods
+144:  predict label: Rule Learning  |  true label: Rule Learning
+145:  predict label: Rule Learning  |  true label: Rule Learning
+146:  predict label: Rule Learning  |  true label: Case-Based
+147:  predict label: Theory  |  true label: Case-Based
+148:  predict label: Theory  |  true label: Reinforcement Learning
+149:  predict label: Control, Navigation and Planning.  |  true label: Reinforcement Learning
+150:  predict label: Rule Learning  |  true label: Case-Based
+151:  predict label: Theory  |  true label: Neural Networks
+152:  predict label: Theory  |  true label: Theory
+153:  predict label: Theory  |  true label: Case-Based
+154:  predict label: Rule Learning  |  true label: Neural Networks
+155:  predict label: Rule Learning  |  true label: Rule Learning
+156:  predict label: Rule Learning  |  true label: Theory
+157:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+158:  predict label: Theory  |  true label: Theory
+159:  predict label: Rule Learning  |  true label: Rule Learning
+160:  predict label: Rule Learning  |  true label: Probabilistic Methods
+161:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+162:  predict label: Theory  |  true label: Neural Networks
+163:  predict label: Rule Learning  |  true label: Neural Networks
+164:  predict label: Theory  |  true label: Neural Networks
+165:  predict label: Rule Learning  |  true label: Rule Learning
+166:  predict label: Reinforcement Learning  |  true label: Neural Networks
+167:  predict label: Rule Learning  |  true label: Probabilistic Methods
+168:  predict label: Probabilistic Methods  |  true label: Neural Networks
+169:  predict label: Theory  |  true label: Neural Networks
+170:  predict label: Rule Learning  |  true label: Reinforcement Learning
+171:  predict label: Rule Learning  |  true label: Case-Based
+172:  predict label: Rule Learning  |  true label: Case-Based
+173:  predict label: Rule Learning  |  true label: Genetic Algorithms
+174:  predict label: Theory  |  true label: Case-Based
+175:  predict label: Rule Learning  |  true label: Rule Learning
+176:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+177:  predict label: Rule Learning  |  true label: Theory
+178:  predict label: Rule Learning  |  true label: Case-Based
+179:  predict label: Rule Learning  |  true label: Case-Based
+180:  predict label: Theory  |  true label: Reinforcement Learning
+181:  predict label: Theory  |  true label: Theory
+182:  predict label: Rule Learning  |  true label: Case-Based
+183:  predict label: Theory  |  true label: Reinforcement Learning
+184:  predict label: Reinforcement Learning  |  true label: Case-Based
+185:  predict label: Visual Processing  |  true label: Neural Networks
+186:  predict label: Rule Learning  |  true label: Genetic Algorithms
+187:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+188:  predict label: Theory  |  true label: Probabilistic Methods
+189:  predict label: Rule Learning  |  true label: Theory
+190:  predict label: Theory  |  true label: Theory
+191:  predict label: Rule Learning  |  true label: Genetic Algorithms
+192:  predict label: Rule Learning  |  true label: Neural Networks
+193:  predict label: Theory  |  true label: Neural Networks
+194:  predict label: Rule Learning  |  true label: Theory
+195:  predict label: Theory  |  true label: Neural Networks
+196:  predict label: Theory  |  true label: Theory
+197:  predict label: Rule Learning  |  true label: Neural Networks
+198:  predict label: Reinforcement Learning  |  true label: Neural Networks
+199:  predict label: Rule Learning  |  true label: Genetic Algorithms
+200:  predict label: Case-Based  |  true label: Case-Based
+201:  predict label: Case-Based  |  true label: Case-Based
+202:  predict label: Reinforcement Learning  |  true label: Case-Based
+203:  predict label: Rule Learning  |  true label: Case-Based
+204:  predict label: Theory  |  true label: Probabilistic Methods
+205:  predict label: Rule Learning  |  true label: Theory
+206:  predict label: Rule Learning  |  true label: Theory
+207:  predict label: Theory  |  true label: Case-Based
+208:  predict label: Rule Learning  |  true label: Case-Based
+209:  predict label: Reinforcement Learning  |  true label: Rule Learning
+210:  predict label: Rule Learning  |  true label: Neural Networks
+211:  predict label: Rule Learning  |  true label: Neural Networks
+212:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+213:  predict label: Rule Learning  |  true label: Neural Networks
+214:  predict label: Rule Learning  |  true label: Genetic Algorithms
+215:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+216:  predict label: Theory  |  true label: Probabilistic Methods
+217:  predict label: Rule Learning  |  true label: Neural Networks
+218:  predict label: Rule Learning  |  true label: Neural Networks
+219:  predict label: Rule Learning  |  true label: Probabilistic Methods
+220:  predict label: Neural Networks  |  true label: Theory
+221:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+222:  predict label: Rule Learning  |  true label: Neural Networks
+223:  predict label: Technical Report  |  true label: Neural Networks
+224:  predict label: Theory  |  true label: Neural Networks
+225:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+226:  predict label: Rule Learning  |  true label: Probabilistic Methods
+227:  predict label: Case-Based  |  true label: Case-Based
+228:  predict label: Theory  |  true label: Theory
+229:  predict label: Theory  |  true label: Probabilistic Methods
+230:  predict label: Rule Learning  |  true label: Theory
+231:  predict label: Theory  |  true label: Case-Based
+232:  predict label: Theory  |  true label: Rule Learning
+233:  predict label: Rule Learning  |  true label: Neural Networks
+234:  predict label: Rule Learning  |  true label: Neural Networks
+235:  predict label: Rule Learning  |  true label: Genetic Algorithms
+236:  predict label: Rule Learning  |  true label: Neural Networks
+237:  predict label: Rule Learning  |  true label: Case-Based
+238:  predict label: Rule Learning  |  true label: Genetic Algorithms
+239:  predict label: Rule Learning  |  true label: Neural Networks
+240:  predict label: Theory  |  true label: Case-Based
+241:  predict label: Rule Learning  |  true label: Probabilistic Methods
+242:  predict label: Rule Learning  |  true label: Neural Networks
+243:  predict label: Theory  |  true label: Case-Based
+244:  predict label: Rule Learning  |  true label: Case-Based
+245:  predict label: Rule Learning  |  true label: Neural Networks
+246:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+247:  predict label: Reinforcement Learning  |  true label: Neural Networks
+248:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+249:  predict label: Rule Learning  |  true label: Neural Networks
+250:  predict label: Rule Learning  |  true label: Neural Networks
+251:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+252:  predict label: Rule Learning  |  true label: Case-Based
+253:  predict label: Rule Learning  |  true label: Neural Networks
+254:  predict label: Rule Learning  |  true label: Theory
+255:  predict label: Reinforcement Learning  |  true label: Case-Based
+256:  predict label: Theory  |  true label: Probabilistic Methods
+257:  predict label: Rule Learning  |  true label: Neural Networks
+258:  predict label: Theory  |  true label: Probabilistic Methods
+259:  predict label: Real-Valued Schemata Search (RVSS)  |  true label: Neural Networks
+260:  predict label: Rule Learning  |  true label: Theory
+261:  predict label: Theory  |  true label: Neural Networks
+262:  predict label: Theory  |  true label: Neural Networks
+263:  predict label: Theory  |  true label: Theory
+264:  predict label: Rule Learning  |  true label: Neural Networks
+265:  predict label: Theory  |  true label: Probabilistic Methods
+266:  predict label: Rule Learning  |  true label: Neural Networks
+267:  predict label: Theory  |  true label: Theory
+268:  predict label: Theory  |  true label: Probabilistic Methods
+269:  predict label: Rule Learning  |  true label: Neural Networks
+270:  predict label: Rule Learning  |  true label: Probabilistic Methods
+271:  predict label: Rule Learning  |  true label: Neural Networks
+272:  predict label: Rule Learning  |  true label: Neural Networks
+273:  predict label: Rule Learning  |  true label: Genetic Algorithms
+274:  predict label: Rule Learning  |  true label: Neural Networks
+275:  predict label: Rule Learning  |  true label: Neural Networks
+276:  predict label: Reinforcement Learning  |  true label: Neural Networks
+277:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+278:  predict label: Theory  |  true label: Genetic Algorithms
+279:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+280:  predict label: Theory  |  true label: Neural Networks
+281:  predict label: Rule Learning  |  true label: Neural Networks
+282:  predict label: Case-Based.  |  true label: Case-Based
+283:  predict label: Rule Learning  |  true label: Reinforcement Learning
+284:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+285:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+286:  predict label: Rule Learning  |  true label: Neural Networks
+287:  predict label: Rule Learning  |  true label: Genetic Algorithms
+288:  predict label: Rule Learning  |  true label: Theory
+289:  predict label: Neural Networks  |  true label: Neural Networks
+290:  predict label: 1. Rule Learning  |  true label: Case-Based
+291:  predict label: Rule Learning  |  true label: Neural Networks
+292:  predict label: Rule Learning  |  true label: Neural Networks
+293:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+294:  predict label: Theory  |  true label: Neural Networks
+295:  predict label: Theory  |  true label: Neural Networks
+296:  predict label: Reinforcement Learning  |  true label: Neural Networks
+297:  predict label: Rule Learning  |  true label: Probabilistic Methods
+298:  predict label: Rule Learning  |  true label: Genetic Algorithms
+299:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+300:  predict label: Rule Learning  |  true label: Case-Based
+301:  predict label: Theory  |  true label: Neural Networks
+302:  predict label: Rule Learning  |  true label: Neural Networks
+303:  predict label: Theory  |  true label: Theory
+304:  predict label: Rule Learning  |  true label: Neural Networks
+305:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+306:  predict label: Rule Learning  |  true label: Genetic Algorithms
+307:  predict label: Rule Learning  |  true label: Rule Learning
+308:  predict label: Theory  |  true label: Theory
+309:  predict label: Reinforcement Learning  |  true label: Neural Networks
+310:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+311:  predict label: Rule Learning  |  true label: Case-Based
+312:  predict label: Rule Learning  |  true label: Case-Based
+313:  predict label: Theory  |  true label: Rule Learning
+314:  predict label: Rule Learning  |  true label: Theory
+315:  predict label: Rule Learning  |  true label: Case-Based
+316:  predict label: Theory  |  true label: Neural Networks
+317:  predict label: Rule Learning  |  true label: Case-Based
+318:  predict label: Rule Learning  |  true label: Probabilistic Methods
+319:  predict label: Rule Learning  |  true label: Neural Networks
+320:  predict label: Rule Learning  |  true label: Neural Networks
+321:  predict label: Theory  |  true label: Rule Learning
+322:  predict label: Theory  |  true label: Rule Learning
+323:  predict label: Rule Learning  |  true label: Neural Networks
+324:  predict label: Rule Learning  |  true label: Probabilistic Methods
+325:  predict label: Theory  |  true label: Neural Networks
+326:  predict label: Rule Learning  |  true label: Reinforcement Learning
+327:  predict label: Rule Learning  |  true label: Neural Networks
+328:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+329:  predict label: Rule Learning  |  true label: Case-Based
+330:  predict label: Rule Learning  |  true label: Theory
+331:  predict label: Rule Learning  |  true label: Theory
+332:  predict label: Rule Learning  |  true label: Neural Networks
+333:  predict label: Rule Learning  |  true label: Probabilistic Methods
+334:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+335:  predict label: Rule Learning  |  true label: Case-Based
+336:  predict label: Rule Learning  |  true label: Case-Based
+337:  predict label: Rule Learning  |  true label: Probabilistic Methods
+338:  predict label: Theory  |  true label: Neural Networks
+339:  predict label: Rule Learning  |  true label: Neural Networks
+340:  predict label: Rule Learning  |  true label: Neural Networks
+341:  predict label: Rule Learning  |  true label: Case-Based
+342:  predict label: Rule Learning  |  true label: Neural Networks
+343:  predict label: Rule Learning  |  true label: Case-Based
+344:  predict label: Reinforcement Learning  |  true label: Theory
+345:  predict label: Rule Learning  |  true label: Rule Learning
+346:  predict label: Rule Learning  |  true label: Neural Networks
+347:  predict label: Rule Learning  |  true label: Genetic Algorithms
+348:  predict label: Rule Learning  |  true label: Reinforcement Learning
+349:  predict label: Rule Learning  |  true label: Case-Based
+350:  predict label: Rule Learning  |  true label: Neural Networks
+351:  predict label: Rule Learning  |  true label: Theory
+352:  predict label: Theory  |  true label: Neural Networks
+353:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+354:  predict label: Theory  |  true label: Neural Networks
+355:  predict label: Rule Learning  |  true label: Theory
+356:  predict label: Rule Learning  |  true label: Neural Networks
+357:  predict label: Rule Learning  |  true label: Probabilistic Methods
+358:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+359:  predict label: Rule Learning  |  true label: Rule Learning
+360:  predict label: Rule Learning  |  true label: Case-Based
+361:  predict label: Theory  |  true label: Probabilistic Methods
+362:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+363:  predict label: Rule Learning  |  true label: Neural Networks
+364:  predict label: Theory  |  true label: Neural Networks
+365:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+366:  predict label: Rule Learning  |  true label: Neural Networks
+367:  predict label: Theory  |  true label: Theory
+368:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+369:  predict label: Rule Learning  |  true label: Rule Learning
+370:  predict label: Rule Learning  |  true label: Rule Learning
+371:  predict label: Reinforcement Learning  |  true label: Neural Networks
+372:  predict label: algorithms and architectures | recurrent networks  |  true label: Neural Networks
+373:  predict label: Rule Learning  |  true label: Case-Based
+374:  predict label: Rule Learning  |  true label: Probabilistic Methods
+375:  predict label: Rule Learning  |  true label: Theory
+376:  predict label: Theory  |  true label: Theory
+377:  predict label: Rule Learning  |  true label: Theory
+378:  predict label: Rule Learning  |  true label: Theory
+379:  predict label: Theory.  |  true label: Neural Networks
+380:  predict label: Rule Learning  |  true label: Neural Networks
+381:  predict label: Rule Learning  |  true label: Theory
+382:  predict label: Rule Learning  |  true label: Neural Networks
+383:  predict label: Rule Learning  |  true label: Case-Based
+384:  predict label: Rule Learning  |  true label: Case-Based
+385:  predict label: Rule Learning  |  true label: Neural Networks
+386:  predict label: Rule Learning  |  true label: Probabilistic Methods
+387:  predict label: Rule Learning  |  true label: Rule Learning
+388:  predict label: Theory  |  true label: Theory
+389:  predict label: Rule Learning  |  true label: Genetic Algorithms
+390:  predict label: Theory  |  true label: Probabilistic Methods
+391:  predict label: Theory  |  true label: Case-Based
+392:  predict label: Rule Learning  |  true label: Neural Networks
+393:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+394:  predict label: Rule Learning  |  true label: Probabilistic Methods
+395:  predict label: Rule Learning  |  true label: Theory
+396:  predict label: Case-Based  |  true label: Case-Based
+397:  predict label: Rule Learning  |  true label: Neural Networks
+398:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+399:  predict label: Neural Networks  |  true label: Neural Networks
+400:  predict label: Theory  |  true label: Neural Networks
+401:  predict label: Rule Learning  |  true label: Neural Networks
+402:  predict label: Rule Learning  |  true label: Neural Networks
+403:  predict label: Rule Learning  |  true label: Theory
+404:  predict label: Rule Learning  |  true label: Reinforcement Learning
+405:  predict label: Rule Learning  |  true label: Neural Networks
+406:  predict label: Rule Learning  |  true label: Neural Networks
+407:  predict label: Theory  |  true label: Probabilistic Methods
+408:  predict label: Rule Learning  |  true label: Neural Networks
+409:  predict label: Rule Learning  |  true label: Case-Based
+410:  predict label: Rule Learning  |  true label: Case-Based
+411:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+412:  predict label: Rule Learning  |  true label: Rule Learning
+413:  predict label: Rule Learning  |  true label: Case-Based
+414:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+415:  predict label: Rule Learning  |  true label: Neural Networks
+416:  predict label: Theory  |  true label: Neural Networks
+417:  predict label: Rule Learning  |  true label: Neural Networks
+418:  predict label: Rule Learning  |  true label: Neural Networks
+419:  predict label: Rule Learning  |  true label: Neural Networks
+420:  predict label: Reinforcement Learning  |  true label: Neural Networks
+421:  predict label: Rule Learning  |  true label: Case-Based
+422:  predict label: Rule Learning  |  true label: Case-Based
+423:  predict label: Theory  |  true label: Theory
+424:  predict label: Rule Learning  |  true label: Case-Based
+425:  predict label: Theory  |  true label: Probabilistic Methods
+426:  predict label: Rule Learning  |  true label: Case-Based
+427:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+428:  predict label: Rule Learning  |  true label: Case-Based
+429:  predict label: Theory  |  true label: Theory
+430:  predict label: Theory  |  true label: Neural Networks
+431:  predict label: Rule Learning  |  true label: Neural Networks
+432:  predict label: Rule Learning  |  true label: Probabilistic Methods
+433:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+434:  predict label: Rule Learning  |  true label: Theory
+435:  predict label: Rule Learning  |  true label: Neural Networks
+436:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+437:  predict label: Reinforcement Learning  |  true label: Neural Networks
+438:  predict label: Rule Learning  |  true label: Neural Networks
+439:  predict label: Rule Learning  |  true label: Theory
+440:  predict label: Reinforcement Learning  |  true label: Neural Networks
+441:  predict label: Rule Learning  |  true label: Neural Networks
+442:  predict label: Rule Learning  |  true label: Probabilistic Methods
+443:  predict label: Rule Learning  |  true label: Neural Networks
+444:  predict label: Rule Learning  |  true label: Rule Learning
+445:  predict label: Rule Learning  |  true label: Neural Networks
+446:  predict label: Rule Learning  |  true label: Theory
+447:  predict label: Rule Learning  |  true label: Neural Networks
+448:  predict label: Rule Learning  |  true label: Theory
+449:  predict label: Rule Learning  |  true label: Genetic Algorithms
+450:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+451:  predict label: Rule Learning  |  true label: Neural Networks
+452:  predict label: Rule Learning  |  true label: Probabilistic Methods
+453:  predict label: Rule Learning  |  true label: Genetic Algorithms
+454:  predict label: Rule Learning  |  true label: Case-Based
+455:  predict label: Rule Learning  |  true label: Theory
+456:  predict label: Rule Learning  |  true label: Theory
+457:  predict label: Theory  |  true label: Probabilistic Methods
+458:  predict label: Rule Learning  |  true label: Probabilistic Methods
+459:  predict label: Rule Learning  |  true label: Neural Networks
+460:  predict label: Category: Neural Networks  |  true label: Genetic Algorithms
+461:  predict label: Rule Learning  |  true label: Reinforcement Learning
+462:  predict label: Reinforcement Learning  |  true label: Neural Networks
+463:  predict label: Theory  |  true label: Theory
+464:  predict label: Rule Learning  |  true label: Case-Based
+465:  predict label: Theory  |  true label: Probabilistic Methods
+466:  predict label: Rule Learning  |  true label: Probabilistic Methods
+467:  predict label: Theory  |  true label: Probabilistic Methods
+468:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+469:  predict label: Rule Learning  |  true label: Genetic Algorithms
+470:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+471:  predict label: Rule Learning  |  true label: Probabilistic Methods
+472:  predict label: Rule Learning  |  true label: Probabilistic Methods
+473:  predict label: Rule Learning  |  true label: Case-Based
+474:  predict label: Rule Learning  |  true label: Rule Learning
+475:  predict label: Rule Learning  |  true label: Case-Based
+476:  predict label: Theory  |  true label: Case-Based
+477:  predict label: Rule Learning  |  true label: Probabilistic Methods
+478:  predict label: Theory  |  true label: Probabilistic Methods
+479:  predict label: Rule Learning
+
+Answer: Rule Learning  |  true label: Reinforcement Learning
+480:  predict label: Rule Learning  |  true label: Neural Networks
+481:  predict label: Rule Learning  |  true label: Neural Networks
+482:  predict label: Rule Learning  |  true label: Reinforcement Learning
+483:  predict label: Rule Learning  |  true label: Neural Networks
+484:  predict label: Rule Learning  |  true label: Theory
+485:  predict label: Rule Learning  |  true label: Case-Based
+486:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+487:  predict label: Theory  |  true label: Probabilistic Methods
+488:  predict label: Rule Learning  |  true label: Neural Networks
+489:  predict label: Theory  |  true label: Probabilistic Methods
+490:  predict label: Rule Learning  |  true label: Probabilistic Methods
+491:  predict label: Theory  |  true label: Probabilistic Methods
+492:  predict label: Rule Learning  |  true label: Rule Learning
+493:  predict label: Rule Learning  |  true label: Theory
+494:  predict label: Reinforcement Learning  |  true label: Neural Networks
+495:  predict label: Rule Learning  |  true label: Neural Networks
+496:  predict label: Rule Learning  |  true label: Rule Learning
+497:  predict label: Rule Learning  |  true label: Rule Learning
+498:  predict label: Case-Based  |  true label: Case-Based
+499:  predict label: Rule Learning  |  true label: Genetic Algorithms
+500:  predict label: Case-Based Reasoning (CBR)  |  true label: Case-Based
+501:  predict label: Rule Learning  |  true label: Genetic Algorithms
+502:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+503:  predict label: Rule Learning  |  true label: Genetic Algorithms
+504:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+505:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+506:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+507:  predict label: Theory  |  true label: Theory
+508:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+509:  predict label: Rule Learning  |  true label: Genetic Algorithms
+510:  predict label: Rule Learning  |  true label: Genetic Algorithms
+511:  predict label: Rule Learning  |  true label: Genetic Algorithms
+512:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+513:  predict label: Rule Learning  |  true label: Case-Based
+514:  predict label: Rule Learning  |  true label: Neural Networks
+515:  predict label: Rule Learning  |  true label: Case-Based
+516:  predict label: Rule Learning  |  true label: Theory
+517:  predict label: Rule Learning  |  true label: Genetic Algorithms
+518:  predict label: Machine Learning  |  true label: Rule Learning
+519:  predict label: Rule Learning  |  true label: Theory
+520:  predict label: Rule Learning  |  true label: Neural Networks
+521:  predict label: Reinforcement Learning  |  true label: Neural Networks
+522:  predict label: Rule Learning  |  true label: Neural Networks
+523:  predict label: Rule Learning  |  true label: Rule Learning
+524:  predict label: Rule Learning  |  true label: Rule Learning
+525:  predict label: Molecular, Cellular and Developmental Biology  |  true label: Neural Networks
+526:  predict label: Rule Learning  |  true label: Rule Learning
+527:  predict label: Probabilistic Methods  |  true label: Rule Learning
+528:  predict label: Rule Learning  |  true label: Rule Learning
+529:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+530:  predict label: Rule Learning  |  true label: Genetic Algorithms
+531:  predict label: Rule Learning  |  true label: Genetic Algorithms
+532:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+533:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+534:  predict label: Rule Learning  |  true label: Genetic Algorithms
+535:  predict label: Rule Learning  |  true label: Genetic Algorithms
+536:  predict label: Case-Based  |  true label: Genetic Algorithms
+537:  predict label: Rule Learning  |  true label: Genetic Algorithms
+538:  predict label: Rule Learning  |  true label: Genetic Algorithms
+539:  predict label: Rule Learning  |  true label: Genetic Algorithms
+540:  predict label: Rule Learning  |  true label: Genetic Algorithms
+541:  predict label: Theory  |  true label: Genetic Algorithms
+542:  predict label: Rule Learning  |  true label: Genetic Algorithms
+543:  predict label: Rule Learning  |  true label: Genetic Algorithms
+544:  predict label: Parallelization  |  true label: Genetic Algorithms
+545:  predict label: Rule Learning  |  true label: Genetic Algorithms
+546:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+547:  predict label: Case-Based  |  true label: Case-Based
+548:  predict label: Reinforcement Learning  |  true label: Neural Networks
+549:  predict label: Theory  |  true label: Theory
+550:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+551:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+552:  predict label: Rule Learning  |  true label: Genetic Algorithms
+553:  predict label: Rule Learning  |  true label: Genetic Algorithms
+554:  predict label: Theory  |  true label: Neural Networks
+555:  predict label: Theory  |  true label: Neural Networks
+556:  predict label: Reinforcement Learning  |  true label: Neural Networks
+557:  predict label: Theory  |  true label: Probabilistic Methods
+558:  predict label: Rule Learning  |  true label: Genetic Algorithms
+559:  predict label: Rule Learning  |  true label: Neural Networks
+560:  predict label: Rule Learning  |  true label: Genetic Algorithms
+561:  predict label: Theory  |  true label: Neural Networks
+562:  predict label: Rule Learning  |  true label: Genetic Algorithms
+563:  predict label: Rule Learning  |  true label: Neural Networks
+564:  predict label: Conservative  |  true label: Genetic Algorithms
+565:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+566:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+567:  predict label: Theory  |  true label: Genetic Algorithms
+568:  predict label: Rule Learning  |  true label: Rule Learning
+569:  predict label: Theory  |  true label: Probabilistic Methods
+570:  predict label: Rule Learning  |  true label: Probabilistic Methods
+571:  predict label: Rule Learning  |  true label: Neural Networks
+572:  predict label: Theory  |  true label: Neural Networks
+573:  predict label: Rule Learning  |  true label: Probabilistic Methods
+574:  predict label: Reinforcement Learning  |  true label: Theory
+575:  predict label: Rule Learning  |  true label: Probabilistic Methods
+576:  predict label: Reinforcement Learning  |  true label: Case-Based
+577:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+578:  predict label: Neural Networks  |  true label: Neural Networks
+579:  predict label: Reinforcement Learning  |  true label: Neural Networks
+580:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+581:  predict label: Rule Learning  |  true label: Neural Networks
+582:  predict label: Theory  |  true label: Case-Based
+583:  predict label: Reinforcement Learning  |  true label: Case-Based
+584:  predict label: Rule Learning  |  true label: Case-Based
+585:  predict label: Rule Learning  |  true label: Neural Networks
+586:  predict label: Rule Learning  |  true label: Neural Networks
+587:  predict label: Rule Learning  |  true label: Neural Networks
+588:  predict label: Theory  |  true label: Probabilistic Methods
+589:  predict label: Rule Learning  |  true label: Neural Networks
+590:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+591:  predict label: Theory  |  true label: Genetic Algorithms
+592:  predict label: Rule Learning  |  true label: Neural Networks
+593:  predict label: Optional Category: Rule Learning  |  true label: Neural Networks
+594:  predict label: Theory  |  true label: Neural Networks
+595:  predict label: Rule Learning  |  true label: Neural Networks
+596:  predict label: Rule Learning  |  true label: Neural Networks
+597:  predict label: Theory  |  true label: Genetic Algorithms
+598:  predict label: Rule Learning  |  true label: Probabilistic Methods
+599:  predict label: Theory  |  true label: Neural Networks
+600:  predict label: Rule Learning  |  true label: Neural Networks
+601:  predict label: Rule Learning  |  true label: Neural Networks
+602:  predict label: Rule Learning  |  true label: Probabilistic Methods
+603:  predict label: Theory  |  true label: Probabilistic Methods
+604:  predict label: Decision Analysis  |  true label: Probabilistic Methods
+605:  predict label: 1. Introduction and discussion of results  |  true label: Probabilistic Methods
+606:  predict label: Theory  |  true label: Probabilistic Methods
+607:  predict label: Rule Learning  |  true label: Neural Networks
+608:  predict label: Rule Learning  |  true label: Probabilistic Methods
+609:  predict label: Rule Learning  |  true label: Probabilistic Methods
+610:  predict label: Rule Learning  |  true label: Neural Networks
+611:  predict label: Theory  |  true label: Genetic Algorithms
+612:  predict label: Theory  |  true label: Probabilistic Methods
+613:  predict label: Theory  |  true label: Probabilistic Methods
+614:  predict label: Theory  |  true label: Probabilistic Methods
+615:  predict label: Theory  |  true label: Probabilistic Methods
+616:  predict label: Theory  |  true label: Probabilistic Methods
+617:  predict label: Rule Learning  |  true label: Probabilistic Methods
+618:  predict label: Rule Learning  |  true label: Probabilistic Methods
+619:  predict label: Theory  |  true label: Probabilistic Methods
+620:  predict label: Theory  |  true label: Probabilistic Methods
+621:  predict label: Rule Learning  |  true label: Probabilistic Methods
+622:  predict label: Theory  |  true label: Probabilistic Methods
+623:  predict label: 0 Rule Learning  |  true label: Probabilistic Methods
+624:  predict label: Theory  |  true label: Probabilistic Methods
+625:  predict label: Theory  |  true label: Probabilistic Methods
+626:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+627:  predict label: Theory  |  true label: Probabilistic Methods
+628:  predict label: Theory  |  true label: Probabilistic Methods
+629:  predict label: Rule Learning  |  true label: Probabilistic Methods
+630:  predict label: Rule Learning  |  true label: Neural Networks
+631:  predict label: Rule Learning  |  true label: Neural Networks
+632:  predict label: Rule Learning  |  true label: Genetic Algorithms
+633:  predict label: Rule Learning  |  true label: Genetic Algorithms
+634:  predict label: Rule Learning  |  true label: Genetic Algorithms
+635:  predict label: Rule Learning  |  true label: Neural Networks
+636:  predict label: Rule Learning  |  true label: Neural Networks
+637:  predict label: Rule Learning  |  true label: Neural Networks
+638:  predict label: Reinforcement Learning  |  true label: Neural Networks
+639:  predict label: Theory  |  true label: Probabilistic Methods
+640:  predict label: Rule Learning  |  true label: Case-Based
+641:  predict label: Rule Learning  |  true label: Genetic Algorithms
+642:  predict label: Rule Learning  |  true label: Genetic Algorithms
+643:  predict label: Theory  |  true label: Genetic Algorithms
+644:  predict label: Rule Learning  |  true label: Neural Networks
+645:  predict label: Theory  |  true label: Probabilistic Methods
+646:  predict label: Rule Learning  |  true label: Theory
+647:  predict label: Reinforcement Learning  |  true label: Neural Networks
+648:  predict label: Rule Learning
+
+Is my answer correct?  |  true label: Neural Networks
+649:  predict label: Rule Learning  |  true label: Neural Networks
+650:  predict label: Rule Learning  |  true label: Rule Learning
+651:  predict label: Rule Learning  |  true label: Case-Based
+652:  predict label: Rule Learning  |  true label: Genetic Algorithms
+653:  predict label: Rule Learning  |  true label: Genetic Algorithms
+654:  predict label: Rule Learning  |  true label: Neural Networks
+655:  predict label: Rule Learning  |  true label: Neural Networks
+656:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+657:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+658:  predict label: Rule Learning  |  true label: Case-Based
+659:  predict label: Theory  |  true label: Neural Networks
+660:  predict label: Rule Learning  |  true label: Neural Networks
+661:  predict label: Rule Learning  |  true label: Probabilistic Methods
+662:  predict label: Rule Learning  |  true label: Theory
+663:  predict label: Rule Learning  |  true label: Theory
+664:  predict label: Rule Learning  |  true label: Neural Networks
+665:  predict label: Rule Learning  |  true label: Neural Networks
+666:  predict label: Theory  |  true label: Neural Networks
+667:  predict label: Rule Learning  |  true label: Neural Networks
+668:  predict label: Rule Learning  |  true label: Neural Networks
+669:  predict label: Rule Learning  |  true label: Neural Networks
+670:  predict label: Rule Learning  |  true label: Neural Networks
+671:  predict label: Information Systems  |  true label: Neural Networks
+672:  predict label: Rule Learning  |  true label: Rule Learning
+673:  predict label: Rule Learning  |  true label: Neural Networks
+674:  predict label: Rule Learning  |  true label: Theory
+675:  predict label: Rule Learning  |  true label: Case-Based
+676:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+677:  predict label: Rule Learning  |  true label: Rule Learning
+678:  predict label: Rule Learning  |  true label: Neural Networks
+679:  predict label: Rule Learning  |  true label: Probabilistic Methods
+680:  predict label: Theory  |  true label: Probabilistic Methods
+681:  predict label: Rule Learning  |  true label: Probabilistic Methods
+682:  predict label: Rule Learning  |  true label: Neural Networks
+683:  predict label: Rule Learning  |  true label: Neural Networks
+684:  predict label: Theory  |  true label: Neural Networks
+685:  predict label: Rule Learning  |  true label: Neural Networks
+686:  predict label: Theory  |  true label: Neural Networks
+687:  predict label: Rule Learning  |  true label: Probabilistic Methods
+688:  predict label: Rule Learning  |  true label: Theory
+689:  predict label: Rule Learning  |  true label: Genetic Algorithms
+690:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+691:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+692:  predict label: Theory  |  true label: Theory
+693:  predict label: Theory  |  true label: Probabilistic Methods
+694:  predict label: Rule Learning  |  true label: Neural Networks
+695:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+696:  predict label: Rule Learning  |  true label: Rule Learning
+697:  predict label: Rule Learning  |  true label: Theory
+698:  predict label: Rule Learning  |  true label: Neural Networks
+699:  predict label: Rule Learning  |  true label: Theory
+700:  predict label: Rule Learning  |  true label: Rule Learning
+701:  predict label: Rule Learning  |  true label: Genetic Algorithms
+702:  predict label: Theory  |  true label: Rule Learning
+703:  predict label: Rule Learning  |  true label: Neural Networks
+704:  predict label: Rule Learning  |  true label: Neural Networks
+705:  predict label: Rule Learning  |  true label: Theory
+706:  predict label: Theory  |  true label: Probabilistic Methods
+707:  predict label: Rule Learning  |  true label: Probabilistic Methods
+708:  predict label: Rule Learning  |  true label: Probabilistic Methods
+709:  predict label: Rule Learning  |  true label: Genetic Algorithms
+710:  predict label: Rule Learning  |  true label: Neural Networks
+711:  predict label: Theory  |  true label: Probabilistic Methods
+712:  predict label: Rule Learning  |  true label: Neural Networks
+713:  predict label: Reinforcement Learning  |  true label: Neural Networks
+714:  predict label: Rule Learning  |  true label: Neural Networks
+715:  predict label: Theory  |  true label: Neural Networks
+716:  predict label: Theory  |  true label: Neural Networks
+717:  predict label: Rule Learning  |  true label: Theory
+718:  predict label: Rule Learning  |  true label: Neural Networks
+719:  predict label: Reinforcement Learning  |  true label: Neural Networks
+720:  predict label: Reinforcement Learning  |  true label: Neural Networks
+721:  predict label: Rule Learning  |  true label: Theory
+722:  predict label: Theory  |  true label: Neural Networks
+723:  predict label: Reinforcement Learning  |  true label: Neural Networks
+724:  predict label: Rule Learning  |  true label: Neural Networks
+725:  predict label: Theory  |  true label: Neural Networks
+726:  predict label: Rule Learning  |  true label: Neural Networks
+727:  predict label: Rule Learning  |  true label: Neural Networks
+728:  predict label: Theory  |  true label: Probabilistic Methods
+729:  predict label: Rule Learning  |  true label: Genetic Algorithms
+730:  predict label: Rule Learning  |  true label: Neural Networks
+731:  predict label: Theory  |  true label: Neural Networks
+732:  predict label: Rule Learning  |  true label: Neural Networks
+733:  predict label: Theory  |  true label: Neural Networks
+734:  predict label: Theory  |  true label: Neural Networks
+735:  predict label: Rule Learning  |  true label: Neural Networks
+736:  predict label: Rule Learning  |  true label: Neural Networks
+737:  predict label: Theory  |  true label: Theory
+738:  predict label: Rule Learning  |  true label: Theory
+739:  predict label: Rule Learning  |  true label: Genetic Algorithms
+740:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+741:  predict label: Theory  |  true label: Neural Networks
+742:  predict label: Rule Learning  |  true label: Genetic Algorithms
+743:  predict label: Theory
+
+Answer: Theory  |  true label: Case-Based
+744:  predict label: Rule Learning  |  true label: Theory
+745:  predict label: Rule Learning  |  true label: Case-Based
+746:  predict label: Rule Learning  |  true label: Rule Learning
+747:  predict label: Genetic Algorithms  |  true label: Neural Networks
+748:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+749:  predict label: Theory  |  true label: Theory
+750:  predict label: Rule Learning  |  true label: Neural Networks
+751:  predict label: Rule Learning  |  true label: Case-Based
+752:  predict label: 1. Rule Learning  |  true label: Theory
+753:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+754:  predict label: Rule Learning  |  true label: Neural Networks
+755:  predict label: Theory  |  true label: Neural Networks
+756:  predict label: Theory  |  true label: Neural Networks
+757:  predict label: Rule Learning  |  true label: Neural Networks
+758:  predict label: Rule Learning  |  true label: Neural Networks
+759:  predict label: Reinforcement Learning  |  true label: Neural Networks
+760:  predict label: Reinforcement Learning  |  true label: Neural Networks
+761:  predict label: Rule Learning  |  true label: Probabilistic Methods
+762:  predict label: Theory  |  true label: Reinforcement Learning
+763:  predict label: Rule Learning  |  true label: Neural Networks
+764:  predict label: Rule Learning  |  true label: Neural Networks
+765:  predict label: Rule Learning  |  true label: Theory
+766:  predict label: Theory  |  true label: Theory
+767:  predict label: Rule Learning  |  true label: Neural Networks
+768:  predict label: Reinforcement Learning  |  true label: Neural Networks
+769:  predict label: Neural Networks  |  true label: Neural Networks
+770:  predict label: Rule Learning  |  true label: Neural Networks
+771:  predict label: Rule Learning  |  true label: Case-Based
+772:  predict label: Theory  |  true label: Probabilistic Methods
+773:  predict label: Rule Learning  |  true label: Neural Networks
+774:  predict label: Rule Learning  |  true label: Neural Networks
+775:  predict label: Unsupervised Learning  |  true label: Theory
+776:  predict label: Rule Learning  |  true label: Case-Based
+777:  predict label: Rule Learning  |  true label: Case-Based
+778:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+779:  predict label: Theory  |  true label: Theory
+780:  predict label: Theory  |  true label: Neural Networks
+781:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+782:  predict label: Rule Learning  |  true label: Case-Based
+783:  predict label: Rule Learning  |  true label: Case-Based
+784:  predict label: Rule Learning  |  true label: Neural Networks
+785:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+786:  predict label: Rule Learning  |  true label: Case-Based
+787:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+788:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+789:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+790:  predict label: Theory  |  true label: Neural Networks
+791:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+792:  predict label: Rule Learning  |  true label: Neural Networks
+793:  predict label: Reinforcement Learning  |  true label: Neural Networks
+794:  predict label: Rule Learning  |  true label: Reinforcement Learning
+795:  predict label: Rule Learning  |  true label: Genetic Algorithms
+796:  predict label: Academic paper with title and abstract belongs to the category of Theory.  |  true label: Neural Networks
+797:  predict label: Theory  |  true label: Probabilistic Methods
+798:  predict label: Theory  |  true label: Neural Networks
+799:  predict label: Rule Learning  |  true label: Case-Based
+800:  predict label: Rule Learning  |  true label: Neural Networks
+801:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+802:  predict label: Theory  |  true label: Probabilistic Methods
+803:  predict label: Rule Learning  |  true label: Reinforcement Learning
+804:  predict label: Rule Learning  |  true label: Neural Networks
+805:  predict label: Neural Networks  |  true label: Neural Networks
+806:  predict label: Rule Learning  |  true label: Case-Based
+807:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+808:  predict label: Rule Learning  |  true label: Neural Networks
+809:  predict label: Rule Learning  |  true label: Probabilistic Methods
+810:  predict label: Rule Learning  |  true label: Probabilistic Methods
+811:  predict label: Rule Learning  |  true label: Neural Networks
+812:  predict label: Rule Learning  |  true label: Reinforcement Learning
+813:  predict label: Rule Learning  |  true label: Theory
+814:  predict label: Rule Learning
+
+Please let me know if you need any further information.  |  true label: Genetic Algorithms
+815:  predict label: Rule Learning  |  true label: Rule Learning
+816:  predict label: Rule Learning  |  true label: Neural Networks
+817:  predict label: Rule Learning  |  true label: Rule Learning
+818:  predict label: Rule Learning  |  true label: Neural Networks
+819:  predict label: Rule Learning  |  true label: Probabilistic Methods
+820:  predict label: Rule Learning  |  true label: Rule Learning
+821:  predict label: Theory  |  true label: Theory
+822:  predict label: Rule Learning  |  true label: Case-Based
+823:  predict label: Reinforcement Learning  |  true label: Rule Learning
+824:  predict label: Rule Learning  |  true label: Theory
+825:  predict label: Rule Learning  |  true label: Neural Networks
+826:  predict label: Theory  |  true label: Rule Learning
+827:  predict label: Theory  |  true label: Probabilistic Methods
+828:  predict label: Reinforcement Learning  |  true label: Theory
+829:  predict label: Theory  |  true label: Theory
+830:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+831:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+832:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+833:  predict label: Rule Learning  |  true label: Case-Based
+834:  predict label: Rule Learning  |  true label: Case-Based
+835:  predict label: Rule Learning  |  true label: Case-Based
+836:  predict label: Rule Learning  |  true label: Theory
+837:  predict label: Rule Learning  |  true label: Genetic Algorithms
+838:  predict label: Rule Learning  |  true label: Probabilistic Methods
+839:  predict label: Rule Learning  |  true label: Rule Learning
+840:  predict label: Rule Learning  |  true label: Genetic Algorithms
+841:  predict label: Rule Learning  |  true label: Genetic Algorithms
+842:  predict label: Rule Learning  |  true label: Genetic Algorithms
+843:  predict label: Rule Learning  |  true label: Neural Networks
+844:  predict label: Rule Learning  |  true label: Rule Learning
+845:  predict label: Rule Learning  |  true label: Case-Based
+846:  predict label: Rule Learning  |  true label: Case-Based
+847:  predict label: Rule Learning  |  true label: Case-Based
+848:  predict label: Rule Learning  |  true label: Case-Based
+849:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+850:  predict label: Rule Learning  |  true label: Genetic Algorithms
+851:  predict label: Rule Learning  |  true label: Genetic Algorithms
+852:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+853:  predict label: Rule Learning  |  true label: Neural Networks
+854:  predict label: Rule Learning  |  true label: Neural Networks
+855:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+856:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+857:  predict label: Rule Learning  |  true label: Genetic Algorithms
+858:  predict label: Rule Learning  |  true label: Neural Networks
+859:  predict label: Rule Learning  |  true label: Probabilistic Methods
+860:  predict label: Rule Learning  |  true label: Neural Networks
+861:  predict label: Theory  |  true label: Probabilistic Methods
+862:  predict label: Rule Learning  |  true label: Probabilistic Methods
+863:  predict label: Theory  |  true label: Neural Networks
+864:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+865:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+866:  predict label: Rule Learning  |  true label: Neural Networks
+867:  predict label: Rule Learning  |  true label: Neural Networks
+868:  predict label: Theory  |  true label: Neural Networks
+869:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+870:  predict label: Rule Learning  |  true label: Genetic Algorithms
+871:  predict label: Rule Learning  |  true label: Probabilistic Methods
+872:  predict label: Rule Learning
+
+Is my answer correct?  |  true label: Probabilistic Methods
+873:  predict label: Technical Report R-213-B April, 1994  |  true label: Probabilistic Methods
+874:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+875:  predict label: Rule Learning  |  true label: Neural Networks
+876:  predict label: Rule Learning  |  true label: Neural Networks
+877:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+878:  predict label: Rule Learning  |  true label: Case-Based
+879:  predict label: Asymptotics  |  true label: Neural Networks
+880:  predict label: Rule Learning  |  true label: Rule Learning
+881:  predict label: Rule Learning  |  true label: Rule Learning
+882:  predict label: Rule Learning  |  true label: Rule Learning
+883:  predict label: Theory  |  true label: Theory
+884:  predict label: Rule Learning  |  true label: Rule Learning
+885:  predict label: Rule Learning  |  true label: Rule Learning
+886:  predict label: Rule Learning  |  true label: Rule Learning
+887:  predict label: Theory  |  true label: Neural Networks
+888:  predict label: Theory  |  true label: Theory
+889:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+890:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+891:  predict label: Theory  |  true label: Genetic Algorithms
+892:  predict label: Rule Learning  |  true label: Probabilistic Methods
+893:  predict label: Theory  |  true label: Reinforcement Learning
+894:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+895:  predict label: Rule Learning  |  true label: Genetic Algorithms
+896:  predict label: Rule Learning  |  true label: Case-Based
+897:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+898:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+899:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+900:  predict label: Rule Learning  |  true label: Neural Networks
+901:  predict label: Rule Learning  |  true label: Neural Networks
+902:  predict label: Rule Learning  |  true label: Neural Networks
+903:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+904:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+905:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+906:  predict label: Theory  |  true label: Neural Networks
+907:  predict label: Theory  |  true label: Neural Networks
+908:  predict label: Rule Learning  |  true label: Genetic Algorithms
+909:  predict label: Reinforcement Learning  |  true label: Neural Networks
+910:  predict label: Rule Learning  |  true label: Neural Networks
+911:  predict label: Rule Learning  |  true label: Neural Networks
+912:  predict label: Rule Learning  |  true label: Case-Based
+913:  predict label: Rule Learning  |  true label: Neural Networks
+914:  predict label: Theory  |  true label: Neural Networks
+915:  predict label: Theory  |  true label: Rule Learning
+916:  predict label: Rule Learning  |  true label: Theory
+917:  predict label: Theory  |  true label: Theory
+918:  predict label: Rule Learning  |  true label: Theory
+919:  predict label: Theory  |  true label: Theory
+920:  predict label: Theory  |  true label: Neural Networks
+921:  predict label: Theory  |  true label: Theory
+922:  predict label: Rule Learning  |  true label: Theory
+923:  predict label: Rule Learning  |  true label: Theory
+924:  predict label: Rule Learning  |  true label: Theory
+925:  predict label: Theory  |  true label: Theory
+926:  predict label: Theory  |  true label: Theory
+927:  predict label: Theory  |  true label: Theory
+928:  predict label: Theory  |  true label: Theory
+929:  predict label: Theory  |  true label: Theory
+930:  predict label: Rule Learning  |  true label: Theory
+931:  predict label: Neural Networks  |  true label: Neural Networks
+932:  predict label: Rule Learning  |  true label: Neural Networks
+933:  predict label: Rule Learning  |  true label: Neural Networks
+934:  predict label: Rule Learning  |  true label: Neural Networks
+935:  predict label: Rule Learning  |  true label: Theory
+936:  predict label: Rule Learning  |  true label: Neural Networks
+937:  predict label: Rule Learning  |  true label: Neural Networks
+938:  predict label: Reinforcement Learning.  |  true label: Neural Networks
+939:  predict label: Rule Learning  |  true label: Neural Networks
+940:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+941:  predict label: Theory  |  true label: Neural Networks
+942:  predict label: Rule Learning  |  true label: Neural Networks
+943:  predict label: Neural Networks  |  true label: Neural Networks
+944:  predict label: Rule Learning.  |  true label: Reinforcement Learning
+945:  predict label: Theory  |  true label: Theory
+946:  predict label: Reinforcement Learning  |  true label: Neural Networks
+947:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+948:  predict label: Rule Learning  |  true label: Genetic Algorithms
+949:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+950:  predict label: Rule Learning  |  true label: Neural Networks
+951:  predict label: Theory  |  true label: Neural Networks
+952:  predict label: Rule Learning  |  true label: Neural Networks
+953:  predict label: Rule Learning  |  true label: Probabilistic Methods
+954:  predict label: Rule Learning  |  true label: Case-Based
+955:  predict label: Theory  |  true label: Case-Based
+956:  predict label: Theory  |  true label: Probabilistic Methods
+957:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+958:  predict label: Theory  |  true label: Probabilistic Methods
+959:  predict label: Rule Learning  |  true label: Probabilistic Methods
+960:  predict label: Theory  |  true label: Probabilistic Methods
+961:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+962:  predict label: Theory  |  true label: Theory
+963:  predict label: Rule Learning  |  true label: Neural Networks
+964:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+965:  predict label: Rule Learning  |  true label: Theory
+966:  predict label: Rule Learning  |  true label: Theory
+967:  predict label: Production/Manufacturing scheduling  |  true label: Case-Based
+968:  predict label: Rule Learning  |  true label: Genetic Algorithms
+969:  predict label: Case-Based Reasoning  |  true label: Case-Based
+970:  predict label: Theory  |  true label: Case-Based
+971:  predict label: Rule Learning  |  true label: Neural Networks
+972:  predict label: Rule Learning  |  true label: Probabilistic Methods
+973:  predict label: Rule Learning  |  true label: Case-Based
+974:  predict label: Rule Learning  |  true label: Theory
+975:  predict label: Theory  |  true label: Probabilistic Methods
+976:  predict label: Rule Learning  |  true label: Probabilistic Methods
+977:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+978:  predict label: Rule Learning.  |  true label: Rule Learning
+979:  predict label: Neural Networks  |  true label: Neural Networks
+980:  predict label: Reinforcement Learning  |  true label: Neural Networks
+981:  predict label: Reinforcement Learning  |  true label: Neural Networks
+982:  predict label: Theory  |  true label: Neural Networks
+983:  predict label: Neural Networks  |  true label: Neural Networks
+984:  predict label: Neural Networks  |  true label: Neural Networks
+985:  predict label: Rule Learning  |  true label: Neural Networks
+986:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+987:  predict label: Theory  |  true label: Reinforcement Learning
+988:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+989:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+990:  predict label: Rule Learning  |  true label: Neural Networks
+991:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+992:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+993:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+994:  predict label: Theory  |  true label: Theory
+995:  predict label: Theory  |  true label: Neural Networks
+996:  predict label: Theory  |  true label: Neural Networks
+997:  predict label: Reinforcement Learning  |  true label: Neural Networks
+998:  predict label: Theory  |  true label: Neural Networks
+999:  predict label: Theory  |  true label: Neural Networks
+1000:  predict label: Rule Learning  |  true label: Rule Learning
+1001:  predict label: Rule Learning  |  true label: Theory
+1002:  predict label: Reinforcement Learning  |  true label: Theory
+1003:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1004:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1005:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1006:  predict label: Theory  |  true label: Probabilistic Methods
+1007:  predict label: Theory  |  true label: Probabilistic Methods
+1008:  predict label: Theory  |  true label: Probabilistic Methods
+1009:  predict label: Theory  |  true label: Probabilistic Methods
+1010:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1011:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1012:  predict label: Rule Learning  |  true label: Neural Networks
+1013:  predict label: Theory  |  true label: Rule Learning
+1014:  predict label: Rule Learning  |  true label: Rule Learning
+1015:  predict label: Rule Learning  |  true label: Case-Based
+1016:  predict label: Theory  |  true label: Neural Networks
+1017:  predict label: Rule Learning  |  true label: Neural Networks
+1018:  predict label: Theory  |  true label: Neural Networks
+1019:  predict label: Rule Learning  |  true label: Neural Networks
+1020:  predict label: Rule Learning  |  true label: Neural Networks
+1021:  predict label: Theory  |  true label: Reinforcement Learning
+1022:  predict label: Rule Learning  |  true label: Rule Learning
+1023:  predict label: Rule Learning  |  true label: Theory
+1024:  predict label: Theory  |  true label: Rule Learning
+1025:  predict label: Neural Networks  |  true label: Neural Networks
+1026:  predict label: Theory  |  true label: Probabilistic Methods
+1027:  predict label: Rule Learning  |  true label: Rule Learning
+1028:  predict label: Rule Learning.  |  true label: Rule Learning
+1029:  predict label: Rule Learning  |  true label: Rule Learning
+1030:  predict label: Theory  |  true label: Theory
+1031:  predict label: Theory  |  true label: Probabilistic Methods
+1032:  predict label: Theory  |  true label: Probabilistic Methods
+1033:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1034:  predict label: Rule Learning  |  true label: Rule Learning
+1035:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1036:  predict label: Rule Learning  |  true label: Neural Networks
+1037:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1038:  predict label: Rule Learning  |  true label: Neural Networks
+1039:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1040:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1041:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1042:  predict label: Theory  |  true label: Neural Networks
+1043:  predict label: Theory  |  true label: Theory
+1044:  predict label: Theory  |  true label: Neural Networks
+1045:  predict label: Rule Learning  |  true label: Theory
+1046:  predict label: Rule Learning  |  true label: Neural Networks
+1047:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1048:  predict label: Rule Learning  |  true label: Neural Networks
+1049:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1050:  predict label: Theory  |  true label: Neural Networks
+1051:  predict label: Theory  |  true label: Neural Networks
+1052:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1053:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1054:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1055:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1056:  predict label: Rule Learning  |  true label: Case-Based
+1057:  predict label: Theory  |  true label: Probabilistic Methods
+1058:  predict label: Theory  |  true label: Case-Based
+1059:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1060:  predict label: Rule Learning  |  true label: Neural Networks
+1061:  predict label: Rule Learning  |  true label: Neural Networks
+1062:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1063:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1064:  predict label: Theory  |  true label: Probabilistic Methods
+1065:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1066:  predict label: Theory  |  true label: Probabilistic Methods
+1067:  predict label: Rule Learning  |  true label: Theory
+1068:  predict label: Rule Learning  |  true label: Neural Networks
+1069:  predict label: Rule Learning  |  true label: Case-Based
+1070:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1071:  predict label: Theory  |  true label: Neural Networks
+1072:  predict label: Rule Learning  |  true label: Neural Networks
+1073:  predict label: Rule Learning  |  true label: Case-Based
+1074:  predict label: Rule Learning  |  true label: Case-Based
+1075:  predict label: Reinforcement Learning  |  true label: Case-Based
+1076:  predict label: Machine Learning  |  true label: Rule Learning
+1077:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1078:  predict label: Rule Learning  |  true label: Neural Networks
+1079:  predict label: Rule Learning  |  true label: Theory
+1080:  predict label: Rule Learning  |  true label: Neural Networks
+1081:  predict label: Theory  |  true label: Theory
+1082:  predict label: Case-Based Reasoning  |  true label: Case-Based
+1083:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1084:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1085:  predict label: Theory  |  true label: Theory
+1086:  predict label: Neural Networks  |  true label: Theory
+1087:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1088:  predict label: Rule Learning  |  true label: Neural Networks
+1089:  predict label: Theory  |  true label: Rule Learning
+1090:  predict label: Rule Learning  |  true label: Neural Networks
+1091:  predict label: Rule Learning  |  true label: Neural Networks
+1092:  predict label: Rule Learning  |  true label: Theory
+1093:  predict label: Theory  |  true label: Theory
+1094:  predict label: Theory  |  true label: Genetic Algorithms
+1095:  predict label: Rule Learning  |  true label: Neural Networks
+1096:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1097:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1098:  predict label: Reinforcement Learning.  |  true label: Neural Networks
+1099:  predict label: Theory  |  true label: Neural Networks
+1100:  predict label: Rule Learning  |  true label: Case-Based
+1101:  predict label: Theory  |  true label: Theory
+1102:  predict label: Theory.  |  true label: Theory
+1103:  predict label: Theory  |  true label: Probabilistic Methods
+1104:  predict label: Rule Learning  |  true label: Rule Learning
+1105:  predict label: Theory  |  true label: Probabilistic Methods
+1106:  predict label: Theory  |  true label: Theory
+1107:  predict label: Theory  |  true label: Theory
+1108:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1109:  predict label: Theory  |  true label: Probabilistic Methods
+1110:  predict label: Rule Learning  |  true label: Neural Networks
+1111:  predict label: Rule Learning  |  true label: Neural Networks
+1112:  predict label: Theory  |  true label: Theory
+1113:  predict label: Theory  |  true label: Theory
+1114:  predict label: Theory  |  true label: Probabilistic Methods
+1115:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1116:  predict label: Rule Learning  |  true label: Theory
+1117:  predict label: Rule Learning  |  true label: Neural Networks
+1118:  predict label: Case-Based  |  true label: Case-Based
+1119:  predict label: Rule Learning  |  true label: Case-Based
+1120:  predict label: Theory  |  true label: Neural Networks
+1121:  predict label: Rule Learning  |  true label: Neural Networks
+1122:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1123:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1124:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1125:  predict label: Theory  |  true label: Probabilistic Methods
+1126:  predict label: Rule Learning  |  true label: Neural Networks
+1127:  predict label: Reinforcement Learning  |  true label: Rule Learning
+1128:  predict label: Rule Learning  |  true label: Neural Networks
+1129:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1130:  predict label: Neural Networks  |  true label: Neural Networks
+1131:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1132:  predict label: Theory  |  true label: Neural Networks
+1133:  predict label: Theory  |  true label: Theory
+1134:  predict label: Rule Learning  |  true label: Neural Networks
+1135:  predict label: Rule Learning  |  true label: Neural Networks
+1136:  predict label: Rule Learning  |  true label: Neural Networks
+1137:  predict label: Rule Learning  |  true label: Neural Networks
+1138:  predict label: Rule Learning  |  true label: Neural Networks
+1139:  predict label: Theory  |  true label: Neural Networks
+1140:  predict label: Rule Learning  |  true label: Neural Networks
+1141:  predict label: Theory  |  true label: Neural Networks
+1142:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1143:  predict label: Rule Learning  |  true label: Theory
+1144:  predict label: Rule Learning  |  true label: Case-Based
+1145:  predict label: Theory  |  true label: Theory
+1146:  predict label: Advances in VLSI technology will enable chips with over a billion transistors within the next decade.  |  true label: Rule Learning
+1147:  predict label: Rule Learning  |  true label: Theory
+1148:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1149:  predict label: Theory  |  true label: Probabilistic Methods
+1150:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1151:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1152:  predict label: Technical Report No. 9421, Department of Statistics, University of Toronto  |  true label: Probabilistic Methods
+1153:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1154:  predict label: Theory  |  true label: Neural Networks
+1155:  predict label: Rule Learning  |  true label: Neural Networks
+1156:  predict label: Theory.  |  true label: Neural Networks
+1157:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1158:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1159:  predict label: Theory  |  true label: Case-Based
+1160:  predict label: Rule Learning  |  true label: Neural Networks
+1161:  predict label: Theory  |  true label: Probabilistic Methods
+1162:  predict label: Theory  |  true label: Theory
+1163:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1164:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1165:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1166:  predict label: Rule Learning  |  true label: Neural Networks
+1167:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1168:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1169:  predict label: Support Vector Learning Machines (SVM)  |  true label: Theory
+1170:  predict label: Theory  |  true label: Theory
+1171:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1172:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1173:  predict label: Theory  |  true label: Reinforcement Learning
+1174:  predict label: Rule Learning.  |  true label: Genetic Algorithms
+1175:  predict label: Rule Learning  |  true label: Neural Networks
+1176:  predict label: Rule Learning  |  true label: Neural Networks
+1177:  predict label: Rule Learning  |  true label: Theory
+1178:  predict label: Case-Based  |  true label: Case-Based
+1179:  predict label: Reinforcement Learning  |  true label: Case-Based
+1180:  predict label: Case-Based  |  true label: Case-Based
+1181:  predict label: Theory  |  true label: Genetic Algorithms
+1182:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1183:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1184:  predict label: Rule Learning  |  true label: Rule Learning
+1185:  predict label: Theory  |  true label: Reinforcement Learning
+1186:  predict label: Rule Learning  |  true label: Rule Learning
+1187:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1188:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1189:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1190:  predict label: Theory  |  true label: Neural Networks
+1191:  predict label: Theory  |  true label: Neural Networks
+1192:  predict label: Rule Learning  |  true label: Rule Learning
+1193:  predict label: Theory  |  true label: Probabilistic Methods
+1194:  predict label: Rule Learning  |  true label: Neural Networks
+1195:  predict label: Rule Learning  |  true label: Neural Networks
+1196:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1197:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1198:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1199:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1200:  predict label: Rule Learning  |  true label: Case-Based
+1201:  predict label: Reinforcement Learning.  |  true label: Reinforcement Learning
+1202:  predict label: Theory  |  true label: Reinforcement Learning
+1203:  predict label: Theory  |  true label: Neural Networks
+1204:  predict label: Theory  |  true label: Neural Networks
+1205:  predict label: Theory  |  true label: Neural Networks
+1206:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1207:  predict label: Rule Learning  |  true label: Rule Learning
+1208:  predict label: Rule Learning  |  true label: Theory
+1209:  predict label: Rule Learning  |  true label: Case-Based
+1210:  predict label: Rule Learning  |  true label: Rule Learning
+1211:  predict label: Theory  |  true label: Probabilistic Methods
+1212:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1213:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1214:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1215:  predict label: Rule Learning  |  true label: Theory
+1216:  predict label: Theory  |  true label: Probabilistic Methods
+1217:  predict label: Theory  |  true label: Probabilistic Methods
+1218:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1219:  predict label: Probabilistic Methods  |  true label: Case-Based
+1220:  predict label: Neural Networks  |  true label: Neural Networks
+1221:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1222:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1223:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1224:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1225:  predict label: Theory  |  true label: Probabilistic Methods
+1226:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1227:  predict label: Theory  |  true label: Probabilistic Methods
+1228:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1229:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1230:  predict label: Theory  |  true label: Probabilistic Methods
+1231:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1232:  predict label: Theory  |  true label: Probabilistic Methods
+1233:  predict label: Theory  |  true label: Probabilistic Methods
+1234:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1235:  predict label: Theory  |  true label: Probabilistic Methods
+1236:  predict label: Probabilistic Methods  |  true label: Probabilistic Methods
+1237:  predict label: Genetic Programming  |  true label: Genetic Algorithms
+1238:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1239:  predict label: Rule Learning  |  true label: Neural Networks
+1240:  predict label: Theory  |  true label: Genetic Algorithms
+1241:  predict label: Theory  |  true label: Neural Networks
+1242:  predict label: Rule Learning  |  true label: Neural Networks
+1243:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1244:  predict label: Theory  |  true label: Probabilistic Methods
+1245:  predict label: Rule Learning  |  true label: Theory
+1246:  predict label: Rule Learning  |  true label: Theory
+1247:  predict label: Theory  |  true label: Theory
+1248:  predict label: Theory  |  true label: Neural Networks
+1249:  predict label: Rule Learning  |  true label: Rule Learning
+1250:  predict label: Rule Learning  |  true label: Rule Learning
+1251:  predict label: Rule Learning  |  true label: Rule Learning
+1252:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1253:  predict label: Rule Learning  |  true label: Neural Networks
+1254:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1255:  predict label: Neural Networks  |  true label: Neural Networks
+1256:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1257:  predict label: Rule Learning  |  true label: Neural Networks
+1258:  predict label: Rule Learning  |  true label: Neural Networks
+1259:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1260:  predict label: Rule Learning  |  true label: Case-Based
+1261:  predict label: Case-Based.  |  true label: Case-Based
+1262:  predict label: Rule Learning  |  true label: Rule Learning
+1263:  predict label: Rule Learning  |  true label: Case-Based
+1264:  predict label: Theory  |  true label: Case-Based
+1265:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1266:  predict label: Theory  |  true label: Case-Based
+1267:  predict label: Theory  |  true label: Case-Based
+1268:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1269:  predict label: Theory  |  true label: Case-Based
+1270:  predict label: 2] D. E. Rumelhart, G. E. Hinton and R. J. Williams, "Learning Internal Representations by Error Propagation", in D. E. Rumelhart and J. L. McClelland (eds.) Parallel Distributed Processing: Explorations in the Microstructure of Cognition (Vol. 1), MIT Press (1986) (Rule Learning)  |  true label: Neural Networks
+1271:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1272:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1273:  predict label: Neural Networks  |  true label: Neural Networks
+1274:  predict label: Rule Learning  |  true label: Neural Networks
+1275:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1276:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1277:  predict label: Rule Learning  |  true label: Case-Based
+1278:  predict label: Neural Networks  |  true label: Neural Networks
+1279:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1280:  predict label: Theory  |  true label: Theory
+1281:  predict label: Case-Based  |  true label: Case-Based
+1282:  predict label: Neural Networks  |  true label: Neural Networks
+1283:  predict label: Rule Learning  |  true label: Case-Based
+1284:  predict label: Case-Based  |  true label: Case-Based
+1285:  predict label: Rule Learning  |  true label: Case-Based
+1286:  predict label: Theory  |  true label: Case-Based
+1287:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1288:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1289:  predict label: Rule Learning  |  true label: Neural Networks
+1290:  predict label: Theory  |  true label: Neural Networks
+1291:  predict label: Nonlinear extensions of one-unit and multi-unit Principal Component Analysis (PCA) neural networks.  |  true label: Neural Networks
+1292:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1293:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1294:  predict label: Rule Learning  |  true label: Case-Based
+1295:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1296:  predict label: Rule Learning  |  true label: Neural Networks
+1297:  predict label: Theory  |  true label: Neural Networks
+1298:  predict label: Rule Learning  |  true label: Neural Networks
+1299:  predict label: Rule Learning.  |  true label: Theory
+1300:  predict label: Theory  |  true label: Theory
+1301:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1302:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1303:  predict label: Rule Learning  |  true label: Rule Learning
+1304:  predict label: Rule Learning  |  true label: Case-Based
+1305:  predict label: Reinforcement Learning  |  true label: Rule Learning
+1306:  predict label: Rule Learning  |  true label: Case-Based
+1307:  predict label: Reinforcement Learning.  |  true label: Case-Based
+1308:  predict label: Theory  |  true label: Theory
+1309:  predict label: Rule Learning  |  true label: Rule Learning
+1310:  predict label: Theory  |  true label: Probabilistic Methods
+1311:  predict label: Case-Based Reasoning  |  true label: Probabilistic Methods
+1312:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1313:  predict label: Rule Learning  |  true label: Theory
+1314:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1315:  predict label: Theory  |  true label: Theory
+1316:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1317:  predict label: Theory  |  true label: Genetic Algorithms
+1318:  predict label: Rule Learning  |  true label: Theory
+1319:  predict label: Rule Learning  |  true label: Neural Networks
+1320:  predict label: Theory  |  true label: Theory
+1321:  predict label: Theory  |  true label: Probabilistic Methods
+1322:  predict label: Theory  |  true label: Probabilistic Methods
+1323:  predict label: Reinforcement Learning  |  true label: Rule Learning
+1324:  predict label: Rule Learning  |  true label: Neural Networks
+1325:  predict label: Rule Learning  |  true label: Neural Networks
+1326:  predict label: Rule Learning  |  true label: Neural Networks
+1327:  predict label: Theory  |  true label: Reinforcement Learning
+1328:  predict label: Rule Learning  |  true label: Neural Networks
+1329:  predict label: Theory  |  true label: Rule Learning
+1330:  predict label: Rule Learning  |  true label: Theory
+1331:  predict label: Theory  |  true label: Theory
+1332:  predict label: Theory  |  true label: Case-Based
+1333:  predict label: Rule Learning  |  true label: Rule Learning
+1334:  predict label: Rule Learning  |  true label: Neural Networks
+1335:  predict label: Neural Networks  |  true label: Reinforcement Learning
+1336:  predict label: Rule Learning  |  true label: Case-Based
+1337:  predict label: Rule Learning  |  true label: Case-Based
+1338:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1339:  predict label: Rule Learning  |  true label: Theory
+1340:  predict label: Rule Learning  |  true label: Neural Networks
+1341:  predict label: Rule Learning  |  true label: Case-Based
+1342:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1343:  predict label: Rule Learning  |  true label: Case-Based
+1344:  predict label: 1. Introduction  |  true label: Genetic Algorithms
+1345:  predict label: Theory.  |  true label: Genetic Algorithms
+1346:  predict label: Case-Based  |  true label: Case-Based
+1347:  predict label: Rule Learning  |  true label: Rule Learning
+1348:  predict label: Rule Learning  |  true label: Neural Networks
+1349:  predict label: Rule Learning  |  true label: Case-Based
+1350:  predict label: Rule Learning  |  true label: Case-Based
+1351:  predict label: Neural Networks  |  true label: Neural Networks
+1352:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1353:  predict label: Rule Learning  |  true label: Neural Networks
+1354:  predict label: Rule Learning  |  true label: Neural Networks
+1355:  predict label: Case-Based  |  true label: Case-Based
+1356:  predict label: Rule Learning  |  true label: Case-Based
+1357:  predict label: Rule Learning  |  true label: Case-Based
+1358:  predict label: Case-Based  |  true label: Case-Based
+1359:  predict label: Rule Learning  |  true label: Theory
+1360:  predict label: Case-Based  |  true label: Case-Based
+1361:  predict label: Rule Learning.  |  true label: Neural Networks
+1362:  predict label: Rule Learning  |  true label: Neural Networks
+1363:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1364:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1365:  predict label: Theory  |  true label: Probabilistic Methods
+1366:  predict label: Theory  |  true label: Probabilistic Methods
+1367:  predict label: Rule Learning  |  true label: Neural Networks
+1368:  predict label: Rule Learning  |  true label: Neural Networks
+1369:  predict label: Reinforcement Learning  |  true label: Theory
+1370:  predict label: Theory  |  true label: Neural Networks
+1371:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1372:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1373:  predict label: Theory  |  true label: Rule Learning
+1374:  predict label: Rule Learning  |  true label: Rule Learning
+1375:  predict label: Theory  |  true label: Neural Networks
+1376:  predict label: Rule Learning  |  true label: Neural Networks
+1377:  predict label: Rule Learning  |  true label: Neural Networks
+1378:  predict label: Theory  |  true label: Neural Networks
+1379:  predict label: Rule Learning  |  true label: Neural Networks
+1380:  predict label: Rule Learning  |  true label: Theory
+1381:  predict label: Theory  |  true label: Theory
+1382:  predict label: Reinforcement Learning  |  true label: Rule Learning
+1383:  predict label: Rule Learning  |  true label: Rule Learning
+1384:  predict label: Theory  |  true label: Rule Learning
+1385:  predict label: Theory  |  true label: Rule Learning
+1386:  predict label: Rule Learning  |  true label: Rule Learning
+1387:  predict label: Reinforcement Learning  |  true label: Theory
+1388:  predict label: Neural Networks  |  true label: Neural Networks
+1389:  predict label: Theory  |  true label: Theory
+1390:  predict label: Rule Learning  |  true label: Theory
+1391:  predict label: Rule Learning  |  true label: Neural Networks
+1392:  predict label: Rule Learning  |  true label: Neural Networks
+1393:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1394:  predict label: Rule Learning  |  true label: Rule Learning
+1395:  predict label: Rule Learning  |  true label: Theory
+1396:  predict label: Rule Learning  |  true label: Theory
+1397:  predict label: Conversational Case-Based Reasoning  |  true label: Case-Based
+1398:  predict label: Rule Learning  |  true label: Case-Based
+1399:  predict label: Rule Learning  |  true label: Neural Networks
+1400:  predict label: Neural Networks  |  true label: Neural Networks
+1401:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1402:  predict label: Reinforcement Learning  |  true label: Theory
+1403:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1404:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1405:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1406:  predict label: Theory  |  true label: Neural Networks
+1407:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1408:  predict label: Rule Learning  |  true label: Rule Learning
+1409:  predict label: Theory  |  true label: Probabilistic Methods
+1410:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1411:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1412:  predict label: Theory  |  true label: Reinforcement Learning
+1413:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1414:  predict label: Theory  |  true label: Theory
+1415:  predict label: Rule Learning  |  true label: Neural Networks
+1416:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1417:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1418:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1419:  predict label: Theory  |  true label: Neural Networks
+1420:  predict label: Rule Learning  |  true label: Theory
+1421:  predict label: Theory  |  true label: Neural Networks
+1422:  predict label: Rule Learning  |  true label: Theory
+1423:  predict label: Rule Learning  |  true label: Case-Based
+1424:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1425:  predict label: Theory  |  true label: Neural Networks
+1426:  predict label: Rule Learning  |  true label: Neural Networks
+1427:  predict label: Rule Learning  |  true label: Rule Learning
+1428:  predict label: Rule Learning  |  true label: Rule Learning
+1429:  predict label: Theory  |  true label: Probabilistic Methods
+1430:  predict label: Rule Learning  |  true label: Neural Networks
+1431:  predict label: Rule Learning  |  true label: Rule Learning
+1432:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1433:  predict label: Case-Based  |  true label: Case-Based
+1434:  predict label: Rule Learning  |  true label: Neural Networks
+1435:  predict label: Rule Learning  |  true label: Neural Networks
+1436:  predict label: Rule Learning  |  true label: Neural Networks
+1437:  predict label: Rule Learning  |  true label: Neural Networks
+1438:  predict label: Rule Learning  |  true label: Neural Networks
+1439:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1440:  predict label: Rule Learning  |  true label: Theory
+1441:  predict label: Theory  |  true label: Neural Networks
+1442:  predict label: Theory  |  true label: Neural Networks
+1443:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1444:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1445:  predict label: Rule Learning  |  true label: Case-Based
+1446:  predict label: Rule Learning  |  true label: Neural Networks
+1447:  predict label: Theory  |  true label: Theory
+1448:  predict label: Rule Learning  |  true label: Case-Based
+1449:  predict label: Rule Learning  |  true label: Neural Networks
+1450:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1451:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1452:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1453:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1454:  predict label: Rule Learning  |  true label: Rule Learning
+1455:  predict label: Rule Learning  |  true label: Rule Learning
+1456:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1457:  predict label: Rule Learning  |  true label: Neural Networks
+1458:  predict label: Theory  |  true label: Theory
+1459:  predict label: Rule Learning  |  true label: Neural Networks
+1460:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1461:  predict label: Theory  |  true label: Theory
+1462:  predict label: Theory  |  true label: Theory
+1463:  predict label: Rule Learning  |  true label: Neural Networks
+1464:  predict label: Theory  |  true label: Neural Networks
+1465:  predict label: Neural Networks  |  true label: Neural Networks
+1466:  predict label: Neural Networks  |  true label: Neural Networks
+1467:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1468:  predict label: Neural Networks  |  true label: Neural Networks
+1469:  predict label: Reinforcement Learning.  |  true label: Neural Networks
+1470:  predict label: Theory  |  true label: Neural Networks
+1471:  predict label: Rule Learning  |  true label: Neural Networks
+1472:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1473:  predict label: Rule Learning  |  true label: Neural Networks
+1474:  predict label: Theory  |  true label: Neural Networks
+1475:  predict label: Rule Learning  |  true label: Neural Networks
+1476:  predict label: Rule Learning  |  true label: Neural Networks
+1477:  predict label: Rule Learning  |  true label: Theory
+1478:  predict label: Theory  |  true label: Theory
+1479:  predict label: Reinforcement Learning  |  true label: Rule Learning
+1480:  predict label: Case-Based  |  true label: Case-Based
+1481:  predict label: Theory  |  true label: Theory
+1482:  predict label: Rule Learning  |  true label: Theory
+1483:  predict label: Neural Networks  |  true label: Neural Networks
+1484:  predict label: Rule Learning  |  true label: Theory
+1485:  predict label: Rule Learning  |  true label: Theory
+1486:  predict label: Rule Learning  |  true label: Theory
+1487:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1488:  predict label: Theory  |  true label: Theory
+1489:  predict label: Theory  |  true label: Theory
+1490:  predict label: Theory  |  true label: Neural Networks
+1491:  predict label: Rule Learning  |  true label: Neural Networks
+1492:  predict label: Rule Learning  |  true label: Neural Networks
+1493:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1494:  predict label: Theory  |  true label: Neural Networks
+1495:  predict label: Theory  |  true label: Theory
+1496:  predict label: Theory  |  true label: Theory
+1497:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1498:  predict label: Theory  |  true label: Theory
+1499:  predict label: Rule Learning  |  true label: Case-Based
+1500:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1501:  predict label: Rule Learning  |  true label: Rule Learning
+1502:  predict label: Theory  |  true label: Neural Networks
+1503:  predict label: Neural Networks  |  true label: Neural Networks
+1504:  predict label: Rule Learning  |  true label: Theory
+1505:  predict label: Rule Learning  |  true label: Case-Based
+1506:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1507:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1508:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1509:  predict label: Case-Based  |  true label: Probabilistic Methods
+1510:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1511:  predict label: Rule Learning  |  true label: Neural Networks
+1512:  predict label: Theory  |  true label: Case-Based
+1513:  predict label: Reinforcement Learning  |  true label: Case-Based
+1514:  predict label: Rule Learning  |  true label: Neural Networks
+1515:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1516:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1517:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1518:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1519:  predict label: Theory  |  true label: Reinforcement Learning
+1520:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1521:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1522:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1523:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1524:  predict label: Rule Learning  |  true label: Neural Networks
+1525:  predict label: Rule Learning  |  true label: Neural Networks
+1526:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1527:  predict label: Theory  |  true label: Case-Based
+1528:  predict label: Reinforcement Learning  |  true label: Case-Based
+1529:  predict label: Machine Learning  |  true label: Theory
+1530:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1531:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1532:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1533:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1534:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1535:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1536:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1537:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1538:  predict label: Theory  |  true label: Neural Networks
+1539:  predict label: Data Mining and Knowledge Discovery  |  true label: Neural Networks
+1540:  predict label: Rule Learning  |  true label: Theory
+1541:  predict label: Rule Learning  |  true label: Theory
+1542:  predict label: Theory  |  true label: Theory
+1543:  predict label: 68T05 (Machine Learning)  |  true label: Theory
+1544:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1545:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1546:  predict label: Rule Learning  |  true label: Neural Networks
+1547:  predict label: Theory  |  true label: Theory
+1548:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1549:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1550:  predict label: Rule Learning  |  true label: Theory
+1551:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1552:  predict label: Rule Learning  |  true label: Neural Networks
+1553:  predict label: Theory  |  true label: Neural Networks
+1554:  predict label: Multidisciplinary Review  |  true label: Probabilistic Methods
+1555:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1556:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1557:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1558:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1559:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1560:  predict label: Neural Networks  |  true label: Neural Networks
+1561:  predict label: Theory  |  true label: Genetic Algorithms
+1562:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1563:  predict label: Reinforcement Learning  |  true label: Theory
+1564:  predict label: Theory  |  true label: Probabilistic Methods
+1565:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1566:  predict label: Theory  |  true label: Rule Learning
+1567:  predict label: Theory  |  true label: Rule Learning
+1568:  predict label: Neural Networks  |  true label: Neural Networks
+1569:  predict label: Rule Learning  |  true label: Neural Networks
+1570:  predict label: Theory  |  true label: Neural Networks
+1571:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1572:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1573:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1574:  predict label: Reinforcement Learning.  |  true label: Neural Networks
+1575:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1576:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1577:  predict label: Theory  |  true label: Probabilistic Methods
+1578:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1579:  predict label: Theory  |  true label: Neural Networks
+1580:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1581:  predict label: Rule Learning  |  true label: Rule Learning
+1582:  predict label: Theory  |  true label: Neural Networks
+1583:  predict label: Rule Learning  |  true label: Rule Learning
+1584:  predict label: Rule Learning  |  true label: Case-Based
+1585:  predict label: Rule Learning  |  true label: Case-Based
+1586:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1587:  predict label: Theory  |  true label: Probabilistic Methods
+1588:  predict label: Rule Learning  |  true label: Theory
+1589:  predict label: Theory  |  true label: Theory
+1590:  predict label: Rule Learning  |  true label: Theory
+1591:  predict label: Rule Learning  |  true label: Theory
+1592:  predict label: Case-Based  |  true label: Case-Based
+1593:  predict label: Rule Learning  |  true label: Case-Based
+1594:  predict label: Theory  |  true label: Neural Networks
+1595:  predict label: Rule Learning  |  true label: Case-Based
+1596:  predict label: Rule Learning  |  true label: Neural Networks
+1597:  predict label: Theory  |  true label: Case-Based
+1598:  predict label: Neural Networks  |  true label: Neural Networks
+1599:  predict label: Theory  |  true label: Probabilistic Methods
+1600:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1601:  predict label: Rule Learning  |  true label: Theory
+1602:  predict label: Theory  |  true label: Case-Based
+1603:  predict label: Rule Learning  |  true label: Neural Networks
+1604:  predict label: Rule Learning  |  true label: Case-Based
+1605:  predict label: Determination  |  true label: Neural Networks
+1606:  predict label: Rule Learning  |  true label: Neural Networks
+1607:  predict label: Rule Learning  |  true label: Neural Networks
+1608:  predict label: Rule Learning  |  true label: Neural Networks
+1609:  predict label: Theory  |  true label: Neural Networks
+1610:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1611:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1612:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1613:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1614:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1615:  predict label: Rule Learning  |  true label: Neural Networks
+1616:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1617:  predict label: Rule Learning  |  true label: Rule Learning
+1618:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1619:  predict label: Theory.  |  true label: Probabilistic Methods
+1620:  predict label: Theory  |  true label: Probabilistic Methods
+1621:  predict label: Theory  |  true label: Probabilistic Methods
+1622:  predict label: Rule Learning  |  true label: Neural Networks
+1623:  predict label: Rule Learning  |  true label: Neural Networks
+1624:  predict label: Theory  |  true label: Neural Networks
+1625:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1626:  predict label: Theory  |  true label: Theory
+1627:  predict label: Rule Learning  |  true label: Rule Learning
+1628:  predict label: Rule Learning  |  true label: Theory
+1629:  predict label: Rule Learning  |  true label: Neural Networks
+1630:  predict label: Theory  |  true label: Case-Based
+1631:  predict label: Rule Learning  |  true label: Theory
+1632:  predict label: Rule Learning  |  true label: Theory
+1633:  predict label: Theory  |  true label: Theory
+1634:  predict label: Theory  |  true label: Neural Networks
+1635:  predict label: Theory  |  true label: Theory
+1636:  predict label: Rule Learning  |  true label: Theory
+1637:  predict label: Theory  |  true label: Theory
+1638:  predict label: Theory  |  true label: Probabilistic Methods
+1639:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1640:  predict label: Reinforcement Learning  |  true label: Theory
+1641:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1642:  predict label: Rule Learning  |  true label: Theory
+1643:  predict label: Rule Learning  |  true label: Theory
+1644:  predict label: Rule Learning  |  true label: Neural Networks
+1645:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1646:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1647:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1648:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1649:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1650:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1651:  predict label: Rule Learning  |  true label: Neural Networks
+1652:  predict label: Rule Learning  |  true label: Neural Networks
+1653:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1654:  predict label: Rule Learning  |  true label: Case-Based
+1655:  predict label: Case-Based  |  true label: Case-Based
+1656:  predict label: Rule Learning  |  true label: Theory
+1657:  predict label: Rule Learning  |  true label: Neural Networks
+1658:  predict label: Rule Learning  |  true label: Theory
+1659:  predict label: Theory  |  true label: Neural Networks
+1660:  predict label: Theory  |  true label: Genetic Algorithms
+1661:  predict label: Rule Learning  |  true label: Case-Based
+1662:  predict label: Rule Learning  |  true label: Neural Networks
+1663:  predict label: Theory  |  true label: Neural Networks
+1664:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1665:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1666:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1667:  predict label: Rule Learning  |  true label: Neural Networks
+1668:  predict label: Rule Learning  |  true label: Neural Networks
+1669:  predict label: Neural Networks  |  true label: Neural Networks
+1670:  predict label: Theory  |  true label: Probabilistic Methods
+1671:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1672:  predict label: Rule Learning  |  true label: Neural Networks
+1673:  predict label: Rule Learning  |  true label: Neural Networks
+1674:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1675:  predict label: Rule Learning  |  true label: Neural Networks
+1676:  predict label: Rule Learning  |  true label: Neural Networks
+1677:  predict label: Theory  |  true label: Neural Networks
+1678:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1679:  predict label: Rule Learning  |  true label: Theory
+1680:  predict label: Theory  |  true label: Neural Networks
+1681:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1682:  predict label: Rule Learning  |  true label: Rule Learning
+1683:  predict label: Theory  |  true label: Theory
+1684:  predict label: Rule Learning  |  true label: Neural Networks
+1685:  predict label: Rule Learning  |  true label: Theory
+1686:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1687:  predict label: Rule Learning  |  true label: Neural Networks
+1688:  predict label: Rule Learning  |  true label: Theory
+1689:  predict label: Rule Learning  |  true label: Theory
+1690:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1691:  predict label: Theory  |  true label: Case-Based
+1692:  predict label: Theory  |  true label: Neural Networks
+1693:  predict label: Theory  |  true label: Neural Networks
+1694:  predict label: Rule Learning  |  true label: Neural Networks
+1695:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1696:  predict label: Rule Learning  |  true label: Case-Based
+1697:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1698:  predict label: Rule Learning  |  true label: Neural Networks
+1699:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1700:  predict label: Rule Learning  |  true label: Theory
+1701:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1702:  predict label: Theory  |  true label: Probabilistic Methods
+1703:  predict label: Rule Learning  |  true label: Theory
+1704:  predict label: Theory  |  true label: Probabilistic Methods
+1705:  predict label: Theory  |  true label: Theory
+1706:  predict label: Theory  |  true label: Neural Networks
+1707:  predict label: Case-Based  |  true label: Case-Based
+1708:  predict label: Theory  |  true label: Probabilistic Methods
+1709:  predict label: Rule Learning  |  true label: Theory
+1710:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1711:  predict label: Rule Learning  |  true label: Theory
+1712:  predict label: Neural Networks  |  true label: Neural Networks
+1713:  predict label: Neural Networks  |  true label: Probabilistic Methods
+1714:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1715:  predict label: Rule Learning  |  true label: Rule Learning
+1716:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1717:  predict label: Rule Learning  |  true label: Case-Based
+1718:  predict label: Rule Learning  |  true label: Neural Networks
+1719:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1720:  predict label: Rule Learning  |  true label: Theory
+1721:  predict label: Theory  |  true label: Neural Networks
+1722:  predict label: Rule Learning  |  true label: Neural Networks
+1723:  predict label: Theory  |  true label: Neural Networks
+1724:  predict label: Theory  |  true label: Rule Learning
+1725:  predict label: Reinforcement Learning  |  true label: Case-Based
+1726:  predict label: Theory  |  true label: Theory
+1727:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1728:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1729:  predict label: Rule Learning  |  true label: Case-Based
+1730:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1731:  predict label: Theory  |  true label: Probabilistic Methods
+1732:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1733:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1734:  predict label: Rule Learning  |  true label: Case-Based
+1735:  predict label: Inductive Logic Programming  |  true label: Rule Learning
+1736:  predict label: Rule Learning  |  true label: Rule Learning
+1737:  predict label: Theory  |  true label: Neural Networks
+1738:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1739:  predict label: Theory  |  true label: Case-Based
+1740:  predict label: Rule Learning  |  true label: Neural Networks
+1741:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1742:  predict label: Case-Based  |  true label: Case-Based
+1743:  predict label: Theory  |  true label: Theory
+1744:  predict label: Theory  |  true label: Probabilistic Methods
+1745:  predict label: Rule Learning  |  true label: Neural Networks
+1746:  predict label: Rule Learning  |  true label: Theory
+1747:  predict label: Rule Learning  |  true label: Neural Networks
+1748:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1749:  predict label: Theory  |  true label: Case-Based
+1750:  predict label: Rule Learning  |  true label: Case-Based
+1751:  predict label: Rule Learning  |  true label: Case-Based
+1752:  predict label: Theory  |  true label: Case-Based
+1753:  predict label: Rule Learning  |  true label: Theory
+1754:  predict label: Theory  |  true label: Neural Networks
+1755:  predict label: Rule Learning  |  true label: Neural Networks
+1756:  predict label: Theory  |  true label: Probabilistic Methods
+1757:  predict label: Theory  |  true label: Probabilistic Methods
+1758:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1759:  predict label: Theory  |  true label: Case-Based
+1760:  predict label: Theory  |  true label: Probabilistic Methods
+1761:  predict label: Rule Learning  |  true label: Rule Learning
+1762:  predict label: Theory  |  true label: Case-Based
+1763:  predict label: Rule Learning  |  true label: Case-Based
+1764:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1765:  predict label: Rule Learning  |  true label: Neural Networks
+1766:  predict label: Rule Learning  |  true label: Neural Networks
+1767:  predict label: Rule Learning  |  true label: Case-Based
+1768:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1769:  predict label: Theory  |  true label: Genetic Algorithms
+1770:  predict label: Theory  |  true label: Genetic Algorithms
+1771:  predict label: Theory  |  true label: Probabilistic Methods
+1772:  predict label: Rule Learning  |  true label: Neural Networks
+1773:  predict label: Rule Learning  |  true label: Neural Networks
+1774:  predict label: Rule Learning  |  true label: Neural Networks
+1775:  predict label: Rule Learning  |  true label: Neural Networks
+1776:  predict label: Theory  |  true label: Genetic Algorithms
+1777:  predict label: Theory  |  true label: Rule Learning
+1778:  predict label: Theory  |  true label: Probabilistic Methods
+1779:  predict label: Rule Learning  |  true label: Neural Networks
+1780:  predict label: Case-Based  |  true label: Case-Based
+1781:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1782:  predict label: Rule Learning  |  true label: Neural Networks
+1783:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1784:  predict label: Technical Report No. 9607, Department of Statistics, University of Toronto  |  true label: Neural Networks
+1785:  predict label: Rule Learning  |  true label: Neural Networks
+1786:  predict label: Neural Networks  |  true label: Neural Networks
+1787:  predict label: Probabilistic Methods  |  true label: Theory
+1788:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1789:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1790:  predict label: Rule Learning  |  true label: Neural Networks
+1791:  predict label: Theory  |  true label: Theory
+1792:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1793:  predict label: 62G07 (Bayesian Statistics)  |  true label: Probabilistic Methods
+1794:  predict label: Rule Learning  |  true label: Neural Networks
+1795:  predict label: Theory  |  true label: Probabilistic Methods
+1796:  predict label: Rule Learning  |  true label: Case-Based
+1797:  predict label: Theory  |  true label: Neural Networks
+1798:  predict label: Theory  |  true label: Rule Learning
+1799:  predict label: Rule Learning  |  true label: Neural Networks
+1800:  predict label: Rule Learning  |  true label: Rule Learning
+1801:  predict label: Rule Learning  |  true label: Neural Networks
+1802:  predict label: Case-Based.  |  true label: Case-Based
+1803:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1804:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1805:  predict label: Theory  |  true label: Theory
+1806:  predict label: Theory  |  true label: Theory
+1807:  predict label: Theory  |  true label: Neural Networks
+1808:  predict label: Rule Learning  |  true label: Case-Based
+1809:  predict label: Theory.  |  true label: Genetic Algorithms
+1810:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1811:  predict label: Theory  |  true label: Probabilistic Methods
+1812:  predict label: Theory  |  true label: Neural Networks
+1813:  predict label: Rule Learning  |  true label: Theory
+1814:  predict label: Rule Learning  |  true label: Theory
+1815:  predict label: Rule Learning  |  true label: Theory
+1816:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1817:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1818:  predict label: Algorithms based on Nested Generalized Exemplar (NGE) theory  |  true label: Rule Learning
+1819:  predict label: Theory  |  true label: Neural Networks
+1820:  predict label: Rule Learning  |  true label: Case-Based
+1821:  predict label: Theory  |  true label: Genetic Algorithms
+1822:  predict label: Rule Learning  |  true label: Neural Networks
+1823:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1824:  predict label: Theory  |  true label: Neural Networks
+1825:  predict label: Rule Learning  |  true label: Theory
+1826:  predict label: Rule Learning  |  true label: Case-Based
+1827:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1828:  predict label: Theory  |  true label: Neural Networks
+1829:  predict label: Rule Learning  |  true label: Neural Networks
+1830:  predict label: Theory  |  true label: Probabilistic Methods
+1831:  predict label: Rule Learning  |  true label: Neural Networks
+1832:  predict label: Rule Learning  |  true label: Neural Networks
+1833:  predict label: Real-world learning tasks may involve high-dimensional data sets with arbitrary patterns of missing data.  |  true label: Probabilistic Methods
+1834:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1835:  predict label: Theory  |  true label: Probabilistic Methods
+1836:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1837:  predict label: Theory  |  true label: Neural Networks
+1838:  predict label: Rule Learning  |  true label: Neural Networks
+1839:  predict label: Rule Learning  |  true label: Neural Networks
+1840:  predict label: Rule Learning  |  true label: Theory
+1841:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1842:  predict label: Theory  |  true label: Probabilistic Methods
+1843:  predict label: Theory  |  true label: Genetic Algorithms
+1844:  predict label: Rule Learning  |  true label: Neural Networks
+1845:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1846:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1847:  predict label: Theory  |  true label: Neural Networks
+1848:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1849:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1850:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1851:  predict label: Theory  |  true label: Genetic Algorithms
+1852:  predict label: Rule Learning  |  true label: Neural Networks
+1853:  predict label: Theory  |  true label: Rule Learning
+1854:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1855:  predict label: Theory  |  true label: Theory
+1856:  predict label: Theory  |  true label: Theory
+1857:  predict label: Theory  |  true label: Theory
+1858:  predict label: Rule Learning  |  true label: Neural Networks
+1859:  predict label: Rule Learning  |  true label: Rule Learning
+1860:  predict label: Rule Learning  |  true label: Neural Networks
+1861:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1862:  predict label: Reinforcement Learning.  |  true label: Reinforcement Learning
+1863:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1864:  predict label: Neural Networks  |  true label: Reinforcement Learning
+1865:  predict label: Rule Learning  |  true label: Theory
+1866:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1867:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1868:  predict label: Theory  |  true label: Genetic Algorithms
+1869:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1870:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1871:  predict label: Rule Learning  |  true label: Case-Based
+1872:  predict label: Rule Learning  |  true label: Theory
+1873:  predict label: Theory  |  true label: Theory
+1874:  predict label: Rule Learning  |  true label: Neural Networks
+1875:  predict label: Rule Learning  |  true label: Rule Learning
+1876:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1877:  predict label: Theory  |  true label: Theory
+1878:  predict label: Theory  |  true label: Rule Learning
+1879:  predict label: Theory  |  true label: Rule Learning
+1880:  predict label: Reinforcement Learning  |  true label: Theory
+1881:  predict label: Rule Learning  |  true label: Theory
+1882:  predict label: Rule Learning  |  true label: Theory
+1883:  predict label: Rule Learning  |  true label: Neural Networks
+1884:  predict label: Rule Learning  |  true label: Theory
+1885:  predict label: Rule Learning  |  true label: Theory
+1886:  predict label: Theory  |  true label: Neural Networks
+1887:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1888:  predict label: Rule Learning  |  true label: Neural Networks
+1889:  predict label: Rule Learning  |  true label: Neural Networks
+1890:  predict label: Theory  |  true label: Case-Based
+1891:  predict label: Document Drafting  |  true label: Case-Based
+1892:  predict label: Rule Learning  |  true label: Neural Networks
+1893:  predict label: Reinforcement Learning  |  true label: Case-Based
+1894:  predict label: Reinforcement Learning  |  true label: Case-Based
+1895:  predict label: Theory  |  true label: Reinforcement Learning
+1896:  predict label: Theory  |  true label: Theory
+1897:  predict label: Rule Learning  |  true label: Theory
+1898:  predict label: Rule Learning  |  true label: Rule Learning
+1899:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1900:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1901:  predict label: Theory  |  true label: Neural Networks
+1902:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1903:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1904:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1905:  predict label: Rule Learning  |  true label: Reinforcement Learning
+1906:  predict label: Rule Learning  |  true label: Case-Based
+1907:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1908:  predict label: Rule Learning  |  true label: Neural Networks
+1909:  predict label: Theory  |  true label: Theory
+1910:  predict label: Theory  |  true label: Probabilistic Methods
+1911:  predict label: Theory  |  true label: Probabilistic Methods
+1912:  predict label: Theory  |  true label: Theory
+1913:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1914:  predict label: Rule Learning  |  true label: Rule Learning
+1915:  predict label: Theory  |  true label: Rule Learning
+1916:  predict label: Theory  |  true label: Rule Learning
+1917:  predict label: Rule Learning  |  true label: Rule Learning
+1918:  predict label: Rule Learning  |  true label: Case-Based
+1919:  predict label: Theory  |  true label: Probabilistic Methods
+1920:  predict label: Theory  |  true label: Probabilistic Methods
+1921:  predict label: Neural Networks  |  true label: Neural Networks
+1922:  predict label: Rule Learning  |  true label: Theory
+1923:  predict label: Rule Learning  |  true label: Theory
+1924:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1925:  predict label: Theory  |  true label: Genetic Algorithms
+1926:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1927:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1928:  predict label: Theory  |  true label: Probabilistic Methods
+1929:  predict label: Rule Learning  |  true label: Theory
+1930:  predict label: Theory  |  true label: Probabilistic Methods
+1931:  predict label: Rule Learning  |  true label: Case-Based
+1932:  predict label: Rule Learning  |  true label: Case-Based
+1933:  predict label: Rule Learning  |  true label: Case-Based
+1934:  predict label: Rule Learning  |  true label: Case-Based
+1935:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1936:  predict label: Rule Learning  |  true label: Neural Networks
+1937:  predict label: Theory  |  true label: Probabilistic Methods
+1938:  predict label: Rule Learning  |  true label: Theory
+1939:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+1940:  predict label: Theory  |  true label: Theory
+1941:  predict label: Rule Learning  |  true label: Case-Based
+1942:  predict label: Theory  |  true label: Probabilistic Methods
+1943:  predict label: Theory  |  true label: Probabilistic Methods
+1944:  predict label: Theory  |  true label: Probabilistic Methods
+1945:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1946:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1947:  predict label: Rule Learning  |  true label: Theory
+1948:  predict label: Genetic Algorithms.  |  true label: Genetic Algorithms
+1949:  predict label: Rule Learning  |  true label: Neural Networks
+1950:  predict label: Theory  |  true label: Theory
+1951:  predict label: Theory  |  true label: Theory
+1952:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1953:  predict label: Knowledge Acquisition  |  true label: Rule Learning
+1954:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1955:  predict label: Neural Networks  |  true label: Neural Networks
+1956:  predict label: Theory  |  true label: Probabilistic Methods
+1957:  predict label: Theory  |  true label: Neural Networks
+1958:  predict label: Theory  |  true label: Neural Networks
+1959:  predict label: Theory  |  true label: Neural Networks
+1960:  predict label: Theory  |  true label: Neural Networks
+1961:  predict label: Rule Learning  |  true label: Rule Learning
+1962:  predict label: Case-Based  |  true label: Case-Based
+1963:  predict label: Case-Based  |  true label: Case-Based
+1964:  predict label: Rule Learning  |  true label: Case-Based
+1965:  predict label: Rule Learning  |  true label: Theory
+1966:  predict label: Theory  |  true label: Case-Based
+1967:  predict label: Theory  |  true label: Probabilistic Methods
+1968:  predict label: Theory  |  true label: Probabilistic Methods
+1969:  predict label: Rule Learning  |  true label: Neural Networks
+1970:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1971:  predict label: Theory.  |  true label: Probabilistic Methods
+1972:  predict label: Reinforcement Learning  |  true label: Probabilistic Methods
+1973:  predict label: Rule Learning  |  true label: Theory
+1974:  predict label: Rule Learning  |  true label: Rule Learning
+1975:  predict label: Rule Learning  |  true label: Theory
+1976:  predict label: Rule Learning.  |  true label: Neural Networks
+1977:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1978:  predict label: Rule Learning  |  true label: Probabilistic Methods
+1979:  predict label: Rule Learning  |  true label: Neural Networks
+1980:  predict label: Rule Learning  |  true label: Theory
+1981:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1982:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+1983:  predict label: Machine Learning  |  true label: Genetic Algorithms
+1984:  predict label: Reinforcement Learning  |  true label: Neural Networks
+1985:  predict label: Theory  |  true label: Case-Based
+1986:  predict label: Rule Learning  |  true label: Theory
+1987:  predict label: Neural Networks  |  true label: Neural Networks
+1988:  predict label: Theory  |  true label: Theory
+1989:  predict label: Rule Learning  |  true label: Theory
+1990:  predict label: Rule Learning  |  true label: Rule Learning
+1991:  predict label: Rule Learning  |  true label: Case-Based
+1992:  predict label: Case-Based  |  true label: Case-Based
+1993:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+1994:  predict label: Theory  |  true label: Probabilistic Methods
+1995:  predict label: Rule Learning  |  true label: Case-Based
+1996:  predict label: Rule Learning  |  true label: Neural Networks
+1997:  predict label: Rule Learning  |  true label: Genetic Algorithms
+1998:  predict label: Genetic Algorithms.  |  true label: Genetic Algorithms
+1999:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2000:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2001:  predict label: Theory  |  true label: Probabilistic Methods
+2002:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2003:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2004:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2005:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2006:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2007:  predict label: Theory  |  true label: Probabilistic Methods
+2008:  predict label: Theory  |  true label: Probabilistic Methods
+2009:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2010:  predict label: Case-Based  |  true label: Case-Based
+2011:  predict label: Rule Learning  |  true label: Neural Networks
+2012:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2013:  predict label: Theory  |  true label: Probabilistic Methods
+2014:  predict label: Theory  |  true label: Probabilistic Methods
+2015:  predict label: Neural Networks  |  true label: Neural Networks
+2016:  predict label: Rule Learning  |  true label: Rule Learning
+2017:  predict label: Rule Learning  |  true label: Neural Networks
+2018:  predict label: Theory  |  true label: Case-Based
+2019:  predict label: Theory  |  true label: Case-Based
+2020:  predict label: Rule Learning  |  true label: Case-Based
+2021:  predict label: Rule Learning  |  true label: Neural Networks
+2022:  predict label: Rule Learning  |  true label: Neural Networks
+2023:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+2024:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2025:  predict label: Theory  |  true label: Rule Learning
+2026:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2027:  predict label: Theory  |  true label: Genetic Algorithms
+2028:  predict label: Theory  |  true label: Theory
+2029:  predict label: Theory
+
+Please let me know if you need any further clarification.  |  true label: Theory
+2030:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2031:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2032:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2033:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2034:  predict label: Algorithm-oriented  |  true label: Genetic Algorithms
+2035:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2036:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2037:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2038:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2039:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2040:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2041:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2042:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2043:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2044:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2045:  predict label: Theory  |  true label: Genetic Algorithms
+2046:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2047:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2048:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2049:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2050:  predict label: Reinforcement Learning  |  true label: Theory
+2051:  predict label: Theory  |  true label: Rule Learning
+2052:  predict label: Theory  |  true label: Neural Networks
+2053:  predict label: Rule Learning  |  true label: Neural Networks
+2054:  predict label: Rule Learning  |  true label: Neural Networks
+2055:  predict label: Rule Learning  |  true label: Neural Networks
+2056:  predict label: Neural Networks  |  true label: Neural Networks
+2057:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2058:  predict label: Theory  |  true label: Genetic Algorithms
+2059:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2060:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2061:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2062:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2063:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2064:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2065:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2066:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2067:  predict label: Theory  |  true label: Theory
+2068:  predict label: Rule Learning  |  true label: Neural Networks
+2069:  predict label: Reinforcement Learning  |  true label: Theory
+2070:  predict label: Rule Learning  |  true label: Neural Networks
+2071:  predict label: Rule Learning  |  true label: Theory
+2072:  predict label: Rule Learning  |  true label: Neural Networks
+2073:  predict label: Rule Learning  |  true label: Theory
+2074:  predict label: Theory  |  true label: Rule Learning
+2075:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2076:  predict label: Rule Learning  |  true label: Case-Based
+2077:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2078:  predict label: Rule Learning  |  true label: Case-Based
+2079:  predict label: Reinforcement Learning  |  true label: Reinforcement Learning
+2080:  predict label: Theory  |  true label: Neural Networks
+2081:  predict label: Theory  |  true label: Neural Networks
+2082:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2083:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2084:  predict label: Rule Learning  |  true label: Probabilistic Methods
+2085:  predict label: Rule Learning  |  true label: Theory
+2086:  predict label: Rule Learning  |  true label: Rule Learning
+2087:  predict label: Theory  |  true label: Rule Learning
+2088:  predict label: Theory  |  true label: Case-Based
+2089:  predict label: Rule Learning  |  true label: Rule Learning
+2090:  predict label: Theory  |  true label: Rule Learning
+2091:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2092:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2093:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2094:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2095:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2096:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2097:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2098:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2099:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2100:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2101:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2102:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2103:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2104:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2105:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2106:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2107:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2108:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2109:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2110:  predict label: Theory  |  true label: Genetic Algorithms
+2111:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2112:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2113:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2114:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2115:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2116:  predict label: Theory  |  true label: Genetic Algorithms
+2117:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2118:  predict label: Theory  |  true label: Genetic Algorithms
+2119:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2120:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2121:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2122:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2123:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2124:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2125:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2126:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2127:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2128:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2129:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2130:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2131:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2132:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2133:  predict label: Reinforcement Learning  |  true label: Case-Based
+2134:  predict label: Reinforcement Learning  |  true label: Case-Based
+2135:  predict label: Theory  |  true label: Theory
+2136:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2137:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2138:  predict label: Theory  |  true label: Neural Networks
+2139:  predict label: Theory  |  true label: Neural Networks
+2140:  predict label: Genetic Algorithms  |  true label: Genetic Algorithms
+2141:  predict label: Reinforcement Learning  |  true label: Rule Learning
+2142:  predict label: Theory  |  true label: Rule Learning
+2143:  predict label: Rule Learning  |  true label: Neural Networks
+2144:  predict label: Rule Learning  |  true label: Neural Networks
+2145:  predict label: Neural Networks  |  true label: Neural Networks
+2146:  predict label: Reinforcement Learning  |  true label: Neural Networks
+2147:  predict label: Theory  |  true label: Neural Networks
+2148:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2149:  predict label: Theory  |  true label: Genetic Algorithms
+2150:  predict label: Rule Learning  |  true label: Case-Based
+2151:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2152:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2153:  predict label: Reinforcement Learning  |  true label: Genetic Algorithms
+2154:  predict label: Rule Learning  |  true label: Genetic Algorithms
+2155:  predict label: Rule Learning.  |  true label: Neural Networks
+2156:  predict label: Theory  |  true label: Genetic Algorithms
+2157:  predict label: Rule Learning  |  true label: Genetic Algorithms
