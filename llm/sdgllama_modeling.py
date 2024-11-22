@@ -1,166 +1,156 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, LlamaForCausalLM
+from transformers import LlamaModel, LlamaForCausalLM
 import torch.nn.functional as F
-
-import os
-import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-upper_dir = os.path.dirname(current_dir)
-sys.path.append(upper_dir)
-from TAGLAS.datasets import Cora
+from transformers.modeling_outputs import CausalLMOutputWithPast
 
 
-class SDG_LLM(nn.Module):
-    def __init__(self, llama_model_name, num_layers=3, p_dim_in=128, p_dim_out=768):
-        super(SDG_LLM, self).__init__()
-        self.llm = LlamaForCausalLM.from_pretrained(llama_model_name)
-        self.projector = nn.Linear(p_dim_in, self.llm.config.hidden_size)
-        self.tokenizer = AutoTokenizer.from_pretrained(llama_model_name)
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.input_embeddings = self.llm.get_input_embeddings()
-        self.decoder = self.llm.get_decoder()
-        self.num_layers = num_layers
+class SDGConfig(LlamaConfig):
+    model_type = "sdg"
+    def __init__(self, se_dim_in, sa_layer_nums):
+        super(SDGConfig, self).__init__()
+        self.se_dim = se_dim
+        self.sa_layer_nums = sa_layer_nums
 
-        for param in self.llm.parameters():
-            param.requires_grad = False
 
-    def get_special_embeddings(self, text):
-        tokens = self.tokenizer(text, return_tensors="pt")['input_ids']
-        return self.input_embeddings(tokens.to(self.projector.weight.device))
 
+class SDGLlamaModel(LlamaModel):
+    config_class = SDGConfig
+
+    def __init__(self, config: SDGConfig):
+        super(SDGLlamaModel, self).__init__(config)
+
+class SDGLlamaForCausalLM(LlamaForCausalLM):
+    def __init__(self, config):
+        super(SDGLlamaForCausalLM, self).__init__(config)
+        self.model = SDGLlamaModel(config)
+        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+        self.projector = nn.Linear(config.se_dim_in, config.hidden_size)
+        self.sa_layer_nums = config.sa_layer_nums
+
+        self.post_init()
+    
+    def get_model(self):
+        return self.model
+    
     def sim(self, z1, z2):
         z1 = F.normalize(z1) 
         z2 = F.normalize(z2) 
         return torch.mm(z1, z2.t()) 
 
-    def structure_attention(self, t, sim_m):
-        sim_m_expanded = sim_m.unsqueeze(-1).unsqueeze(-1) 
-        weighted_t = (sim_m_expanded * t.unsqueeze(0)).sum(dim=1)
-        sim_sum = sim_m.sum(dim=1, keepdim=True).unsqueeze(-1)
+    def structure_attention(self, t, sims, sg_nodes):
+        if sg_nodes.is_sparse:
+            filtered_sims = torch.sparse.mm(sg_nodes, sims)
+        else:
+            filtered_sims = sims * sg_nodes
+        sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
+        weighted_t = (sims_expanded * t.unsqueeze(0)).sum(dim=1)
+        sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1)
         sim_sum = sim_sum + (sim_sum == 0).float()
         t_hat = weighted_t / sim_sum
         return t_hat
 
-    def forward(self, t, p, inst):
-        p_hat = self.projector(p)  # 将结构化信息映射到 LLaMA 兼容的维度
+    def forward(
+        self,
+        input_ids: torch.LongTensor = None,
+        struct_encode: torch.LongTensor = None,
+        subgraph_nodes: torch.LongTensor = None,
+        attention_mask: Optional[torch.Tensor] = None,
+        position_ids: Optional[torch.LongTensor] = None,
+        past_key_values: Optional[Union[Cache, List[torch.FloatTensor]]] = None,
+        inputs_embeds: Optional[torch.FloatTensor] = None,
+        labels: Optional[torch.LongTensor] = None,
+        use_cache: Optional[bool] = None,
+        output_attentions: Optional[bool] = None,
+        output_hidden_states: Optional[bool] = None,
+        return_dict: Optional[bool] = None,
+        cache_position: Optional[torch.LongTensor] = None,
+    ) -> Union[Tuple, CausalLMOutputWithPast]:
 
-        sim_m = self.sim(p_hat, p_hat)  # 计算相似度矩阵
-        t_prime = self.decoder(input_ids=t).last_hidden_state  # 提取文本表示
-        for _ in range(self.num_layers):
-            t_prime = self.structure_attention(t_prime, sim_m)
-            t_prime = self.decoder(inputs_embeds=t_prime).last_hidden_state
+        output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
+        output_hidden_states = (
+            output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states
+        )
+        return_dict = return_dict if return_dict is not None else self.config.use_return_dic
+        outputs = self.model(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            past_key_values=past_key_values,
+            inputs_embeds=inputs_embeds,
+            use_cache=use_cache,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict
+        )
+        hidden_states = outputs[0]
 
-        head_embeds = self.get_special_embeddings(inst['head'])
-        tail_embeds = self.get_special_embeddings(inst['tail'])
-        target_node_textual_info_embeds = self.get_special_embeddings("target node textual information: ")
-        target_node_structural_info_embeds = self.get_special_embeddings("\ntarget node structual information: ")
-        textual_info_embeds = self.get_special_embeddings("\nother node textual information: ")
-        structural_info_embeds = self.get_special_embeddings("\nother node structual information: ")
+        if struct_encode is not None:
+            se = self.projector(struct_encode)
+            sims = self.sim(se, se)
+            subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.zeros((se.size(0), se.size(0)))
 
-        t_prime_mean_first = t_prime.mean(dim=1)[0].unsqueeze(0).unsqueeze(0) 
-        t_prime_mean_rest = t_prime.mean(dim=1)[1:].unsqueeze(1)
+            for _ in range(self.sa_layer_nums):
+                hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
+                outputs = self.model(
+                    attention_mask=attention_mask,
+                    past_key_values=past_key_values,
+                    inputs_embeds=hidden_states,
+                    use_cache=use_cache,
+                    output_attentions=output_attentions,
+                    output_hidden_states=output_hidden_states,
+                    return_dict=return_dict
+                )
+                hidden_states = outputs[0]
+        
+        logits = self.lm_head(hidden_states)
 
-        p_hat_first = p_hat.unsqueeze(1)[0].unsqueeze(0) 
-        p_hat_rest = p_hat.unsqueeze(1)[1:] 
+        loss = None
+        if labels is not None:
+            # Shift so that tokens < n predict n
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = labels[..., 1:].contiguous()
+            # Flatten the tokens
+            loss_fct = CrossEntropyLoss(ignore_index=IGNORE_INDEX)
+            shift_logits = shift_logits.view(-1, self.config.vocab_size)
+            shift_labels = shift_labels.view(-1)
+            # Enable model/pipeline parallelism
+            shift_labels = shift_labels.to(shift_logits.device)
+            loss = loss_fct(shift_logits, shift_labels)
 
-        combined_embeds = torch.cat([
-            head_embeds,
-            target_node_textual_info_embeds,
-            t_prime_mean_first,
-            target_node_structural_info_embeds,
-            p_hat_first,
-            textual_info_embeds
-        ], dim=1)
+        if not return_dict:
+            output = (logits,) + outputs[1:]
+            return (loss,) + output if loss is not None else output
 
-        # for i in range(t_prime_mean_rest.size(0)):
-        #     combined_embeds = torch.cat([combined_embeds, t_prime_mean_rest[i].unsqueeze(0)], dim=1)
-        # combined_embeds = torch.cat([combined_embeds, structural_info_embeds], dim=1)
-        # for i in range(p_hat_rest.size(0)):
-        #     combined_embeds = torch.cat([combined_embeds, p_hat_rest[i].unsqueeze(0)], dim=1)
-        combined_embeds = torch.cat([combined_embeds, tail_embeds], dim=1)
+        return CausalLMOutputWithPast(
+            loss=loss,
+            logits=logits,
+            past_key_values=outputs.past_key_values,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
 
-        # combined_embeds = torch.cat([
-        #     head_embeds,
-        #     target_node_textual_info_embeds,
-        #     t_prime_mean_first,
-        #     target_node_structural_info_embeds,
-        #     p_hat_first,
-        #     textual_info_embeds,
-        #     t_prime_mean_rest,
-        #     structural_info_embeds,
-        #     p_hat_rest,
-        #     tail_embeds
-        # ], dim=1)
+    def prepare_inputs_for_generation(
+        self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
+    ):
+        if past_key_values:
+            input_ids = input_ids[:, -1:]
 
-        # logits = self.llm(inputs_embeds=combined_embeds, attention_mask=attention_mask).logits
+        # if `inputs_embeds` are passed, we only want to use them in the 1st generation step
+        if inputs_embeds is not None and past_key_values is None:
+            model_inputs = {"inputs_embeds": inputs_embeds}
+        else:
+            model_inputs = {"input_ids": input_ids}
 
-        # return logits
-        return combined_embeds
+        model_inputs.update(
+            {
+                "past_key_values": past_key_values,
+                "use_cache": kwargs.get("use_cache"),
+                "attention_mask": attention_mask,
+                "struct_encode": kwargs.get("struct_encode", None),
+                "subgraph_nodes": kwargs.get("subgraph_nodes", None),
+            }
+        )
+        return model_inputs
 
-    def logits_to_text(self, logits):
-        tokenizer = self.tokenizer
-        if len(logits.size()) == 2:
-            logits = logits.unsqueeze(0)
-        decoded_texts = []
-        for i in range(logits.size(0)):
-            sample_logit = logits[i]
-            # sample_mask = masks[i]
-            # sample_logit = sample_logit[sample_mask]
-            token_ids = sample_logit[:, :32000].argmax(dim=-1).unsqueeze(0)
-            token_ids[token_ids >= 32000] = 1
-            sample_text = tokenizer.batch_decode(token_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            decoded_texts.extend(sample_text)
-        return decoded_texts
-
-    def embeddings_generate(self, embeddings):
-        max_generate_steps = 50  # 最多生成 50 个 token
-        generated_tokens = []
-        current_embeds = embeddings
-
-        for step in range(max_generate_steps):
-            outputs = self.llm(inputs_embeds=current_embeds)
-            logits = outputs.logits  # (batch_size, seq_len, vocab_size)
-
-            next_token_logits = logits[:, -1, :]  # (batch_size, vocab_size)
-            next_token_id = torch.argmax(next_token_logits, dim=-1) 
-            print(next_token_id)
-            generated_tokens.append(next_token_id.item())
-
-            next_token_embed = self.input_embeddings(next_token_id.unsqueeze(-1))  # (batch_size, 1, hidden_dim)
-            current_embeds = torch.cat([current_embeds, next_token_embed], dim=1)
-
-            # attention_mask = torch.cat([attention_mask, torch.ones((1, 1), device=device)], dim=1)
-
-            if next_token_id.item() == self.tokenizer.eos_token_id:
-                break
-        decoded_text = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
-        return decoded_text
-
-    def generate(self, raw_texts, p, inst, device):
-        t = self.tokenizer(raw_texts, return_tensors="pt", padding=True, truncation=True)['input_ids'].to(device)
-        with torch.no_grad():
-            embeddings = self(t, p, inst)
-            decoded_text = self.embeddings_generate(embeddings)
-        return decoded_text
-
-device = torch.device("cuda:5" if torch.cuda.is_available() else "cpu") 
-sdg = SDG_LLM('/home/wangjingchu/code/SDGLM/llm/Llama-2-7b-chat-hf').to(device)
-subgraph_nodes = torch.load('/home/wangjingchu/code/SDGLM/TAGDataset/cora/subgraph_nodes.pt')
-se_output = torch.load('/home/wangjingchu/code/SDGLM/structure_encoder/output_cora_tag_pt_module.pt').to(device)
-cora_dataset = torch.load('/home/wangjingchu/code/SDGLM/TAGDataset/cora/cora_tag.pt')
-data = cora_dataset[0]
-
-raw_texts = [str(data.x[i]) for i in subgraph_nodes[0]]
-p = torch.stack([se_output[i] for i in subgraph_nodes[0]])
-
-
-inst = {
-    'head': "Graph description: Each node represents a paper, edges represent citations. Below are the textual and structural information of target node and the other nodes within the subgraph of the target node.\n",
-    'tail': "Categories: Rule Learning, Neural Networks, Case-Based, Genetic Algorithms, Theory, Reinforcement Learning, Probabilistic Methods.\n Please choose the category of the target node from the category list. Please only answer the category's name.\nAnswer: "
-}
-
-logits = sdg.generate(raw_texts, p, inst, device)
-print(logits)
-
-
+AutoConfig.register("llaga", LlagaConfig)
+AutoModelForCausalLM.register(LlagaConfig, LlagaLlamaForCausalLM)
