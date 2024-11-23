@@ -1,14 +1,18 @@
 import torch
 import torch.nn as nn
-from transformers import LlamaModel, LlamaForCausalLM
+from torch.nn import CrossEntropyLoss
 import torch.nn.functional as F
+from transformers import LlamaModel, LlamaForCausalLM, AutoConfig
+from transformers.models.llama.configuration_llama import LlamaConfig
 from transformers.modeling_outputs import CausalLMOutputWithPast
+from transformers.cache_utils import Cache
+from typing import List, Optional, Tuple, Union
 
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in, sa_layer_nums):
-        super(SDGConfig, self).__init__()
+    def __init__(self, se_dim_in, sa_layer_nums, **kwargs):
+        super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
         self.sa_layer_nums = sa_layer_nums
 
@@ -21,6 +25,7 @@ class SDGLlamaModel(LlamaModel):
         super(SDGLlamaModel, self).__init__(config)
 
 class SDGLlamaForCausalLM(LlamaForCausalLM):
+    config_class = SDGConfig
     def __init__(self, config):
         super(SDGLlamaForCausalLM, self).__init__(config)
         self.model = SDGLlamaModel(config)
@@ -28,7 +33,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         self.projector = nn.Linear(config.se_dim_in, config.hidden_size)
         self.sa_layer_nums = config.sa_layer_nums
 
-        self.post_init()
+        # self.post_init()
     
     def get_model(self):
         return self.model
@@ -72,7 +77,14 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         output_hidden_states = (
             output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states
         )
-        return_dict = return_dict if return_dict is not None else self.config.use_return_dic
+        return_dict = return_dict if return_dict is not None else True
+
+        if attention_mask.dim() == 3:
+            attention_mask = attention_mask.squeeze(0)
+
+        if input_ids.dim() == 3: 
+            input_ids = input_ids.squeeze(0)
+
         outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -117,7 +129,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             shift_logits = logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
             # Flatten the tokens
-            loss_fct = CrossEntropyLoss(ignore_index=IGNORE_INDEX)
+            loss_fct = CrossEntropyLoss(ignore_index=0)
             shift_logits = shift_logits.view(-1, self.config.vocab_size)
             shift_labels = shift_labels.view(-1)
             shift_logits = shift_logits[valid_indices]
@@ -163,9 +175,6 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             }
         )
         return model_inputs
-
-AutoConfig.register("llaga", LlagaConfig)
-AutoModelForCausalLM.register(LlagaConfig, LlagaLlamaForCausalLM)
 
 from transformers import AutoConfig, AutoModelForCausalLM
 

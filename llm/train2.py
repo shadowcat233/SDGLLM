@@ -1,10 +1,26 @@
-from transformers import HfArgumentParser, Trainer, LlamaConfig, LlamaForCausalLM
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+
+import transformers
+from transformers import HfArgumentParser, Trainer, AutoConfig, LlamaForCausalLM
+from transformers.models.llama.configuration_llama import LlamaConfig
 from torch import nn
+from dataclasses import dataclass, field
+from typing import List, Optional, Tuple, Union
+
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+upper_dir = os.path.dirname(current_dir)
+sys.path.append(upper_dir)
+
 from sdg_dataset import SDGDataset
+from sdgllama_modeling import SDGLlamaForCausalLM, SDGConfig
 
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="/home/wangjingchu/code/SDGLM/llm/Llama-2-7b-chat-hf")
+    # output_dir: str = field(default="./checkpoints")
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=2)
@@ -85,7 +101,15 @@ def sdg_train():
         sa_layer_nums=model_args.sa_layer_nums,
         **pretrained_config.to_dict()
     )
+    print('sdg_config done')
     model = SDGLlamaForCausalLM(config=sdg_config)
+    print('sdg_model init done')
+
+    pretrained_model = LlamaForCausalLM.from_pretrained(model_args.model_name_or_path, config=pretrained_config)
+    print('pretrain_model loading done')
+    model.model.load_state_dict(pretrained_model.model.state_dict())
+    print('sdg_model load dict done')
+
     if model_args.freeze_llm_backbone:
         for param in model.model.parameters():
             param.requires_grad = False
@@ -111,7 +135,6 @@ def sdg_train():
     train_dataset = Subset(dataset, train_indices)
     eval_dataset = Subset(dataset, eval_indices)
 
-    # 定义 Trainer
     trainer = SDGTrainer(
         model=model,
         args=training_args,
@@ -119,5 +142,9 @@ def sdg_train():
         eval_dataset=eval_dataset
     )
 
-    # 启动训练
+    print('trainer set done, start training')
+
     trainer.train()
+
+if __name__ == "__main__":
+    sdg_train()
