@@ -9,7 +9,7 @@ class SDGConfig(LlamaConfig):
     model_type = "sdg"
     def __init__(self, se_dim_in, sa_layer_nums):
         super(SDGConfig, self).__init__()
-        self.se_dim = se_dim
+        self.se_dim_in = se_dim_in
         self.sa_layer_nums = sa_layer_nums
 
 
@@ -54,7 +54,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         self,
         input_ids: torch.LongTensor = None,
         struct_encode: torch.LongTensor = None,
-        subgraph_nodes: torch.LongTensor = None,
+        subgraph_nodes: torch.Tensor = None,
+        valid_nodes_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
         position_ids: Optional[torch.LongTensor] = None,
         past_key_values: Optional[Union[Cache, List[torch.FloatTensor]]] = None,
@@ -83,6 +84,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             return_dict=return_dict
         )
         hidden_states = outputs[0]
+        past_key_values = outputs.past_key_values
 
         if struct_encode is not None:
             se = self.projector(struct_encode)
@@ -101,11 +103,16 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
                     return_dict=return_dict
                 )
                 hidden_states = outputs[0]
+                past_key_values = outputs.past_key_values
         
         logits = self.lm_head(hidden_states)
 
         loss = None
         if labels is not None:
+            if valid_nodes_mask is None:
+                valid_nodes_mask = torch.ones((input_ids.size(0), input_ids.size(0)))
+            valid_indices = torch.nonzero(valid_nodes_mask == 1, as_tuple=True)[0]
+            valid_cnt = valid_nodes_mask.sum()
             # Shift so that tokens < n predict n
             shift_logits = logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
@@ -113,10 +120,15 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             loss_fct = CrossEntropyLoss(ignore_index=IGNORE_INDEX)
             shift_logits = shift_logits.view(-1, self.config.vocab_size)
             shift_labels = shift_labels.view(-1)
+            shift_logits = shift_logits[valid_indices]
+            shift_labels = shift_labels[valid_indices]
             # Enable model/pipeline parallelism
             shift_labels = shift_labels.to(shift_logits.device)
             loss = loss_fct(shift_logits, shift_labels)
 
+            seq_len = input_ids.size(0)
+            loss = loss / (valid_cnt * seq_len)
+            
         if not return_dict:
             output = (logits,) + outputs[1:]
             return (loss,) + output if loss is not None else output
@@ -154,3 +166,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
 
 AutoConfig.register("llaga", LlagaConfig)
 AutoModelForCausalLM.register(LlagaConfig, LlagaLlamaForCausalLM)
+
+from transformers import AutoConfig, AutoModelForCausalLM
+
+AutoConfig.register("sdg", SDGConfig)
+AutoModelForCausalLM.register(SDGConfig, SDGLlamaForCausalLM)

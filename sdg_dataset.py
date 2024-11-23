@@ -3,14 +3,14 @@ import torch
 from transformers import AutoTokenizer
 
 class SDGDataset(Dataset):
-    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, valid_nodes_masks, tokenizer, inst):
+    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, valid_nodes_masks, tokenizer, inst, split):
         self.struct_encodes = struct_encodes
         self.subgraphs = subgraphs
         self.tokenizer = tokenizer
         self.tokenizer.pad_token = self.tokenizer.unk_token
-        self.max_length = min(max(len(s) for s in texts) + 2, 512)
         self.batchs = batchs
         self.valid_nodes_masks = valid_nodes_masks
+        self.split = split
 
         self.label_ids = self.tokenizer(
             labels,
@@ -21,11 +21,15 @@ class SDGDataset(Dataset):
 
         self.texts_ids = self.tokenizer(
             texts,
-            max_length=self.max_length,
-            padding="max_length",
+            max_length=300,
+            padding=True,
             truncation=True,
             return_tensors="pt",
         )["input_ids"][1:]
+        # i = 0
+        # for ids in self.texts_ids:
+        #     if ids[-1] == 0: i = i + 1
+        # print(f'last token is padding rate: {i/2708}')
         self.inst_head_ids = self.tokenizer(
             inst['head'],
             padding=True,

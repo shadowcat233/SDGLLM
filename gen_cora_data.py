@@ -1,29 +1,32 @@
 from TAGLAS.datasets import Cora
 from TAGLAS.tasks import SubgraphTextNPTask
 from TAGLAS.tasks.text_encoder import SentenceEncoder
+import torch
+
 dataset = Cora()
 data = dataset[0]
 
-print(data.x[0])
-print(data.label)
+# print(data.x[0])
+# print(data.label)
 
-task = SubgraphTextNPTask(dataset)
+# task = SubgraphTextNPTask(dataset)
 
-subgraph_nodes = []
-for i in range(len(data.node_map)):
-    _, processed_node_map, _, _ = \
-        task.__process_graph__(i, dataset[0].edge_index, dataset[0].node_map, dataset[0].edge_map)
-    indices = (processed_node_map == i).nonzero(as_tuple=True)[0]
-    processed_node_map[indices[0]] = processed_node_map[0]
-    processed_node_map[0] = i
-    subgraph_nodes.append(processed_node_map.tolist())
+# subgraph_nodes = []
+# for i in range(len(data.node_map)):
+#     _, processed_node_map, _, _ = \
+#         task.__process_graph__(i, dataset[0].edge_index, dataset[0].node_map, dataset[0].edge_map)
+#     indices = (processed_node_map == i).nonzero(as_tuple=True)[0]
+#     processed_node_map[indices[0]] = processed_node_map[0]
+#     processed_node_map[0] = i
+#     subgraph_nodes.append(processed_node_map.tolist())
 
-print(subgraph_nodes[1000:1010])
+# print(subgraph_nodes[1000:1010])
 
-import torch
-torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
 
-def divide_nodes_by_subgraphs(subgraph_nodes, threshold=64):
+# torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
+subgraph_nodes = torch.load('./TAGDataset/cora/subgraph_nodes.pt')
+
+def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=64):
     """
     将所有节点划分为多个集合，每个集合满足：其中的节点的所有子图节点都在该集合中。
     :param subgraph_nodes: List[List[int]]，每个节点的三阶子图节点的列表
@@ -61,7 +64,7 @@ def divide_nodes_by_subgraphs(subgraph_nodes, threshold=64):
 
         return current_set, valid_nodes
 
-    for start_node in range(num_nodes):
+    for start_node in range(start, end):
         if not visited[start_node]:
             # 扩展集合
             new_set, new_valid = expand_set(start_node, threshold)
@@ -84,7 +87,12 @@ def divide_nodes_by_subgraphs(subgraph_nodes, threshold=64):
     print(one[visited].sum()/num_nodes)
     return sets, valids
 
-batchs, valids = divide_nodes_by_subgraphs(subgraph_nodes)
+batchs, valids = divide_nodes_by_subgraphs(subgraph_nodes, 0, 2708)
+split = len(batchs)
+print(split)
+b2, v2 = divide_nodes_by_subgraphs(subgraph_nodes, 2708, 2708)
+batchs = batchs + b2
+valids = valids + v2
 print('------------------------')
 print(len(batchs))
 print('------------------------')
@@ -124,8 +132,9 @@ true_labels = [data.label[data.label_map[i]] for i in range(len(data.x))]
 
 struct_encodes = torch.load("/home/wangjingchu/code/SDGLM/structure_encoder/output_cora_tag_pt_module.pt")
 
-cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, valid_nodes_masks, tokenizer, inst)
+cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, valid_nodes_masks, tokenizer, inst, split)
 batch = cora_sdg_dts[0]
 print(batch["input_ids"][0])
 
 torch.save(cora_sdg_dts, './cora_sdg_dataset.pt')
+
