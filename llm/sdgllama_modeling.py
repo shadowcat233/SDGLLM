@@ -44,16 +44,15 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         return torch.mm(z1, z2.t()) 
 
     def structure_attention(self, t, sims, sg_nodes):
-        if sg_nodes.is_sparse:
-            filtered_sims = torch.sparse.mm(sg_nodes, sims)
-        else:
-            filtered_sims = sims * sg_nodes
+
+        filtered_sims = sims * sg_nodes
         sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
-        weighted_t = (sims_expanded * t.unsqueeze(0)).sum(dim=1)
-        sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1)
-        sim_sum = sim_sum + (sim_sum == 0).float()
-        t_hat = weighted_t / sim_sum
+        weighted_t = (sims_expanded * t.unsqueeze(1))
+        sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1) 
+        sim_sum = sim_sum + (sim_sum == 0).float() 
+        t_hat = (weighted_t.sum(dim=1) / sim_sum).squeeze(-1)
         return t_hat
+
 
     def forward(
         self,
@@ -79,12 +78,15 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
         return_dict = return_dict if return_dict is not None else True
 
-        if attention_mask.dim() == 3:
-            attention_mask = attention_mask.squeeze(0)
+        attention_mask = attention_mask.squeeze(0)
+        input_ids = input_ids.squeeze(0)
+        struct_encode = struct_encode.squeeze(0)
+        subgraph_nodes = subgraph_nodes.squeeze(0)
+        valid_nodes_mask = valid_nodes_mask.squeeze(0)
+        print(attention_mask.shape, input_ids.shape, struct_encode.shape, subgraph_nodes.shape, valid_nodes_mask.shape)
 
-        if input_ids.dim() == 3: 
-            input_ids = input_ids.squeeze(0)
-
+        labels = input_ids.squeeze(0)
+        
         outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -96,26 +98,32 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             return_dict=return_dict
         )
         hidden_states = outputs[0]
-        past_key_values = outputs.past_key_values
+        # del outputs
+        # torch.cuda.empty_cache()
+        # past_key_values = outputs.past_key_values
 
         if struct_encode is not None:
             se = self.projector(struct_encode)
             sims = self.sim(se, se)
-            subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.zeros((se.size(0), se.size(0)))
+            subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
 
-            for _ in range(self.sa_layer_nums):
+            for i in range(self.sa_layer_nums):
                 hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
-                outputs = self.model(
-                    attention_mask=attention_mask,
-                    past_key_values=past_key_values,
-                    inputs_embeds=hidden_states,
-                    use_cache=use_cache,
-                    output_attentions=output_attentions,
-                    output_hidden_states=output_hidden_states,
-                    return_dict=return_dict
-                )
-                hidden_states = outputs[0]
-                past_key_values = outputs.past_key_values
+                print(hidden_states.shape, attention_mask.shape)
+                # outputs = self.model(
+                #     attention_mask=attention_mask,
+                #     past_key_values=past_key_values,
+                #     inputs_embeds=hidden_states,
+                #     use_cache=use_cache,
+                #     output_attentions=output_attentions,
+                #     output_hidden_states=output_hidden_states,
+                #     return_dict=return_dict
+                # )
+                # hidden_states = outputs[0]
+                # # past_key_values = outputs.past_key_values
+                # if i<self.sa_layer_nums-1:
+                #     del outputs
+                #     torch.cuda.empty_cache()
         
         logits = self.lm_head(hidden_states)
 

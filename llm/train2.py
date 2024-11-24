@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
 import transformers
 from transformers import HfArgumentParser, Trainer, AutoConfig, LlamaForCausalLM
@@ -15,7 +15,7 @@ upper_dir = os.path.dirname(current_dir)
 sys.path.append(upper_dir)
 
 from sdg_dataset import SDGDataset
-from sdgllama_modeling import SDGLlamaForCausalLM, SDGConfig
+from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 
 @dataclass
 class ModelArguments:
@@ -23,8 +23,8 @@ class ModelArguments:
     # output_dir: str = field(default="./checkpoints")
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
-    sa_layer_nums: int = field(default=2)
-    use_lora: bool = field(default=True)
+    sa_layer_nums: int = field(default=1)
+    use_lora: bool = field(default=False)
     lora_r: int = field(default=64)
     lora_dropout: float = field(default=0.05)
 
@@ -92,6 +92,7 @@ class SDGTrainer(Trainer):
 
 
 def sdg_train():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     pretrained_config = LlamaConfig.from_pretrained(model_args.model_name_or_path)
@@ -102,17 +103,21 @@ def sdg_train():
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
-    model = SDGLlamaForCausalLM(config=sdg_config)
+    model = SDGLlamaForCausalLM(config=sdg_config).to(device)
     print('sdg_model init done')
 
     pretrained_model = LlamaForCausalLM.from_pretrained(model_args.model_name_or_path, config=pretrained_config)
     print('pretrain_model loading done')
-    model.model.load_state_dict(pretrained_model.model.state_dict())
+    model.model.load_state_dict(pretrained_model.model.state_dict(), strict=False)
     print('sdg_model load dict done')
 
+    del pretrained_model
+    torch.cuda.empty_cache()
+
     if model_args.freeze_llm_backbone:
-        for param in model.model.parameters():
-            param.requires_grad = False
+        for name, param in model.model.named_parameters():
+            if "projector" not in name:
+                param.requires_grad = False
 
     if model_args.use_lora:
         from peft import LoraConfig, get_peft_model

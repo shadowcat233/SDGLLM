@@ -26,7 +26,7 @@ data = dataset[0]
 # torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
 subgraph_nodes = torch.load('./TAGDataset/cora/subgraph_nodes.pt')
 
-def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=64):
+def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=4):
     """
     将所有节点划分为多个集合，每个集合满足：其中的节点的所有子图节点都在该集合中。
     :param subgraph_nodes: List[List[int]]，每个节点的三阶子图节点的列表
@@ -70,41 +70,33 @@ def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=64):
             new_set, new_valid = expand_set(start_node, threshold)
             for node in new_valid:
                 visited[node] = True
-            if len(new_valid) < threshold/8:
+            if len(new_valid) < 3: #threshold/2:
                 # 合并到最后一个集合
-                if sets:
+                if sets and len(valids[-1]) + len(new_valid) <= threshold * 1.5:
                     sets[-1] = list(set(sets[-1]) | new_set)
                     valids[-1] = list(set(valids[-1]) | set(new_valid))
-                else:
-                    sets.append(list(new_set))
-                    valids.append(list(new_valid))
             else:
                 # 将集合转换为列表并添加到结果中
                 sets.append(list(new_set))
                 valids.append(new_valid)
                 
-    one = torch.ones(num_nodes)
-    print(one[visited].sum()/num_nodes)
     return sets, valids
 
-batchs, valids = divide_nodes_by_subgraphs(subgraph_nodes, 0, 2708)
+batchs, valids = divide_nodes_by_subgraphs(subgraph_nodes, 0, 2216)
 split = len(batchs)
 print(split)
-b2, v2 = divide_nodes_by_subgraphs(subgraph_nodes, 2708, 2708)
+b2, v2 = divide_nodes_by_subgraphs(subgraph_nodes, 2217, 2708)
 batchs = batchs + b2
 valids = valids + v2
 print('------------------------')
 print(len(batchs))
 print('------------------------')
-for b in batchs:
-    print(len(b))
-print('------------------------')
-for v in valids:
-    print(len(v))
-print('------------------------')
+for i in range(len(batchs)):
+    print(len(batchs[i]), len(valids[i]))
+# print('------------------------')
 # print(batchs)
-print('------------------------')
-print(valids)
+# print('------------------------')
+# print(valids)
 torch.save(batchs, './TAGDataset/cora/batchs.pt')
 torch.save(valids, './TAGDataset/cora/valids.pt')
 
@@ -130,7 +122,7 @@ valid_nodes_masks = [
 
 true_labels = [data.label[data.label_map[i]] for i in range(len(data.x))]
 
-struct_encodes = torch.load("/home/wangjingchu/code/SDGLM/structure_encoder/output_cora_tag_pt_module.pt")
+struct_encodes = torch.load("/home/wangjingchu/code/SDGLM/structure_encoder/output_cora_tag_pt_module.pt").to('cpu')
 
 cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, valid_nodes_masks, tokenizer, inst, split)
 batch = cora_sdg_dts[0]

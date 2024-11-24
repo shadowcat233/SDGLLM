@@ -54,10 +54,17 @@ class SDGDataset(Dataset):
         ])
         attention_mask = torch.ones((t_ids.size(0), t_ids.size(1)))
         attention_mask[t_ids==self.tokenizer.pad_token_id] = 0
+        inv = {self.batchs[idx][i]: i for i in range(len(self.batchs[idx]))}
+        sg_nodes = torch.zeros(len(self.batchs[idx]), len(self.batchs[idx]))
+        for i in range(len(self.batchs[idx])):
+            for neigh in self.subgraphs[self.batchs[idx][i]]:
+                if neigh in self.batchs[idx]:
+                    sg_nodes[inv[self.batchs[idx][i]], inv[neigh]] = 1
+        struct_encode = torch.stack([self.struct_encodes[i] for i in self.batchs[idx]])
         return {
-            "input_ids": t_ids,
-            "attention_mask": attention_mask,
-            "struct_encode": self.struct_encodes[idx],
-            "subgraph_nodes": self.subgraphs[idx],
-            "valid_nodes_mask": self.valid_nodes_masks[idx]
+            "input_ids": t_ids.detach(),
+            "attention_mask": attention_mask.detach(),
+            "struct_encode": struct_encode.detach(),
+            "subgraph_nodes": sg_nodes.detach(),
+            "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx]).detach()
         }
