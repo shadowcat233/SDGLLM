@@ -19,7 +19,7 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: Optional[str] = field(default="/home/wangjingchu/code/SDGLM/llm/Llama-2-7b-chat-hf")
+    model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
     # output_dir: str = field(default="./checkpoints")
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
@@ -30,7 +30,7 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="/home/wangjingchu/code/SDGLM/cora_sdg_dataset.pt")
+    data_path: str = field(default="../cora_sdg_dataset.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
@@ -92,27 +92,20 @@ class SDGTrainer(Trainer):
 
 
 def sdg_train():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     pretrained_config = LlamaConfig.from_pretrained(model_args.model_name_or_path)
     dataset = torch.load(data_args.data_path)
     sdg_config = SDGConfig(
         se_dim_in=dataset.struct_encodes.size(1),
-        sa_layer_nums=model_args.sa_layer_nums,
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
-    model = SDGLlamaForCausalLM(config=sdg_config).to(device)
-    print('sdg_model init done')
-
-    pretrained_model = LlamaForCausalLM.from_pretrained(model_args.model_name_or_path, config=pretrained_config)
-    print('pretrain_model loading done')
-    model.model.load_state_dict(pretrained_model.model.state_dict(), strict=False)
-    print('sdg_model load dict done')
-
-    del pretrained_model
-    torch.cuda.empty_cache()
+    model = SDGLlamaForCausalLM.from_pretrained(
+            model_args.model_name_or_path,
+            config=sdg_config
+    )
+    print('model done')
 
     if model_args.freeze_llm_backbone:
         for name, param in model.model.named_parameters():
