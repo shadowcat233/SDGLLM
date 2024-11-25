@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 
 from gpse import GPSE, MLP
 import torch
@@ -91,7 +91,7 @@ def train(module, dataset, node_sims, epochs, device):
         output = module(data) 
         s_loss = struct_text_loss(output, node_sims, criterion, i)
         c_loss = constractive_loss(output, A, 0.2)
-        loss = s_loss*5 + c_loss
+        loss = s_loss*0 + c_loss
         optimizer.zero_grad()
         loss.backward()  
         optimizer.step()
@@ -136,9 +136,9 @@ def main():
     node_features = torch.load('./TAGDataset/cora/task/ST/node_features.pt').to(device)
     node_sims = get_node_sim_matrix(node_features)
     gpse = GPSE.from_pretrained('molpcba').to(device)
-    module = GPSE_MLP(gpse, 512, 128, 256, 4).to(device)
+    module = GPSE_MLP(gpse, 512, 1024, 1024, 4).to(device)
     print('-----------------------------')
-    train(module, dataset, node_sims, 1000, device)
+    train(module, dataset, node_sims, 500, device)
     torch.save(module, './cora_tag_pt_module.pt')
     # module = torch.load('./cora_tag_pt_module.pt')
     eval(module, dataset, device, node_sims)
