@@ -20,11 +20,10 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    # output_dir: str = field(default="./checkpoints")
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=1)
-    use_lora: bool = field(default=False)
+    use_lora: bool = field(default=True)
     lora_r: int = field(default=64)
     lora_dropout: float = field(default=0.05)
 
@@ -34,6 +33,9 @@ class DataArguments:
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
+    output_dir: str = field(default="./checkpoints")
+    per_device_train_batch_size: str = field(default=1)
+    gradient_accumulation_steps: str = field(default=1)
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
     save_per_ckpts: int = field(default=5)
