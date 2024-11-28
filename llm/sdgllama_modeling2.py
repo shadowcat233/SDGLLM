@@ -14,10 +14,9 @@ from typing import List, Optional, Tuple, Union
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in, sa_layer_nums, **kwargs):
+    def __init__(self, se_dim_in, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
-        self.sa_layer_nums = sa_layer_nums
 
 
 
@@ -26,7 +25,7 @@ class SDGLlamaModel(LlamaModel):
 
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
-        self.projector = nn.Linear(config.se_dim_in, config.hidden_size)
+        self.struct_projector = nn.Linear(config.se_dim_in, config.hidden_size)
 
     def sim(self, z1, z2):
         z1 = F.normalize(z1) 
@@ -72,7 +71,7 @@ class SDGLlamaModel(LlamaModel):
         valid_nodes_mask = valid_nodes_mask.squeeze(0)
 
         if struct_encode is not None:
-            se = self.projector(struct_encode)
+            se = self.struct_projector(struct_encode)
             sims = self.sim(se, se)
             subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
 
@@ -162,7 +161,7 @@ class SDGLlamaModel(LlamaModel):
 
             hidden_states = layer_outputs[0]
 
-            if (i+1) % 4 == 0 and struct_encode is not None:
+            if i > 0 and i % 8 == 0 and struct_encode is not None:
                 hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
 
             if use_cache:

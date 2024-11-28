@@ -1,7 +1,7 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
-from transformers import LlamaForCausalLM, AutoTokenizer, LlamaConfig
+from transformers import LlamaForCausalLM, AutoTokenizer, LlamaConfig, LlamaModel
 import torch
 from torch.nn import DataParallel
 
@@ -15,6 +15,7 @@ dataset = torch.load('../TAGDataset/cora/cora_tag.pt')
 data = dataset[0]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = 'cpu'
 model_path = './Llama-2-7b-chat-hf'
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = LlamaForCausalLM.from_pretrained(model_path).to(device)
@@ -24,13 +25,15 @@ model = LlamaForCausalLM.from_pretrained(model_path).to(device)
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # model.to(device)
- 
-prompt_head = "Here's the title and abstruct of a paper, please tell me which category the paper belongs to."
+
+prompt_head = "[SYSTEM MESSAGE] A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, \
+and polite answers to the user's questions.\n\
+[USER] Here's the title and abstract of a paper, please tell me which category the paper belongs to."
 prompt_tail = "Optional Categories: Rule Learning, Neural Networks, Case-Based, Genetic Algorithms, Theory, Reinforcement Learning, Probabilistic Methods \
 \nPlease select one of the options from the above list that is the most likely category. Only answer the name of the category and don't add any other replies. \
-\nYour answer is: "
+\n[ASSISTENT] The paper belongs to the category of "
 
-true_labels = [data.label[data.label_map[i]] for i in range(140)]
+true_labels = [data.label[data.label_map[i]] for i in range(2708)]
 
 predicted_labels = []
  
@@ -39,7 +42,7 @@ def print_cuda_info():
     print(f"保留显存: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
     print(f"总显存: {torch.cuda.get_device_properties(0).total_memory / 1024**2:.2f} MB")
 
-for i in range(140):
+for i in range(2708):
     text = data.x[i]
     prompt = prompt_head + '\n' + text + '\n' + prompt_tail
     inputs = tokenizer(prompt, return_tensors="pt").to(device)
@@ -49,11 +52,12 @@ for i in range(140):
     res = tokenizer.decode(generate_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=False)
 
     if res.startswith(prompt): res = res[len(prompt):]
+    res = res.translate(str.maketrans("", "", ".\'\""))
     predicted_labels.append(res.strip())
     
     print(f'{i:4d}:  predict label: {res.strip()}  |  true label: {data.label[data.label_map[i]]}')
-    print_cuda_info()
-    torch.cuda.empty_cache()
+    # print_cuda_info()
+    # torch.cuda.empty_cache()
 
  
  

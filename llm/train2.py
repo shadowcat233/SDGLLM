@@ -77,7 +77,7 @@ class SDGTrainer(Trainer):
 
             # Save only projector parameters
             projector_state = {
-                k: v.cpu() for k, v in model.projector.state_dict().items()
+                k: v.cpu() for k, v in model.model.struct_projector.state_dict().items()
             }
 
             if self.args.local_rank in [-1, 0]:  # Save on main process only
@@ -110,8 +110,8 @@ def sdg_train():
     print('model done')
 
     if model_args.freeze_llm_backbone:
-        for name, param in model.model.named_parameters():
-            if "projector" not in name:
+        for name, param in model.named_parameters():
+            if "struct_projector" not in name:
                 param.requires_grad = False
 
     if model_args.use_lora:
@@ -124,6 +124,11 @@ def sdg_train():
             bias="none",
             task_type="CAUSAL_LM" 
         )
+        if training_args.bits == 16:
+            if training_args.bf16:
+                model.to(torch.bfloat16)
+            if training_args.fp16:
+                model.to(torch.float16)
         model = get_peft_model(model, lora_config)
 
     from torch.utils.data import Subset

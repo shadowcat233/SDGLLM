@@ -26,7 +26,7 @@ data = dataset[0]
 # torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
 subgraph_nodes = torch.load('./TAGDataset/cora/subgraph_nodes.pt')
 
-def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=4):
+def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=1):
     """
     将所有节点划分为多个集合，每个集合满足：其中的节点的所有子图节点都在该集合中。
     :param subgraph_nodes: List[List[int]]，每个节点的三阶子图节点的列表
@@ -70,7 +70,7 @@ def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=4):
             new_set, new_valid = expand_set(start_node, threshold)
             for node in new_valid:
                 visited[node] = True
-            if len(new_valid) < 3: #threshold/2:
+            if len(new_valid) < threshold:
                 # 合并到最后一个集合
                 if sets and len(valids[-1]) + len(new_valid) <= threshold * 1.5:
                     sets[-1] = list(set(sets[-1]) | new_set)
@@ -90,9 +90,9 @@ batchs = batchs + b2
 valids = valids + v2
 print('------------------------')
 print(len(batchs))
-print('------------------------')
-for i in range(len(batchs)):
-    print(len(batchs[i]), len(valids[i]))
+# print('------------------------')
+# for i in range(len(batchs)):
+#     print(len(batchs[i]), len(valids[i]))
 # print('------------------------')
 # print(batchs)
 # print('------------------------')
