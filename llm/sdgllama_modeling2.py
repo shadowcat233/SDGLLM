@@ -244,7 +244,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
         return_dict = return_dict if return_dict is not None else True
 
-        labels = input_ids.squeeze(0)
+        if labels is None:
+            labels = input_ids.squeeze(0)
 
         outputs = self.model(
             input_ids=input_ids,

@@ -109,6 +109,10 @@ def sdg_train():
     )
     print('model done')
 
+    model.is_parallelizable = True
+    model.model_parallel = True
+    model.config.use_cache = False
+
     if model_args.freeze_llm_backbone:
         for name, param in model.named_parameters():
             if "struct_projector" not in name:
@@ -124,12 +128,11 @@ def sdg_train():
             bias="none",
             task_type="CAUSAL_LM" 
         )
-        if training_args.bits == 16:
-            if training_args.bf16:
-                model.to(torch.bfloat16)
-            if training_args.fp16:
-                model.to(torch.float16)
         model = get_peft_model(model, lora_config)
+        if training_args.bf16:
+            model.to(torch.bfloat16)
+        if training_args.fp16:
+            model.to(torch.float16)
 
     from torch.utils.data import Subset
 
@@ -146,6 +149,8 @@ def sdg_train():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset
     )
+
+    print(f'is_model_parallizable: {trainer.is_model_parallel}')
 
     print('trainer set done, start training')
 

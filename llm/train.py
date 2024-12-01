@@ -13,32 +13,31 @@ from TAGLAS.datasets import Cora
 
 
 from torch.utils.data import DataLoader, Dataset
-import torch.nn.functional as F
 
 
-class SubgraphDataset(Dataset):
-    def __init__(self, subgraph_nodes, labels):
-        self.subgraph_nodes = subgraph_nodes
-        self.labels = labels
+# class SubgraphDataset(Dataset):
+#     def __init__(self, subgraph_nodes, labels):
+#         self.subgraph_nodes = subgraph_nodes
+#         self.labels = labels
 
-    def __len__(self):
-        return len(self.subgraph_nodes)
+#     def __len__(self):
+#         return len(self.subgraph_nodes)
 
-    def __getitem__(self, idx):
-        return {'subgraph_nodes': self.subgraph_nodes[idx], 'labels': self.labels[idx]}
+#     def __getitem__(self, idx):
+#         return {'subgraph_nodes': self.subgraph_nodes[idx], 'labels': self.labels[idx]}
 
 
-from torch.nn.utils.rnn import pad_sequence
+# from torch.nn.utils.rnn import pad_sequence
 
-def custom_collate_fn(batch):
-    subgraph_nodes = [torch.tensor(item['subgraph_nodes']) for item in batch]
-    labels = [item['labels'] for item in batch]
+# def custom_collate_fn(batch):
+#     subgraph_nodes = [torch.tensor(item['subgraph_nodes']) for item in batch]
+#     labels = [item['labels'] for item in batch]
     
-    # 使用 padding 对 subgraph_nodes 进行填充
-    padded_subgraph_nodes = pad_sequence(subgraph_nodes, batch_first=True, padding_value=-1)
-    labels = torch.stack(labels)  # 拼接标签
+#     # 使用 padding 对 subgraph_nodes 进行填充
+#     padded_subgraph_nodes = pad_sequence(subgraph_nodes, batch_first=True, padding_value=-1)
+#     labels = torch.stack(labels)  # 拼接标签
     
-    return {'subgraph_nodes': padded_subgraph_nodes, 'labels': labels}
+#     return {'subgraph_nodes': padded_subgraph_nodes, 'labels': labels}
 
 class SDG_LLM(nn.Module):
     def __init__(self, llama_model_name, num_layers=1, p_dim_in=128):
@@ -49,7 +48,7 @@ class SDG_LLM(nn.Module):
 
         self.projector = nn.Linear(p_dim_in, self.llm.config.hidden_size)
         self.tokenizer = AutoTokenizer.from_pretrained(llama_model_name)
-        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.pad_token = self.tokenizer.unk_token
         self.input_embeddings = self.llm.get_input_embeddings()
         self.decoder = self.llm.get_decoder()
         self.num_layers = num_layers
@@ -66,15 +65,19 @@ class SDG_LLM(nn.Module):
         z2 = F.normalize(z2) 
         return torch.mm(z1, z2.t()) 
 
-    def structure_attention(self, t, sim_m):
-        sim_m_expanded = sim_m.unsqueeze(-1).unsqueeze(-1) 
+    def structure_attention(self, t, sim_m, sg_nodes):
+        if sg_nodes.is_sparse:
+            filtered_sim_m = torch.sparse.mm(sg_nodes, sim_m)
+        else:
+            filtered_sim_m = sim_m * sg_nodes
+        sim_m_expanded = filtered_sim_m.unsqueeze(-1).unsqueeze(-1) 
         weighted_t = (sim_m_expanded * t.unsqueeze(0)).sum(dim=1)
-        sim_sum = sim_m.sum(dim=1, keepdim=True).unsqueeze(-1)
+        sim_sum = filtered_sim_m.sum(dim=1, keepdim=True).unsqueeze(-1)
         sim_sum = sim_sum + (sim_sum == 0).float()
         t_hat = weighted_t / sim_sum
         return t_hat
 
-    def forward(self, t, p):
+    def forward(self, t, p, sg_nodes):
 
         p_hat = self.projector(p)
         torch.cuda.empty_cache()
@@ -94,41 +97,55 @@ class SDG_LLM(nn.Module):
         return t_prime, p_hat
 
     def combine_embeddings(self, t_prime, p_hat, inst, only_target=True):
-        head_embeds = self.get_special_embeddings(inst['head'])
-        tail_embeds = self.get_special_embeddings(inst['tail'])
-        target_node_textual_info_embeds = self.get_special_embeddings("target node textual information: ")
-        target_node_structural_info_embeds = self.get_special_embeddings("\ntarget node structual information: ")
-        textual_info_embeds = self.get_special_embeddings("\nother node textual information: ")
-        structural_info_embeds = self.get_special_embeddings("\nother node structual information: ")
+        head_embeds = self.get_special_embeddings(inst['head']).squeeze(0)
+        tail_embeds = self.get_special_embeddings(inst['tail']).squeeze(0)
+        target_node_textual_info_embeds = self.get_special_embeddings("target node textual information: ").squeeze(0)
+        target_node_structural_info_embeds = self.get_special_embeddings("\ntarget node structual information: ").squeeze(0)
+        # textual_info_embeds = self.get_special_embeddings("\nother node textual information: ")
+        # structural_info_embeds = self.get_special_embeddings("\nother node structual information: ")
 
-        t_prime_mean_first = t_prime.mean(dim=1)[0].unsqueeze(0).unsqueeze(0) 
-        t_prime_mean_rest = t_prime.mean(dim=1)[1:].unsqueeze(1)
+        # t_prime_mean_first = t_prime.mean(dim=1)[0].unsqueeze(0).unsqueeze(0) 
+        # t_prime_mean_rest = t_prime.mean(dim=1)[1:].unsqueeze(1)
 
-        p_hat_first = p_hat.unsqueeze(1)[0].unsqueeze(0) 
-        p_hat_rest = p_hat.unsqueeze(1)[1:] 
+        # p_hat_first = p_hat.unsqueeze(1)[0].unsqueeze(0) 
+        # p_hat_rest = p_hat.unsqueeze(1)[1:] 
 
-        combined_embeds = torch.cat([
+        p_hat_expanded = p_hat.unsqueeze(1)
+        combined_parts = [
             head_embeds,
-            target_node_textual_info_embeds,
-            t_prime_mean_first,
-            target_node_structural_info_embeds,
-            p_hat_first,
-            textual_info_embeds
-        ], dim=1)
+            target_node_textual_info_embeds, 
+            t_prime,
+            target_node_structural_info_embeds, 
+            p_hat_expanded, 
+            tail_embeds,
+        ]
 
-        if only_target==False:
-            for i in range(t_prime_mean_rest.size(0)):
-                combined_embeds = torch.cat([combined_embeds, t_prime_mean_rest[i].unsqueeze(0)], dim=1)
-            combined_embeds = torch.cat([combined_embeds, structural_info_embeds], dim=1)
-            for i in range(p_hat_rest.size(0)):
-                combined_embeds = torch.cat([combined_embeds, p_hat_rest[i].unsqueeze(0)], dim=1)
+        combined_embeds = torch.cat(
+            [part.unsqueeze(0) if len(part.shape) == 2 else part for part in combined_parts], 
+            dim=1
+        )
 
-        combined_embeds = torch.cat([combined_embeds, tail_embeds], dim=1)
+        # combined_embeds = torch.cat([
+        #     head_embeds,
+        #     target_node_textual_info_embeds,
+        #     t_prime_mean_first,
+        #     target_node_structural_info_embeds,
+        #     p_hat_first,
+        #     textual_info_embeds
+        # ], dim=1)
+
+        # if only_target==False:
+        #     for i in range(t_prime_mean_rest.size(0)):
+        #         combined_embeds = torch.cat([combined_embeds, t_prime_mean_rest[i].unsqueeze(0)], dim=1)
+        #     combined_embeds = torch.cat([combined_embeds, structural_info_embeds], dim=1)
+        #     for i in range(p_hat_rest.size(0)):
+        #         combined_embeds = torch.cat([combined_embeds, p_hat_rest[i].unsqueeze(0)], dim=1)
+
+        # combined_embeds = torch.cat([combined_embeds, tail_embeds], dim=1)
         return combined_embeds
 
-    def generate_from_embeddings(self, embeddings):
+    def generate_from_embeddings(self, embeddings, max_generate_steps=50):
 
-        max_generate_steps = 50
         generated_tokens = []
         all_logits = []
         current_embeds = embeddings
@@ -186,15 +203,14 @@ class SDG_LLM(nn.Module):
         return normalized_loss
 
 
-    def batch_generate_and_compute_loss(self, texts, p_encode, subgraph_nodes, inst, labels=None):
+    def batch_generate_and_compute_loss(self, texts, p_encode, sg_nodes, inst, labels=None, generate_text=False):
         """
         输入批量数据进行生成并计算损失。
         texts: List[str], 每个节点的自然语言信息。
         p_encode: torch.Tensor,大小为 (num_nodes, p_dim_in), 节点的位置结构信息。
-        subgraph_nodes: List[List[int]], 每个节点的子图中节点编号。
+        sg_nodes: torch.SparseTensor, 记录每个节点的子图中节点。
         labels: torch.Tensor (optional), 目标文本对应的 token 序列, 用于计算损失。
         """
-        batch_size = len(subgraph_nodes)
         device = p_encode.device
 
         all_logits = []
@@ -203,19 +219,8 @@ class SDG_LLM(nn.Module):
         t_ids = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True).to(device)['input_ids']
 
         for i in range(batch_size):
-            subgraph_idxs = subgraph_nodes[i][subgraph_nodes[i] != -1]  # 当前节点的子图索引
-            t = t_ids[subgraph_idxs]  # 子图的文本 token IDs
-            p = p_encode[subgraph_idxs]  # 子图的结构化信息
-
-            print(f'subgraph_idxs: {subgraph_idxs}')
-            print(f't: {t}')
-            print(f'p: {p}')
-
             # Forward pass
-            t_prime, p_hat = self.forward(t, p)
-
-            print(f't_p: {t_prime}')
-            print(f'p_h: {p_hat}')
+            t_prime, p_hat = self.forward(t_ids, p_encode, sg_nodes)
 
             # Combine embeddings for generation
             combined_embeds = self.combine_embeddings(t_prime, p_hat, inst)
@@ -224,9 +229,10 @@ class SDG_LLM(nn.Module):
             generated_tokens, logits = self.generate_from_embeddings(combined_embeds)
 
             # Decode generated text
-            generated_texts = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            print(generated_texts)
-            all_generated_texts.append(generated_texts)
+            if generate_text:
+                generated_texts = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+                print(generated_texts)
+                all_generated_texts.append(generated_texts)
             all_logits.append(logits)
 
         if labels is not None:
@@ -246,6 +252,14 @@ def print_cuda_info():
     print(f"总显存: {torch.cuda.get_device_properties(0).total_memory / 1024**2:.2f} MB")
 
 
+def generate_dense_sg_nodes(batch_size, node_list):
+    sg_nodes = torch.zeros(batch_size, batch_size)
+    for i, neigh in enumerate(node_list):
+        sg_nodes[i, neigh] = 1
+    return sg_nodes
+
+
+
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
     print(device)
@@ -260,8 +274,10 @@ def main():
                             truncation=True)['input_ids'].to(device)
     labels = labels[:, 1:]
 
-    subgraphs = SubgraphDataset(subgraph_nodes[:140], labels[:140])
-    dataloader = DataLoader(subgraphs, batch_size=2, shuffle=True, collate_fn=custom_collate_fn)
+    # subgraphs = SubgraphDataset(subgraph_nodes[:140], labels[:140])
+    # dataloader = DataLoader(subgraphs, batch_size=2, shuffle=True, collate_fn=custom_collate_fn)
+
+    sg_nodes = generate_dense_sg_nodes(len(data.x), subgraph_nodes)
 
     inst = {
     'head': "Graph description: Each node represents a paper, edges represent citations. Below are the textual and structural information of target node and the other nodes within the subgraph of the target node.\n",
@@ -274,19 +290,12 @@ def main():
 
     epochs = 500
     for i in range(epochs):
-        epoch_loss = 0
-        for batch_idx, batch in enumerate(dataloader):
-            subgraph_nodes = batch['subgraph_nodes']
-            labels = batch['labels']
-            print(subgraph_nodes, labels)
-            _, loss = sdg.batch_generate_and_compute_loss(data.x, se_output, subgraph_nodes, inst, labels)
-            optimizer.zero_grad()
-            loss.backward()  
-            optimizer.step()
-            epoch_loss += loss.item()
-            print(f"Epoch {i+1}, Batch {batch_idx+1}/{len(dataloader)}, Loss: {loss.item():.6f}")
-
-        print(f"Epoch {i+1} completed. Average Loss: {epoch_loss / len(dataloader):.6f}")
+        _, loss = sdg.batch_generate_and_compute_loss(data.x, se_output, sg_nodes, inst, labels)
+        optimizer.zero_grad()
+        loss.backward()  
+        optimizer.step()
+        epoch_loss += loss.item()
+        print(f"Epoch {i+1} Loss: {loss.item():.6f}")
 
         if i % 1 == 0:
             save_path = f'./chkps/sdg_llm_epoch_{i}.pt'

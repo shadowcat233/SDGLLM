@@ -11,6 +11,7 @@ class SDGDataset(Dataset):
         self.batchs = batchs
         self.valid_nodes_masks = valid_nodes_masks
         self.split = split
+        self.dtype = torch.float16
 
         self.label_ids = self.tokenizer(
             labels,
@@ -42,6 +43,9 @@ class SDGDataset(Dataset):
             truncation=True,
             return_tensors="pt",
         )["input_ids"].squeeze(0)[1:]
+
+    def set_dtype(self, dtype):
+        self.dtype = dtype
         
 
     def __len__(self):
