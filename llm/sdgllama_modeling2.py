@@ -10,11 +10,12 @@ from transformers.models.llama.modeling_llama import LlamaAttention, LlamaRMSNor
     logger, BaseModelOutputWithPast, Cache, DynamicCache, _prepare_4d_causal_attention_mask_for_sdpa, \
     _prepare_4d_causal_attention_mask, CausalLMOutputWithPast, LlamaForCausalLM
 from typing import List, Optional, Tuple, Union
+import torch.nn.init as init
 
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in, **kwargs):
+    def __init__(self, se_dim_in=1024, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
 
@@ -26,6 +27,15 @@ class SDGLlamaModel(LlamaModel):
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
         self.struct_projector = nn.Linear(config.se_dim_in, config.hidden_size)
+
+
+    def set_struct_projector(self, proj, dim_in, dim_out):
+        if proj is not None:
+            self.struct_projector = proj
+        else:
+            self.struct_projector = nn.Linear(dim_in, dim_out)
+        for param in self.struct_projector.parameters():
+            param.requires_grad = True
 
     def sim(self, z1, z2):
         z1 = F.normalize(z1) 
@@ -64,9 +74,12 @@ class SDGLlamaModel(LlamaModel):
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
+        if self.device == torch.device('cuda:0'):
+            print(self.struct_projector.weight[:5, :5])
+            print(self.struct_projector.bias[:5])
         attention_mask = attention_mask.squeeze(0)
         input_ids = input_ids.squeeze(0)
-        struct_encode = struct_encode.squeeze(0)
+        struct_encode = struct_encode.squeeze(0).to(dtype=self.struct_projector.weight.dtype)
         subgraph_nodes = subgraph_nodes.squeeze(0)
         valid_nodes_mask = valid_nodes_mask.squeeze(0)
 
@@ -158,10 +171,10 @@ class SDGLlamaModel(LlamaModel):
                     output_attentions=output_attentions,
                     use_cache=use_cache,
                 )
-
             hidden_states = layer_outputs[0]
 
             if i > 0 and i % 8 == 0 and struct_encode is not None:
+                if self.device == torch.device('cuda:0'): print(i)
                 hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
 
             if use_cache:
@@ -244,6 +257,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
         return_dict = return_dict if return_dict is not None else True
 
+        # print(input_ids.shape)
+
         if labels is None:
             labels = input_ids.squeeze(0)
 
@@ -262,7 +277,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
         hidden_states = outputs[0]
         
-        logits = self.lm_head(hidden_states)
+        logits = self.lm_head(hidden_states.to(dtype=self.lm_head.weight.dtype))
 
         loss = None
         if labels is not None:
@@ -283,8 +298,10 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             shift_labels = shift_labels.to(shift_logits.device)
             loss = loss_fct(shift_logits, shift_labels)
 
-            seq_len = input_ids.size(0)
+            seq_len = input_ids.squeeze(0).size(1)
             loss = loss / (valid_cnt * seq_len)
+
+            if self.device == torch.device('cuda:0'): print(loss.item())
             
         if not return_dict:
             output = (logits,) + outputs[1:]

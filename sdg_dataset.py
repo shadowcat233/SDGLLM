@@ -22,11 +22,11 @@ class SDGDataset(Dataset):
 
         self.texts_ids = self.tokenizer(
             texts,
-            max_length=300,
+            max_length=100,
             padding=True,
             truncation=True,
             return_tensors="pt",
-        )["input_ids"][1:]
+        )["input_ids"][:, 1:]
         # i = 0
         # for ids in self.texts_ids:
         #     if ids[-1] == 0: i = i + 1
@@ -72,3 +72,11 @@ class SDGDataset(Dataset):
             "subgraph_nodes": sg_nodes.detach(),
             "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx]).detach()
         }
+
+
+if __name__ == "__main__":
+    cora = torch.load('/root/autodl-tmp/SDGLLM/cora_sdg_dataset.pt')
+    print(cora.struct_encodes.shape)
+    print(cora.texts_ids.shape)
+    print(cora.label_ids.shape)
+    data = cora[135]

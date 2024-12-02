@@ -6,25 +6,27 @@ import torch
 dataset = Cora()
 data = dataset[0]
 
-# print(data.x[0])
-# print(data.label)
+print(data.x[0])
+print(data.label)
 
-# task = SubgraphTextNPTask(dataset)
+task = SubgraphTextNPTask(dataset)
 
-# subgraph_nodes = []
-# for i in range(len(data.node_map)):
-#     _, processed_node_map, _, _ = \
-#         task.__process_graph__(i, dataset[0].edge_index, dataset[0].node_map, dataset[0].edge_map)
-#     indices = (processed_node_map == i).nonzero(as_tuple=True)[0]
-#     processed_node_map[indices[0]] = processed_node_map[0]
-#     processed_node_map[0] = i
-#     subgraph_nodes.append(processed_node_map.tolist())
+subgraph_nodes = []
+for i in range(len(data.node_map)):
+    _, processed_node_map, _, _ = \
+        task.__process_graph__(i, dataset[0].edge_index, dataset[0].node_map, dataset[0].edge_map)
+    indices = (processed_node_map == i).nonzero(as_tuple=True)[0]
+    processed_node_map[indices[0]] = processed_node_map[0]
+    processed_node_map[0] = i
+    if len(processed_node_map)>15:
+        processed_node_map = processed_node_map[:15]
+    subgraph_nodes.append(processed_node_map.tolist())
 
-# print(subgraph_nodes[1000:1010])
+print(subgraph_nodes[1000:1010])
 
 
-# torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
-subgraph_nodes = torch.load('./TAGDataset/cora/subgraph_nodes.pt')
+torch.save(subgraph_nodes, './TAGDataset/cora/subgraph_nodes.pt')
+# subgraph_nodes = torch.load('./TAGDataset/cora/subgraph_nodes.pt')
 
 def divide_nodes_by_subgraphs(subgraph_nodes, start, end, threshold=1):
     """
@@ -104,7 +106,7 @@ from sdg_dataset import SDGDataset
 
 from transformers import AutoTokenizer
 
-model_path = '/home/wangjingchu/code/SDGLM/llm/Llama-2-7b-chat-hf'
+model_path = '/root/autodl-tmp/SDGLLM/llm/Llama-2-7b-chat-hf'
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 inst = {}
@@ -113,7 +115,7 @@ and polite answers to the user's questions.\n<<\SYS>>\
 <s>[INST] Here's the title and abstruct of a paper, please tell me which category the paper belongs to.\n"
 inst['tail'] = "Optional Categories: Rule Learning, Neural Networks, Case-Based, Genetic Algorithms, Theory, Reinforcement Learning, Probabilistic Methods\n\
 Please select one of the options from the above list that is the most likely category. \
-Only answer the name of the category and don't add any other replies.[\INST] The paper belongs to the category of "
+Don't add any other replies.[\INST] The paper belongs to the category of "
 
 valid_nodes_masks = [
     [1 if node in valids[i] else 0 for node in batchs[i]]
@@ -122,11 +124,11 @@ valid_nodes_masks = [
 
 true_labels = [data.label[data.label_map[i]] for i in range(len(data.x))]
 
-struct_encodes = torch.load("/home/wangjingchu/code/SDGLM/structure_encoder/output_cora_tag_pt_module.pt").to('cpu')
+struct_encodes = torch.load("./structure_encoder/output_cora_tag_pt_module.pt").to('cpu')
 
 cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, valid_nodes_masks, tokenizer, inst, split)
 batch = cora_sdg_dts[0]
-print(batch["input_ids"][0])
+print(batch)
 
 torch.save(cora_sdg_dts, './cora_sdg_dataset.pt')
 
