@@ -20,6 +20,7 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
+    struct_proj_path: Optional[str] = field(default=None)
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=1)
@@ -41,10 +42,10 @@ class TrainingArguments(transformers.TrainingArguments):
     logging_steps: int = field(default=10)
     logging_first_step: bool = field(default=True)
     # load_best_model_at_end: bool = field(default=True)
-    learning_rate: float = field(default=1e-4)
+    learning_rate: float = field(default=2e-3)
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
-    save_per_ckpts: int = field(default=1)
+    save_steps: int = field(default=10)
 
 from transformers import Trainer
 import os
@@ -68,35 +69,64 @@ class SDGTrainer(Trainer):
     #         num_workers=self.args.dataloader_num_workers,
     #     )
 
-    def _save_checkpoint(self, model, trial, metrics=None):
+    def save_model(self, output_dir: Optional[str] = None, _internal_call: bool = False):
         """
         Save model checkpoint only every k epochs and only projector parameters.
         """
-        # Check if current epoch is a save point
-        current_epoch = int(self.state.epoch)
-        save_interval = getattr(self.args, "save_per_epochs", 1)  # Default save every epoch
-        if True: # current_epoch % save_interval == 0:
-            from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
-            checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-epoch-{current_epoch}"
-            run_dir = self._get_output_dir(trial=trial)
-            output_dir = os.path.join(run_dir, checkpoint_folder)
+        # pp = self.optimizer.optimizer.persistent_parameters
+        # for p in pp:
+        #     print(p.ds_tensor.shape)
+        WEIGHTS_NAME = "pytorch_model.bin"
+        if self.is_deepspeed_enabled:
+        # 如果启用了DeepSpeed,则需要使用self.accelerator.get_state_dict获取模型状态字典
+        # .get_state_dict 这个函数可以将ZeRO3切片在其他设备上的参数加载过来
+            try:
+                state_dict = self.accelerator.get_state_dict(self.deepspeed)
+                if state_dict is not None:
+                    state_dict = {k: v for k, v in state_dict.items() if 'struct_projector' in k}
+                    print(state_dict)
+                    if self.args.should_save:
+                        if not os.path.exists(output_dir):
+                            os.makedirs(output_dir)
+                        torch.save(state_dict, os.path.join(output_dir, WEIGHTS_NAME))
+            except ValueError:
+                pass
+            # # 如果出现Value警告,可能是由于stage3_gather_16bit_weights_on_model_save=false导致的
+            # # 这种情况下,将保存完整的检查点,并提示使用zero_to_fp32.py脚本恢复权重
+            #     # logger.warning(
+            #     #     " stage3_gather_16bit_weights_on_model_save=false. Saving the full checkpoint instead, use"
+            #     #     " zero_to_fp32.py to recover weights"
+            #     # )
+            #     if self.args.should_save:
+            #         self._save(output_dir, state_dict={})
+            #     # 移除之前的state_dict文件
+            #     remove_dummy_checkpoint(self.args.should_save, output_dir, [WEIGHTS_NAME, SAFE_WEIGHTS_NAME])
+            #     self.model_wrapped.save_checkpoint(output_dir)  # 保存完整的检查点
 
-            # Save only projector parameters
-            projector_state = {
-                k: v.cpu() for k, v in model.model.struct_projector.state_dict().items()
-            }
-            print(f'projector weight shape: {model.model.struct_projector.weight.shape}')
-
-            if self.args.local_rank in [-1, 0]:  # Save on main process only
-                os.makedirs(output_dir, exist_ok=True)
-                torch.save(projector_state, os.path.join(output_dir, "projector.bin"))
-                self.model.config.save_pretrained(output_dir)
+        # elif self.args.should_save:
+        #     self._save(output_dir)
 
     def _save(self, output_dir: Optional[str] = None, state_dict=None):
-        """
-        Prevent default saving behavior for the full model.
-        """
         pass
+        # if state_dict is None:
+        #     pass
+        # SAFE_WEIGHTS_NAME = "model.safetensors"
+        # WEIGHTS_NAME = "pytorch_model.bin"
+        # output_dir = output_dir if output_dir is not None else self.args.output_dir
+        # # 创建输出目录(如果不存在)
+        # os.makedirs(output_dir, exist_ok=True)
+        # # logger.info(f"Saving model checkpoint to {output_dir}")
+
+        # if self.args.save_safetensors:
+        #     # 如果设置了save_safetensors,则使用safetensors库保存state_dict
+        #     import safetensors
+        #     safetensors.torch.save_file(
+        #         state_dict, os.path.join(output_dir, SAFE_WEIGHTS_NAME), metadata={"format": "pt"}
+        #     )
+        # else:
+        #     # 否则使用torch.save保存state_dict
+        #     torch.save(state_dict, os.path.join(output_dir, WEIGHTS_NAME))
+
 
 
 
@@ -110,6 +140,7 @@ def sdg_train():
     dataset = torch.load(data_args.data_path)
     sdg_config = SDGConfig(
         se_dim_in=dataset.struct_encodes.size(1),
+        proj_path=model_args.struct_proj_path,
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
@@ -120,7 +151,7 @@ def sdg_train():
             config=sdg_config,
             torch_dtype=dtype
     )
-    model.model.set_struct_projector(proj=None, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
+    # model.model.set_struct_projector(proj=None, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
     print('model done')
 
     model.is_parallelizable = True
@@ -128,9 +159,9 @@ def sdg_train():
     model.config.use_cache = False
 
     if model_args.freeze_llm_backbone:
-        for name, param in model.named_parameters():
-            if "struct_projector" not in name:
-                param.requires_grad = False
+        model.requires_grad_(False)
+        for param in model.model.struct_projector.parameters():
+            param.requires_grad = True
 
     if model_args.use_lora:
         from peft import LoraConfig, get_peft_model
@@ -163,6 +194,7 @@ def sdg_train():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset
     )
+    trainer.args.save_only_model = True
 
     print(f'is_model_parallizable: {trainer.is_model_parallel}')
 

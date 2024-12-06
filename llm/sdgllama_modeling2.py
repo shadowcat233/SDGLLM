@@ -13,11 +13,22 @@ from typing import List, Optional, Tuple, Union
 import torch.nn.init as init
 
 
+# class StructProjector(torch.nn.Module):
+#     def __init__(self, dim_in, dim_out):
+#         super(StructProjector, self).__init__()
+#         self.layer1 = nn.Linear(dim_in, dim_in)
+#         self.relu = nn.ReLU()
+#         self.layer2 = nn.Linear(dim_in, dim_out)
+#     def forward(self, input):
+#         return self.layer2(self.relu(self.layer1(input)))
+
+
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in=1024, **kwargs):
+    def __init__(self, se_dim_in=1024, proj_path=None, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
+        self.proj_path = proj_path
 
 
 
@@ -26,16 +37,22 @@ class SDGLlamaModel(LlamaModel):
 
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
-        self.struct_projector = nn.Linear(config.se_dim_in, config.hidden_size)
+        self.set_struct_projector(config.proj_path, config.se_dim_in, config.hidden_size)
+        # print(self.struct_projector.state_dict())
+
+    def get_struct_proj_state_dict(self):
+        return self.struct_projector.state_dict()
+
+    def init_struct_proj(self):
+        init.kaiming_normal_(self.struct_projector.weight)
 
 
-    def set_struct_projector(self, proj, dim_in, dim_out):
-        if proj is not None:
-            self.struct_projector = proj
+    def set_struct_projector(self, proj_path=None, dim_in=1024, dim_out=4096):
+        if proj_path is not None:
+            self.struct_projector = torch.load(proj_path)
         else:
-            self.struct_projector = nn.Linear(dim_in, dim_out)
-        for param in self.struct_projector.parameters():
-            param.requires_grad = True
+            self.struct_projector = nn.Linear(dim_in, dim_out, bias=False)
+            
 
     def sim(self, z1, z2):
         z1 = F.normalize(z1) 
@@ -74,19 +91,17 @@ class SDGLlamaModel(LlamaModel):
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        if self.device == torch.device('cuda:0'):
-            print(self.struct_projector.weight[:5, :5])
-            print(self.struct_projector.bias[:5])
+        # if self.device == torch.device('cuda:0'):
+        # print(self.struct_projector.state_dict())
         attention_mask = attention_mask.squeeze(0)
         input_ids = input_ids.squeeze(0)
-        struct_encode = struct_encode.squeeze(0).to(dtype=self.struct_projector.weight.dtype)
+        struct_encode = struct_encode.squeeze(0)
         subgraph_nodes = subgraph_nodes.squeeze(0)
         valid_nodes_mask = valid_nodes_mask.squeeze(0)
 
-        if struct_encode is not None:
-            se = self.struct_projector(struct_encode)
-            sims = self.sim(se, se)
-            subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
+        se = self.struct_projector(struct_encode)
+        sims = self.sim(se, se)
+        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
 
         # retrieve input_ids and inputs_embeds
         if input_ids is not None and inputs_embeds is not None:
@@ -174,7 +189,7 @@ class SDGLlamaModel(LlamaModel):
             hidden_states = layer_outputs[0]
 
             if i > 0 and i % 8 == 0 and struct_encode is not None:
-                if self.device == torch.device('cuda:0'): print(i)
+                # if self.device == torch.device('cuda:0'): print(i)
                 hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
 
             if use_cache:
@@ -301,7 +316,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             seq_len = input_ids.squeeze(0).size(1)
             loss = loss / (valid_cnt * seq_len)
 
-            if self.device == torch.device('cuda:0'): print(loss.item())
+            # if self.device == torch.device('cuda:0'): print(loss.item())
             
         if not return_dict:
             output = (logits,) + outputs[1:]
@@ -316,16 +331,22 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
 
     def prepare_inputs_for_generation(
-        self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
+        self, input_ids, struct_encode, subgraph_nodes, valid_nodes_mask, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
     ):
         if past_key_values:
             input_ids = input_ids[:, -1:]
 
         # if `inputs_embeds` are passed, we only want to use them in the 1st generation step
         if inputs_embeds is not None and past_key_values is None:
-            model_inputs = {"inputs_embeds": inputs_embeds}
+            model_inputs = {"inputs_embeds": inputs_embeds,
+                            "struct_encode": struct_encode,
+                            "subgraph_nodes": subgraph_nodes,
+                            "valid_nodes_mask": valid_nodes_mask}
         else:
-            model_inputs = {"input_ids": input_ids}
+            model_inputs = {"input_ids": input_ids,
+                            "struct_encode": struct_encode,
+                            "subgraph_nodes": subgraph_nodes,
+                            "valid_nodes_mask": valid_nodes_mask}
 
         model_inputs.update(
             {
