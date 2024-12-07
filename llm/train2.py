@@ -20,7 +20,7 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default=None)
+    struct_proj_path: Optional[str] = field(default='./checkpoints/struct_proj.pt')
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=1)
@@ -34,7 +34,7 @@ class DataArguments:
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./checkpoints")
+    output_dir: str = field(default="./checkpoints_lr=2e-3")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -45,7 +45,7 @@ class TrainingArguments(transformers.TrainingArguments):
     learning_rate: float = field(default=2e-3)
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
-    save_steps: int = field(default=10)
+    # save_steps: int = field(default=10)
 
 from transformers import Trainer
 import os
@@ -73,9 +73,6 @@ class SDGTrainer(Trainer):
         """
         Save model checkpoint only every k epochs and only projector parameters.
         """
-        # pp = self.optimizer.optimizer.persistent_parameters
-        # for p in pp:
-        #     print(p.ds_tensor.shape)
         WEIGHTS_NAME = "pytorch_model.bin"
         if self.is_deepspeed_enabled:
         # 如果启用了DeepSpeed,则需要使用self.accelerator.get_state_dict获取模型状态字典
@@ -151,17 +148,20 @@ def sdg_train():
             config=sdg_config,
             torch_dtype=dtype
     )
-    # model.model.set_struct_projector(proj=None, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
-    print('model done')
+    print("1 ", model.model.struct_projector.weight)
+    model.model.set_struct_projector(proj_path=model_args.struct_proj_path, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
+    print(model.model.struct_projector.weight)
+    print("2 ", 'model done')
 
     model.is_parallelizable = True
     model.model_parallel = True
     model.config.use_cache = False
 
     if model_args.freeze_llm_backbone:
-        model.requires_grad_(False)
-        for param in model.model.struct_projector.parameters():
-            param.requires_grad = True
+        for n, param in model.named_parameters():
+            if 'struct_projector' in n:
+                param.requires_grad = True
+            else: param.requires_grad = False
 
     if model_args.use_lora:
         from peft import LoraConfig, get_peft_model
@@ -195,6 +195,10 @@ def sdg_train():
         eval_dataset=eval_dataset
     )
     trainer.args.save_only_model = True
+    for n, param in trainer.model.named_parameters():
+        if param.requires_grad:
+            print(n)
+            param.register_hook(lambda grad, n=n, p=param: print(f"Model Grad for {n} {p.shape}: {grad}, p = {p}"))
 
     print(f'is_model_parallizable: {trainer.is_model_parallel}')
 

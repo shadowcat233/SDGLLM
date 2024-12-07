@@ -66,17 +66,18 @@ class SDGDataset(Dataset):
                     sg_nodes[inv[self.batchs[idx][i]], inv[neigh]] = 1
         struct_encode = torch.stack([self.struct_encodes[i] for i in self.batchs[idx]])
         return {
-            "input_ids": t_ids.detach(),
-            "attention_mask": attention_mask.detach(),
-            "struct_encode": struct_encode.detach(),
-            "subgraph_nodes": sg_nodes.detach(),
-            "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx]).detach()
+            "input_ids": t_ids,
+            "attention_mask": attention_mask,
+            "struct_encode": struct_encode,
+            "subgraph_nodes": sg_nodes,
+            "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx])
         }
 
 
 if __name__ == "__main__":
-    cora = torch.load('/root/autodl-tmp/SDGLLM/cora_sdg_dataset.pt')
+    cora = torch.load('./cora_sdg_dataset.pt')
     print(cora.struct_encodes.shape)
     print(cora.texts_ids.shape)
     print(cora.label_ids.shape)
     data = cora[135]
+    print(cora.label_ids.shape)

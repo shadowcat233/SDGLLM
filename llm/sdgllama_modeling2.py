@@ -301,8 +301,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             valid_indices = torch.nonzero(valid_nodes_mask == 1, as_tuple=True)[0]
             valid_cnt = valid_nodes_mask.sum()
             # Shift so that tokens < n predict n
-            shift_logits = logits[..., :-1, :].contiguous()
-            shift_labels = labels[..., 1:].contiguous()
+            shift_logits = logits[..., -7:-1, :].contiguous()
+            shift_labels = labels[..., -6:].contiguous()
             # Flatten the tokens
             loss_fct = CrossEntropyLoss(ignore_index=0)
             shift_logits = shift_logits.view(-1, self.config.vocab_size)
@@ -314,7 +314,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             loss = loss_fct(shift_logits, shift_labels)
 
             seq_len = input_ids.squeeze(0).size(1)
-            loss = loss / (valid_cnt * seq_len)
+            loss = loss / (valid_cnt * 6)
 
             # if self.device == torch.device('cuda:0'): print(loss.item())
             
