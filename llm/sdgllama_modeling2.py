@@ -11,7 +11,15 @@ from transformers.models.llama.modeling_llama import LlamaAttention, LlamaRMSNor
     _prepare_4d_causal_attention_mask, CausalLMOutputWithPast, LlamaForCausalLM
 from typing import List, Optional, Tuple, Union
 import torch.nn.init as init
+from torch_geometric.data import Data
 
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+upper_dir = os.path.dirname(current_dir)
+sys.path.append(upper_dir)
+
+from structure_encoder.pretrain_on_cora import GPSE_MLP
 
 # class StructProjector(torch.nn.Module):
 #     def __init__(self, dim_in, dim_out):
@@ -25,10 +33,11 @@ import torch.nn.init as init
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in=1024, proj_path=None, **kwargs):
+    def __init__(self, se_dim_in=1024, proj_path=None, gpsemlp_path=None, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
         self.proj_path = proj_path
+        self.gpsemlp_path = gpsemlp_path
 
 
 
@@ -39,9 +48,6 @@ class SDGLlamaModel(LlamaModel):
         super(SDGLlamaModel, self).__init__(config)
         self.set_struct_projector(config.proj_path, config.se_dim_in, config.hidden_size)
         # print(self.struct_projector.state_dict())
-
-    def get_struct_proj_state_dict(self):
-        return self.struct_projector.state_dict()
 
     def init_struct_proj(self):
         init.kaiming_normal_(self.struct_projector.weight)
@@ -223,36 +229,17 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
     def __init__(self, config):
         super(SDGLlamaForCausalLM, self).__init__(config)
         self.model = SDGLlamaModel(config)
-        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
-        # self.projector = nn.Linear(config.se_dim_in, config.hidden_size)
-        # self.sa_layer_nums = config.sa_layer_nums
-
-        # self.post_init()
-    
-    def get_model(self):
-        return self.model
-    
-    # def sim(self, z1, z2):
-    #     z1 = F.normalize(z1) 
-    #     z2 = F.normalize(z2) 
-    #     return torch.mm(z1, z2.t()) 
-
-    # def structure_attention(self, t, sims, sg_nodes):
-
-    #     filtered_sims = sims * sg_nodes
-    #     sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
-    #     weighted_t = (sims_expanded * t.unsqueeze(1))
-    #     sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1) 
-    #     sim_sum = sim_sum + (sim_sum == 0).float() 
-    #     t_hat = (weighted_t.sum(dim=1) / sim_sum).squeeze(-1)
-    #     return t_hat
-
+        self.set_gpsemlp(config.gpsemlp_path)
+        
+    def set_gpsemlp(self, gpsemlp_path):
+        self.gpsemlp = torch.load(gpsemlp_path)
 
     def forward(
         self,
         input_ids: torch.LongTensor = None,
         struct_encode: torch.LongTensor = None,
         subgraph_nodes: torch.Tensor = None,
+        graph: Data = None,
         valid_nodes_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
         position_ids: Optional[torch.LongTensor] = None,
@@ -271,6 +258,11 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states
         )
         return_dict = return_dict if return_dict is not None else True
+
+        g_loss = 0
+        if graph is not None:
+            struct_encode = self.gpsemlp(graph)
+            g_loss += self.gpsemlp.constractive_loss(graph, struct_encode)
 
         # print(input_ids.shape)
 
@@ -316,7 +308,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             seq_len = input_ids.squeeze(0).size(1)
             loss = loss / (valid_cnt * 6)
 
-            # if self.device == torch.device('cuda:0'): print(loss.item())
+        loss += g_loss * 0.1
             
         if not return_dict:
             output = (logits,) + outputs[1:]

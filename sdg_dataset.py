@@ -1,9 +1,11 @@
 from torch.utils.data import Dataset
 import torch
 from transformers import AutoTokenizer
+from torch_geometric.data import Data
+
 
 class SDGDataset(Dataset):
-    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, valid_nodes_masks, tokenizer, inst, split):
+    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, edges, valid_nodes_masks, tokenizer, inst, split):
         self.struct_encodes = struct_encodes
         self.subgraphs = subgraphs
         self.tokenizer = tokenizer
@@ -12,6 +14,7 @@ class SDGDataset(Dataset):
         self.valid_nodes_masks = valid_nodes_masks
         self.split = split
         self.dtype = torch.float16
+        self.edges = edges
 
         self.label_ids = self.tokenizer(
             labels,
@@ -58,18 +61,31 @@ class SDGDataset(Dataset):
         ])
         attention_mask = torch.ones((t_ids.size(0), t_ids.size(1)))
         attention_mask[t_ids==self.tokenizer.pad_token_id] = 0
+
         inv = {self.batchs[idx][i]: i for i in range(len(self.batchs[idx]))}
+
         sg_nodes = torch.zeros(len(self.batchs[idx]), len(self.batchs[idx]))
         for i in range(len(self.batchs[idx])):
             for neigh in self.subgraphs[self.batchs[idx][i]]:
                 if neigh in self.batchs[idx]:
                     sg_nodes[inv[self.batchs[idx][i]], inv[neigh]] = 1
+
         struct_encode = torch.stack([self.struct_encodes[i] for i in self.batchs[idx]])
+
+        edges = self.edges[idx]
+        edges = [[inv[i] for i in e] for e in edges]
+
+        rand = np.random.normal(loc=0, scale=1.0, size=(len(self.batch[idx]), 20))
+        x = torch.from_numpy(rand.astype('float32')).to(device)
+        x[-1] = 0
+        graph = Data(x=x, edge_index=edges)
+
         return {
             "input_ids": t_ids,
             "attention_mask": attention_mask,
             "struct_encode": struct_encode,
             "subgraph_nodes": sg_nodes,
+            "graph": graph,
             "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx])
         }
 
