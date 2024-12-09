@@ -21,6 +21,7 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
     struct_proj_path: Optional[str] = field(default='./checkpoints/struct_proj.pt')
+    gpsemlp_path: Optional[str] = field(default='../structure_encoder/cora_tag_pt_module.pt')
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=1)
@@ -34,7 +35,7 @@ class DataArguments:
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./checkpoints_lr=2e-3")
+    output_dir: str = field(default="./ckpt_tuning_gpse")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -50,6 +51,25 @@ class TrainingArguments(transformers.TrainingArguments):
 from transformers import Trainer
 import os
 import torch
+
+
+from torch_geometric.data import Batch, Data
+from transformers.data.data_collator import torch_default_data_collator
+
+def custom_data_collator(features):
+    """
+    自定义 data_collator, 专门处理包含 torch_geometric.data.Data 类型的 graph 数据。
+    """
+    graphs = [f['graph'] for f in features] 
+    other_data = [{k: v for k, v in f.items() if k != 'graph'} for f in features] 
+
+    batched_graphs = Batch.from_data_list(graphs)
+
+    batched_other_data = torch_default_data_collator(other_data)
+
+    batched_other_data['graph'] = batched_graphs
+    return batched_other_data
+
 
 class SDGTrainer(Trainer):
     # def get_train_dataloader(self):
@@ -80,8 +100,7 @@ class SDGTrainer(Trainer):
             try:
                 state_dict = self.accelerator.get_state_dict(self.deepspeed)
                 if state_dict is not None:
-                    state_dict = {k: v for k, v in state_dict.items() if 'struct_projector' in k}
-                    print(state_dict)
+                    state_dict = {k: v for k, v in state_dict.items() if 'struct_projector' in k or 'gpsemlp' in k}
                     if self.args.should_save:
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -138,6 +157,7 @@ def sdg_train():
     sdg_config = SDGConfig(
         se_dim_in=dataset.struct_encodes.size(1),
         proj_path=model_args.struct_proj_path,
+        gpsemlp_path=model_args.gpsemlp_path,
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
@@ -148,10 +168,10 @@ def sdg_train():
             config=sdg_config,
             torch_dtype=dtype
     )
-    print("1 ", model.model.struct_projector.weight)
+
     model.model.set_struct_projector(proj_path=model_args.struct_proj_path, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
-    print(model.model.struct_projector.weight)
-    print("2 ", 'model done')
+    model.set_gpsemlp(model_args.gpsemlp_path)
+    print('model done')
 
     model.is_parallelizable = True
     model.model_parallel = True
@@ -159,7 +179,7 @@ def sdg_train():
 
     if model_args.freeze_llm_backbone:
         for n, param in model.named_parameters():
-            if 'struct_projector' in n:
+            if 'struct_projector' in n or 'gpsemlp' in n:
                 param.requires_grad = True
             else: param.requires_grad = False
 
@@ -192,13 +212,13 @@ def sdg_train():
         model=model,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset
+        eval_dataset=eval_dataset,
+        data_collator=custom_data_collator
     )
     trainer.args.save_only_model = True
-    for n, param in trainer.model.named_parameters():
-        if param.requires_grad:
-            print(n)
-            param.register_hook(lambda grad, n=n, p=param: print(f"Model Grad for {n} {p.shape}: {grad}, p = {p}"))
+    # for n, param in trainer.model.named_parameters():
+    #     if param.requires_grad:
+    #         param.register_hook(lambda grad, n=n, p=param: print(f"Model Grad for {n} {p.shape}: {grad}, p = {p}"))
 
     print(f'is_model_parallizable: {trainer.is_model_parallel}')
 

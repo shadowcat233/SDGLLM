@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 import torch
 from transformers import AutoTokenizer
 from torch_geometric.data import Data
+import numpy as np
 
 
 class SDGDataset(Dataset):
@@ -25,7 +26,7 @@ class SDGDataset(Dataset):
 
         self.texts_ids = self.tokenizer(
             texts,
-            max_length=100,
+            max_length=150,
             padding=True,
             truncation=True,
             return_tensors="pt",
@@ -74,9 +75,10 @@ class SDGDataset(Dataset):
 
         edges = self.edges[idx]
         edges = [[inv[i] for i in e] for e in edges]
+        edges = torch.tensor(edges, dtype=torch.long)
 
-        rand = np.random.normal(loc=0, scale=1.0, size=(len(self.batch[idx]), 20))
-        x = torch.from_numpy(rand.astype('float32')).to(device)
+        rand = np.random.normal(loc=0, scale=1.0, size=(len(self.batchs[idx]), 20))
+        x = torch.from_numpy(rand.astype('float32'))
         x[-1] = 0
         graph = Data(x=x, edge_index=edges)
 
@@ -86,14 +88,14 @@ class SDGDataset(Dataset):
             "struct_encode": struct_encode,
             "subgraph_nodes": sg_nodes,
             "graph": graph,
-            "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx])
+            "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx]),
+            "labels": t_ids
         }
 
 
 if __name__ == "__main__":
     cora = torch.load('./cora_sdg_dataset.pt')
-    print(cora.struct_encodes.shape)
-    print(cora.texts_ids.shape)
-    print(cora.label_ids.shape)
     data = cora[135]
-    print(cora.label_ids.shape)
+    g = data['graph']
+    print(g.edge_index.shape)
+    print(g.edge_index)

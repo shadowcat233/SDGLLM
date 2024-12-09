@@ -13,23 +13,7 @@ from typing import List, Optional, Tuple, Union
 import torch.nn.init as init
 from torch_geometric.data import Data
 
-import os
-import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-upper_dir = os.path.dirname(current_dir)
-sys.path.append(upper_dir)
-
-from structure_encoder.pretrain_on_cora import GPSE_MLP
-
-# class StructProjector(torch.nn.Module):
-#     def __init__(self, dim_in, dim_out):
-#         super(StructProjector, self).__init__()
-#         self.layer1 = nn.Linear(dim_in, dim_in)
-#         self.relu = nn.ReLU()
-#         self.layer2 = nn.Linear(dim_in, dim_out)
-#     def forward(self, input):
-#         return self.layer2(self.relu(self.layer1(input)))
-
+from gpse_mlp import GPSE_MLP
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
@@ -65,13 +49,14 @@ class SDGLlamaModel(LlamaModel):
         z2 = F.normalize(z2) 
         return torch.mm(z1, z2.t()) 
 
-    def structure_attention(self, t, sims, sg_nodes):
-        filtered_sims = sims * sg_nodes
+    def structure_attention(self, t, sims, sg_nodes, temp=0.4):
+        f = lambda x: torch.exp(x/temp)
+        filtered_sims = f(sims) * sg_nodes
         sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
         weighted_t = (sims_expanded * t.unsqueeze(1))
         sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1) 
         sim_sum = sim_sum + (sim_sum == 0).float() 
-        t_hat = (weighted_t.sum(dim=1) / sim_sum).squeeze(-1)
+        t_hat = (weighted_t.sum(dim=0) / sim_sum).squeeze(-1)
         return t_hat
     
     def forward(
@@ -232,7 +217,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         self.set_gpsemlp(config.gpsemlp_path)
         
     def set_gpsemlp(self, gpsemlp_path):
-        self.gpsemlp = torch.load(gpsemlp_path)
+        self.gpsemlp = torch.load(gpsemlp_path).to(self.device)
 
     def forward(
         self,
@@ -266,8 +251,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
 
         # print(input_ids.shape)
 
-        if labels is None:
-            labels = input_ids.squeeze(0)
+        # if labels is None:
+        #     labels = input_ids.squeeze(0)
 
         outputs = self.model(
             input_ids=input_ids,
@@ -293,8 +278,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             valid_indices = torch.nonzero(valid_nodes_mask == 1, as_tuple=True)[0]
             valid_cnt = valid_nodes_mask.sum()
             # Shift so that tokens < n predict n
-            shift_logits = logits[..., -7:-1, :].contiguous()
-            shift_labels = labels[..., -6:].contiguous()
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = labels[..., :].contiguous()
             # Flatten the tokens
             loss_fct = CrossEntropyLoss(ignore_index=0)
             shift_logits = shift_logits.view(-1, self.config.vocab_size)
@@ -306,9 +291,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             loss = loss_fct(shift_logits, shift_labels)
 
             seq_len = input_ids.squeeze(0).size(1)
-            loss = loss / (valid_cnt * 6)
-
-        loss += g_loss * 0.1
+            loss = loss / (valid_cnt * seq_len)
+            loss += g_loss * 0.1
             
         if not return_dict:
             output = (logits,) + outputs[1:]
@@ -345,8 +329,6 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
                 "past_key_values": past_key_values,
                 "use_cache": kwargs.get("use_cache"),
                 "attention_mask": attention_mask,
-                "struct_encode": kwargs.get("struct_encode", None),
-                "subgraph_nodes": kwargs.get("subgraph_nodes", None),
             }
         )
         return model_inputs

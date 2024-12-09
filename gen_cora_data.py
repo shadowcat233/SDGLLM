@@ -23,8 +23,8 @@ for i in range(len(data.node_map)):
     indices = (processed_node_map == i).nonzero(as_tuple=True)[0]
     processed_node_map[indices[0]] = processed_node_map[0]
     processed_node_map[0] = i
-    if len(processed_node_map)>15:
-        processed_node_map = processed_node_map[:15]
+    if len(processed_node_map)>12:
+        processed_node_map = processed_node_map[:12]
     subgraph_nodes.append(processed_node_map.tolist())
 
     mask_0 = torch.isin(processed_edge_index[0], processed_node_map)
@@ -64,7 +64,7 @@ def divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, start, end, t
         while queue:
             node = queue.pop(0)
             edges = subgraph_edge_index[node]
-            edges_tuple = [(edges[0][i].item(), edges[1][i].item()) for i in range(len(edges[0]))]
+            edges_tuple = [(edges[0][i], edges[1][i]) for i in range(len(edges[0]))]
             for edge in edges_tuple: edge_set.add(edge)
             if node not in current_set:
                 current_set.add(node)
@@ -92,7 +92,7 @@ def divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, start, end, t
 
             for node in new_valid:
                 visited[node] = True
-            if len(new_valid) < threshold:
+            if len(new_valid) < 0.5*threshold:
                 # 合并到最后一个集合
                 if sets and len(valids[-1]) + len(new_valid) <= threshold * 1.5:
                     sets[-1] = list(set(sets[-1]) | new_set)
@@ -111,13 +111,16 @@ def divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, start, end, t
                 
     return sets, valids, e_idxs
 
-batchs, valids, edges = divide_nodes_by_subgraphs(subgraph_nodes, 0, 2216)
+batchs, valids, edges = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, 0, 2216)
 split = len(batchs)
 print(split)
-b2, v2, e2 = divide_nodes_by_subgraphs(subgraph_nodes, 2217, 2708)
+print(edges[0])
+b2, v2, e2 = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, 2217, 2708)
 batchs = batchs + b2
 valids = valids + v2
 edges = edges + e2
+b_f_idx = [b[0] for b in batchs]
+print(b_f_idx)
 print('------------------------')
 print(len(batchs))
 # print('------------------------')
@@ -129,22 +132,22 @@ print(len(batchs))
 # print(valids)
 torch.save(batchs, './TAGDataset/cora/batchs.pt')
 torch.save(valids, './TAGDataset/cora/valids.pt')
-torch.saze(edges, './TAGDataset/cora/edges.pt')
+torch.save(edges, './TAGDataset/cora/edges.pt')
 
 from sdg_dataset import SDGDataset
 
 from transformers import AutoTokenizer
 
-model_path = '/root/autodl-tmp/SDGLLM/llm/Llama-2-7b-chat-hf'
+model_path = './llm/Llama-2-7b-chat-hf'
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 inst = {}
 inst['head'] = "<<SYS>>\nA chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, \
 and polite answers to the user's questions.\n<<\SYS>>\
 <s>[INST] Here's the title and abstruct of a paper, please tell me which category the paper belongs to.\n"
-inst['tail'] = "Optional Categories: Rule Learning, Neural Networks, Case-Based, Genetic Algorithms, Theory, Reinforcement Learning, Probabilistic Methods\n\
+inst['tail'] = "\nOptional Categories: Rule Learning, Neural Networks, Case-Based, Genetic Algorithms, Theory, Reinforcement Learning, Probabilistic Methods\n\
 Please select one of the options from the above list that is the most likely category. \
-Don't add any other replies.[\INST] The paper belongs to the category of "
+Don't add any other replies.[\INST] \nThe paper belongs to the category of "
 
 valid_nodes_masks = [
     [1 if node in valids[i] else 0 for node in batchs[i]]
