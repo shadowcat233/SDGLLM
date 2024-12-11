@@ -4,7 +4,7 @@ from transformers.models.llama.configuration_llama import LlamaConfig
 from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 import torch
 
-device = torch.device("cuda:6" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:7" if torch.cuda.is_available() else "cpu")
 # device = 'cpu'
 
 pretrained_config = LlamaConfig.from_pretrained('./Llama-2-7b-chat-hf')
@@ -24,16 +24,25 @@ model = SDGLlamaForCausalLM.from_pretrained(
         torch_dtype=torch.float
 )
 
-new_state_dict = torch.load('/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse/checkpoint-16860/pytorch_model.bin')
+new_state_dict = torch.load('/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse2/checkpoint-42120/pytorch_model.bin')
 
-for name, module in model.named_modules(): 
-    if name in new_state_dict:
-        try:
-            # 加载新的 state_dict 权重到当前模块
-            print(f"Loading weights for module: {name}")
-            module.load_state_dict(new_state_dict[name])
-        except Exception as e:
-            print(f"Failed to load weights for {name}: {e}")
+model_state_dict = model.state_dict()
+model_state_dict.update(new_state_dict)
+model.load_state_dict(model_state_dict)
+
+# for name, module in model.named_modules(): 
+#     print(name)
+#     if name in new_state_dict:
+#         try:
+#             # 加载新的 state_dict 权重到当前模块
+#             print(f"Loading weights for module: {name}")
+#             module.load_state_dict(new_state_dict[name], strict=False)
+#         except Exception as e:
+#             print(f"Failed to load weights for {name}: {e}")
+
+print(model.model.struct_projector.weight)
+
+# model = LlamaForCausalLM.from_pretrained('./Llama-2-7b-chat-hf')
 
 model.to(device)
 
@@ -51,21 +60,21 @@ true_labels = []
 predict_labels = []
 total = 0
 correct = 0
-for idx in range(2103, 2575):
+# for idx in range(dataset.split, len(dataset)):
+for idx in range(len(dataset)):
     data = dataset[idx]
-    inp_len = data['input_ids'].size(1) - 6
-    label = data['input_ids'][:,-6:]
+    inp_len = data['input_ids'].size(1) - 7
+    label = data['input_ids'][:,-7:]
     valid_node_mask = data['valid_nodes_mask']
     label = label[valid_node_mask==1]
-    # print(valid_node_mask)
-    # print(label)
-    generate_ids = model.generate(input_ids=data['input_ids'][:, :-6].to(device),
-                                    struct_encode=data['struct_encode'].to(device),
-                                    subgraph_nodes=data['subgraph_nodes'].to(device),
-                                    valid_nodes_mask=data['valid_nodes_mask'].to(device),
-                                    attention_mask=data['attention_mask'][:, :-6].to(device),
-                                    graph=data['graph'].to(device),
-                                    max_length=2000)[:,inp_len:]
+    with torch.no_grad():
+        generate_ids = model.generate(input_ids=data['input_ids'][:, :-7].to(device),
+                                        struct_encode=data['struct_encode'].to(device),
+                                        subgraph_nodes=data['subgraph_nodes'].to(device),
+                                        valid_nodes_mask=data['valid_nodes_mask'].to(device),
+                                        attention_mask=data['attention_mask'][:, :-7].to(device),
+                                        graph=data['graph'].to(device),
+                                        max_length=310)[:,inp_len:]
     valid_ids = generate_ids[valid_node_mask==1]
 
     for i in range(label.size(0)):
@@ -79,11 +88,15 @@ for idx in range(2103, 2575):
         predict_labels.append(res)
 
         total += 1
-        if res==ground_truth: correct += 1
+        if ground_truth in res: correct += 1
         print(f'{idx:4d}: predict label: {res} | ground truth: {ground_truth} ACC: {(correct/total):.4f}')
 
-accuracy = sum(1 for a, b in zip(true_labels, predicted_labels) if a == b) / len(true_labels)
+accuracy = sum(1 for a, b in zip(true_labels, predict_labels) if a == b) / len(true_labels)
 print(f"Accuracy: {accuracy:.4f}")
+
+import pandas as pd
+df = pd.DataFrame({'predict labels': predict_labels, 'true labels': true_labels})
+df.to_csv('test_tuning_gpse2_42120_all.csv', index=False)
 
 
 # print('====================================')

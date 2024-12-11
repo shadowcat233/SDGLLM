@@ -1,71 +1,31 @@
+from transformers import LlamaForCausalLM, AutoTokenizer
+from transformers.models.llama.configuration_llama import LlamaConfig
 import torch
 
-# sdict = torch.load('/home/wangjingchu/code/SDGLM/llm/checkpoints/train3/epoch0/struct_proj.bin')
+device = torch.device("cuda:4" if torch.cuda.is_available() else "cpu")
+# device = 'cpu'
 
-# print(sdict)
+pretrained_config = LlamaConfig.from_pretrained('./Llama-2-7b-chat-hf')
 
-# proj = torch.nn.Linear(1024, 4096, bias=False)
-# torch.nn.init.normal_(proj.weight, mean=0.0, std=1e-6)
-# print(proj.weight)
-# torch.save(proj, f'/home/wangjingchu/code/SDGLM/llm/checkpoints/struct_proj.pt')
+model = LlamaForCausalLM.from_pretrained('./Llama-2-7b-chat-hf')
 
-import argparse
+model.to(device)
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="打印包含特定关键词的模型参数")
-    parser.add_argument('--n', type=int, default=843)
-    return parser.parse_args()
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+upper_dir = os.path.dirname(current_dir)
+sys.path.append(upper_dir)
+from TAGLAS.datasets import Cora
 
-arg = parse_args()
+dataset = torch.load('/home/wangjingchu/code/SDGLM/cora_sdg_dataset.pt')
+total_loss = 0
+for i in range(140):
+    data = dataset[i]
+    with torch.no_grad():
+        output = model(input_ids=data['input_ids'].to(device), attention_mask=data['attention_mask'].to(device), labels=data['labels'].to(device))
+    loss = float(output['loss'])
+    print(loss, loss/301)
+    total_loss += loss
 
-sdict = torch.load(f'/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse/checkpoint-{arg.n}/pytorch_model.bin')
-for d in sdict:
-    if 'struct_proj' in  d:
-        print(sdict[d])
-
-
-import json
-with open(f'/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse/checkpoint-{arg.n}/trainer_state.json', 'r') as f:
-    trainer_config = json.load(f)
-
-history = trainer_config['log_history']
-loss = torch.tensor([float(h['loss']) for h in history])
-epoch = torch.tensor([float(h['epoch']) for h in history])
-
-loss_per_epoch = []
-for i in range(len(loss)):
-    if i==len(loss)-1 or (epoch[i] == int(epoch[i]) and epoch[i+1] != int(epoch[i+1])):
-        if epoch[i] != 0:
-            loss_mean = torch.tensor(loss_list).mean()
-            loss_per_epoch.append(float(loss_mean))
-        loss_list = []
-    loss_list.append(loss[i])
-print(loss_per_epoch)
-
-# k=105
-# num_batches = len(loss) // k
-# if len(loss) % k != 0:
-#     loss = loss[:num_batches * k]
-
-# loss = loss.reshape((k, -1))
-
-# loss = loss.mean(0)
-
-
-import matplotlib.pyplot as plt
-plt.figure(figsize=(12, 6))
-plt.plot(loss_per_epoch, marker='o', linestyle='-', color='b', label='loss')
-
-plt.title('training loss')
-plt.xlabel('training epochs')
-plt.ylabel('loss')
-
-plt.legend()
-
-plt.grid(True)
-
-output_path = 'loss_per_epoch.png'
-plt.savefig(output_path, dpi=300, bbox_inches='tight')
-print(f"图像已保存到: {output_path}")
-
-plt.show()
+print(f'avg_loss: {total_loss/140:.6f}')

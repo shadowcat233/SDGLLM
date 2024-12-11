@@ -35,7 +35,7 @@ class DataArguments:
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./ckpt_tuning_gpse")
+    output_dir: str = field(default="./ckpt_tuning_gpse3")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -169,8 +169,19 @@ def sdg_train():
             torch_dtype=dtype
     )
 
-    model.model.set_struct_projector(proj_path=model_args.struct_proj_path, dim_in=sdg_config.se_dim_in, dim_out=sdg_config.hidden_size)
-    model.set_gpsemlp(model_args.gpsemlp_path)
+    sd = torch.load('/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse2/checkpoint-42120/pytorch_model.bin')
+    struct_proj_sd = {}
+    gpsemlp_sd = {}
+    for key, value in sd.items():
+        if "gpsemlp." in key:
+            new_key = key.replace("gpsemlp.", "")
+            gpsemlp_sd[new_key] = value
+        elif "model.struct_projector." in key:
+            new_key = key.replace("model.struct_projector.", "")
+            struct_proj_sd[new_key] = value
+
+    model.model.set_struct_projector(proj_path=model_args.struct_proj_path, state_dict=struct_proj_sd)
+    model.set_gpsemlp(model_args.gpsemlp_path, state_dict=gpsemlp_sd)
     print('model done')
 
     model.is_parallelizable = True

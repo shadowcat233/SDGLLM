@@ -37,11 +37,13 @@ class SDGLlamaModel(LlamaModel):
         init.kaiming_normal_(self.struct_projector.weight)
 
 
-    def set_struct_projector(self, proj_path=None, dim_in=1024, dim_out=4096):
+    def set_struct_projector(self, proj_path=None, dim_in=1024, dim_out=4096, state_dict=None):
         if proj_path is not None:
             self.struct_projector = torch.load(proj_path)
         else:
             self.struct_projector = nn.Linear(dim_in, dim_out, bias=False)
+        if state_dict is not None:
+            self.struct_projector.load_state_dict(state_dict)
             
 
     def sim(self, z1, z2):
@@ -216,8 +218,10 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         self.model = SDGLlamaModel(config)
         self.set_gpsemlp(config.gpsemlp_path)
         
-    def set_gpsemlp(self, gpsemlp_path):
+    def set_gpsemlp(self, gpsemlp_path, state_dict=None):
         self.gpsemlp = torch.load(gpsemlp_path).to(self.device)
+        if state_dict is not None:
+            self.gpsemlp.load_state_dict(state_dict)
 
     def forward(
         self,
@@ -290,9 +294,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             shift_labels = shift_labels.to(shift_logits.device)
             loss = loss_fct(shift_logits, shift_labels)
 
-            seq_len = input_ids.squeeze(0).size(1)
-            loss = loss / (valid_cnt * seq_len)
-            loss += g_loss * 0.1
+            loss += g_loss * 0.2
             
         if not return_dict:
             output = (logits,) + outputs[1:]

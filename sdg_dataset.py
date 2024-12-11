@@ -17,13 +17,6 @@ class SDGDataset(Dataset):
         self.dtype = torch.float16
         self.edges = edges
 
-        self.label_ids = self.tokenizer(
-            labels,
-            padding=True,
-            truncation=True,
-            return_tensors="pt",
-        )["input_ids"][:, 1:]
-
         self.texts_ids = self.tokenizer(
             texts,
             max_length=150,
@@ -47,6 +40,17 @@ class SDGDataset(Dataset):
             truncation=True,
             return_tensors="pt",
         )["input_ids"].squeeze(0)[1:]
+
+        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.label_ids = self.tokenizer(
+            labels,
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
+        )["input_ids"][:, 1:]
+        end_token_id = self.tokenizer.encode(self.tokenizer.eos_token, add_special_tokens=False)[0]
+        end_token_tensor = end_token_id * torch.ones(self.label_ids.size(0), 1, dtype=torch.long)
+        self.label_ids = torch.cat([self.label_ids, end_token_tensor], dim=1)
 
     def set_dtype(self, dtype):
         self.dtype = dtype
