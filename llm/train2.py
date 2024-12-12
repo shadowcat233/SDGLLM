@@ -100,7 +100,7 @@ class SDGTrainer(Trainer):
             try:
                 state_dict = self.accelerator.get_state_dict(self.deepspeed)
                 if state_dict is not None:
-                    state_dict = {k: v for k, v in state_dict.items() if 'struct_projector' in k or 'gpsemlp' in k}
+                    state_dict = {k: v for k, v in state_dict.items() if 'struct_projector' in k or 'gpsemlp' in k or 'semantic_projector' in k}
                     if self.args.should_save:
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -158,6 +158,8 @@ def sdg_train():
         se_dim_in=dataset.struct_encodes.size(1),
         proj_path=model_args.struct_proj_path,
         gpsemlp_path=model_args.gpsemlp_path,
+        has_gpsemlp=False, 
+        has_struct_proj=False,
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
@@ -169,19 +171,24 @@ def sdg_train():
             torch_dtype=dtype
     )
 
-    sd = torch.load('/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse2/checkpoint-42120/pytorch_model.bin')
-    struct_proj_sd = {}
-    gpsemlp_sd = {}
-    for key, value in sd.items():
-        if "gpsemlp." in key:
-            new_key = key.replace("gpsemlp.", "")
-            gpsemlp_sd[new_key] = value
-        elif "model.struct_projector." in key:
-            new_key = key.replace("model.struct_projector.", "")
-            struct_proj_sd[new_key] = value
+    # sd = torch.load('/home/wangjingchu/code/SDGLM/llm/ckpt_tuning_gpse2/checkpoint-42120/pytorch_model.bin')
 
-    model.model.set_struct_projector(proj_path=model_args.struct_proj_path, state_dict=struct_proj_sd)
-    model.set_gpsemlp(model_args.gpsemlp_path, state_dict=gpsemlp_sd)
+    # model_state_dict = model.state_dict()
+    # model_state_dict.update(sd)
+    # model.load_state_dict(model_state_dict)
+
+    # struct_proj_sd = {}
+    # gpsemlp_sd = {}
+    # for key, value in sd.items():
+    #     if "gpsemlp." in key:
+    #         new_key = key.replace("gpsemlp.", "")
+    #         gpsemlp_sd[new_key] = value
+    #     elif "model.struct_projector." in key:
+    #         new_key = key.replace("model.struct_projector.", "")
+    #         struct_proj_sd[new_key] = value
+
+    # model.model.set_struct_projector(proj_path=model_args.struct_proj_path, state_dict=struct_proj_sd)
+    # model.set_gpsemlp(model_args.gpsemlp_path, state_dict=gpsemlp_sd)
     print('model done')
 
     model.is_parallelizable = True
@@ -190,7 +197,7 @@ def sdg_train():
 
     if model_args.freeze_llm_backbone:
         for n, param in model.named_parameters():
-            if 'struct_projector' in n or 'gpsemlp' in n:
+            if 'struct_projector' in n or 'gpsemlp' or 'semantic_projector' in n:
                 param.requires_grad = True
             else: param.requires_grad = False
 

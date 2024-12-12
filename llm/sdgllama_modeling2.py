@@ -17,11 +17,15 @@ from gpse_mlp import GPSE_MLP
 
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
-    def __init__(self, se_dim_in=1024, proj_path=None, gpsemlp_path=None, **kwargs):
+    def __init__(self, se_dim_in=1024, proj_path=None, gpsemlp_path=None, 
+                    has_gpsemlp=True, has_struct_proj=True, has_semantic_proj=True, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
         self.proj_path = proj_path
         self.gpsemlp_path = gpsemlp_path
+        self.has_gpsemlp = has_gpsemlp
+        self.has_struct_proj = has_struct_proj
+        self.has_semantic_proj = has_semantic_proj
 
 
 
@@ -30,12 +34,18 @@ class SDGLlamaModel(LlamaModel):
 
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
-        self.set_struct_projector(config.proj_path, config.se_dim_in, config.hidden_size)
-        # print(self.struct_projector.state_dict())
+        self.struct_projector = None
+        if config.has_struct_proj:
+            self.set_struct_projector(config.proj_path, config.se_dim_in, config.hidden_size)
+        self.semantic_projector = None
+        if config.has_semantic_proj:
+            self.set_semantic_projector(config.hidden_size)
 
     def init_struct_proj(self):
         init.kaiming_normal_(self.struct_projector.weight)
 
+    def set_semantic_projector(self, dim=4096):
+        self.semantic_projector = nn.Linear(dim, dim)
 
     def set_struct_projector(self, proj_path=None, dim_in=1024, dim_out=4096, state_dict=None):
         if proj_path is not None:
@@ -43,7 +53,7 @@ class SDGLlamaModel(LlamaModel):
         else:
             self.struct_projector = nn.Linear(dim_in, dim_out, bias=False)
         if state_dict is not None:
-            self.struct_projector.load_state_dict(state_dict)
+            self.struct_projector.load_state_dict
             
 
     def sim(self, z1, z2):
@@ -52,6 +62,12 @@ class SDGLlamaModel(LlamaModel):
         return torch.mm(z1, z2.t()) 
 
     def structure_attention(self, t, sims, sg_nodes, temp=0.4):
+        '''
+        t: hidden_states, [batch_size, seq_len, embed_dim]
+        sims: 相似度矩阵, [batch_size, batch_size]
+        sg_nodes: 子图filter, [i, j]为1表示点j在点i的子图中, [batch_size, batch_size]
+        temp: 温度缩放，控制相似度值的平滑程度
+        '''
         f = lambda x: torch.exp(x/temp)
         filtered_sims = f(sims) * sg_nodes
         sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
@@ -75,6 +91,8 @@ class SDGLlamaModel(LlamaModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        use_struct_projector: Optional[bool] = True,
+        use_semantic_proj: Optional[bool] = True,
     ) -> Union[Tuple, BaseModelOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -92,8 +110,16 @@ class SDGLlamaModel(LlamaModel):
         subgraph_nodes = subgraph_nodes.squeeze(0)
         valid_nodes_mask = valid_nodes_mask.squeeze(0)
 
-        se = self.struct_projector(struct_encode)
-        sims = self.sim(se, se)
+        if struct_encode is None:
+            batch_size = len(input_ids)
+            sims = torch.eye(batch_size, device=hidden_states.device)
+        else:
+            if use_struct_projector: 
+                if self.struct_projector is None:
+                    raise ValueError("struct_projector is None")
+                struct_encode = self.struct_projector(struct_encode)
+            sims = self.sim(struct_encode, struct_encode)
+
         subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
 
         # retrieve input_ids and inputs_embeds
@@ -181,9 +207,22 @@ class SDGLlamaModel(LlamaModel):
                 )
             hidden_states = layer_outputs[0]
 
-            if i > 0 and i % 8 == 0 and struct_encode is not None:
-                # if self.device == torch.device('cuda:0'): print(i)
+            if i == 15 and i > 0:
                 hidden_states = self.structure_attention(hidden_states, sims, subgraph_nodes)
+                hidden_states_sba = hidden_states
+                hidden_states_sm = None
+
+                if use_semantic_proj:
+                    if self.semantic_projector is None:
+                        raise ValueError("semantic_projector is None")
+                    hidden_states = self.semantic_projector(hidden_states)
+                    hidden_states_sm = hidden_states
+                
+                if output_hidden_states:
+                    hd = (self.norm(hidden_states_sba), )
+                    if hidden_states_sm is not None:
+                        hd += (self.norm(hidden_states_sm), )
+                    all_hidden_states += hd
 
             if use_cache:
                 next_decoder_cache = layer_outputs[2 if output_attentions else 1]
@@ -216,7 +255,9 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
     def __init__(self, config):
         super(SDGLlamaForCausalLM, self).__init__(config)
         self.model = SDGLlamaModel(config)
-        self.set_gpsemlp(config.gpsemlp_path)
+        self.gpsemlp = None
+        if config.has_gpsemlp:
+            self.set_gpsemlp(config.gpsemlp_path)
         
     def set_gpsemlp(self, gpsemlp_path, state_dict=None):
         self.gpsemlp = torch.load(gpsemlp_path).to(self.device)
@@ -240,6 +281,10 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
         cache_position: Optional[torch.LongTensor] = None,
+        use_struct_projector: Optional[bool] = True,
+        use_gpsemlp: Optional[bool] = True,
+        return_all_hidden_states: Optional[bool] = False,
+        use_semantic_proj: Optional[bool] = True,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -249,7 +294,9 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         return_dict = return_dict if return_dict is not None else True
 
         g_loss = 0
-        if graph is not None:
+        if graph is not None and use_gpsemlp:
+            if self.gpsemlp is None:
+                raise ValueError("gpse is None, can't use gpse")
             struct_encode = self.gpsemlp(graph)
             g_loss += self.gpsemlp.constractive_loss(graph, struct_encode)
 
@@ -269,9 +316,11 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            return_dict=return_dict
+            return_dict=return_dict,
+            use_struct_projector=use_struct_projector,
+            use_semantic_proj=use_semantic_proj,
         )
-        hidden_states = outputs[0]
+        hidden_states = outputs['last_hidden_state']
         
         logits = self.lm_head(hidden_states.to(dtype=self.lm_head.weight.dtype))
 
@@ -294,17 +343,20 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             shift_labels = shift_labels.to(shift_logits.device)
             loss = loss_fct(shift_logits, shift_labels)
 
-            loss += g_loss * 0.2
+            loss = loss + g_loss * 0.0
             
         if not return_dict:
             output = (logits,) + outputs[1:]
             return (loss,) + output if loss is not None else output
 
+        if return_all_hidden_states:
+            hidden_states = outputs['hidden_states']
+
         return CausalLMOutputWithPast(
             loss=loss,
             logits=logits,
             past_key_values=outputs.past_key_values,
-            hidden_states=outputs.hidden_states,
+            hidden_states=hidden_states,
             attentions=outputs.attentions,
         )
 
