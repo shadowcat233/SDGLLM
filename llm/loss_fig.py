@@ -35,13 +35,16 @@ epoch = torch.tensor([float(h['epoch']) for h in history])
 
 loss_per_epoch = []
 loss_list = []
+last = len(loss)-1
+e = 1
 for i in range(len(loss)):
-    if i==len(loss)-1 or (epoch[i] == int(epoch[i])+0.01 and epoch[i] != 0.01):
-        if epoch[i] != 0:
-            loss_mean = torch.tensor(loss_list).mean()
-            loss_per_epoch.append(float(loss_mean))
+    if i==last or epoch[i] >= e:
+        loss_mean = torch.tensor(loss_list).mean()
+        loss_per_epoch.append(float(loss_mean))
         loss_list = []
+        e += 1
     loss_list.append(loss[i])
+
 print(loss_per_epoch)
 
 # k=105

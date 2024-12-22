@@ -6,7 +6,7 @@ import numpy as np
 
 
 class SDGDataset(Dataset):
-    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, edges, valid_nodes_masks, tokenizer, inst, split):
+    def __init__(self, texts, labels, struct_encodes, batchs, subgraphs, edges, valid_nodes_masks, tokenizer, inst, split, weight):
         self.struct_encodes = struct_encodes
         self.subgraphs = subgraphs
         self.tokenizer = tokenizer
@@ -16,6 +16,7 @@ class SDGDataset(Dataset):
         self.split = split
         self.dtype = torch.float16
         self.edges = edges
+        self.weight = weight
 
         self.texts_ids = self.tokenizer(
             texts,
@@ -51,6 +52,7 @@ class SDGDataset(Dataset):
         end_token_id = self.tokenizer.encode(self.tokenizer.eos_token, add_special_tokens=False)[0]
         end_token_tensor = end_token_id * torch.ones(self.label_ids.size(0), 1, dtype=torch.long)
         self.label_ids = torch.cat([self.label_ids, end_token_tensor], dim=1)
+        self.tokenizer.pad_token = self.tokenizer.unk_token
 
     def set_dtype(self, dtype):
         self.dtype = dtype
@@ -75,7 +77,7 @@ class SDGDataset(Dataset):
                 if neigh in self.batchs[idx]:
                     sg_nodes[inv[self.batchs[idx][i]], inv[neigh]] = 1
 
-        struct_encode = torch.stack([self.struct_encodes[i] for i in self.batchs[idx]])
+        struct_encode = self.struct_encodes[self.batchs[idx]]
 
         edges = self.edges[idx]
         edges = [[inv[i] for i in e] for e in edges]
@@ -86,6 +88,8 @@ class SDGDataset(Dataset):
         x[-1] = 0
         graph = Data(x=x, edge_index=edges)
 
+        sims = self.weight[self.batchs[idx]][:, self.batchs[idx]]
+
         return {
             "input_ids": t_ids,
             "attention_mask": attention_mask,
@@ -93,13 +97,13 @@ class SDGDataset(Dataset):
             "subgraph_nodes": sg_nodes,
             "graph": graph,
             "valid_nodes_mask": torch.tensor(self.valid_nodes_masks[idx]),
-            "labels": t_ids
+            "labels": t_ids,
+            "sims": sims
         }
 
 
 if __name__ == "__main__":
     cora = torch.load('./cora_sdg_dataset.pt')
-    data = cora[135]
-    g = data['graph']
-    print(g.edge_index.shape)
-    print(g.edge_index)
+    data = cora[0]
+    print(cora.struct_encodes.shape)
+    print(data['attention_mask'][0])

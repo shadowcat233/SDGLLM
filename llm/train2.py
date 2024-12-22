@@ -20,8 +20,10 @@ from sdgllama_modeling2 import SDGLlamaForCausalLM, SDGConfig
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default='./checkpoints/struct_proj.pt')
-    gpsemlp_path: Optional[str] = field(default='../structure_encoder/cora_tag_pt_module.pt')
+    struct_proj_path: Optional[str] = field(default='./struct_projector_1024.pt')
+    gpsemlp_path: Optional[str] = field(default='./gpsemlp.pt')
+    semantic_path: Optional[str] = field(default='./semantic_projector.pt')
+    sims_path: Optional[str] = field(default='../structure_encoder/sims_proj.pt')
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
     sa_layer_nums: int = field(default=1)
@@ -35,7 +37,7 @@ class DataArguments:
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./ckpt_tuning_gpse3")
+    output_dir: str = field(default="./ckpt_tuning_gpse9")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -60,6 +62,10 @@ def custom_data_collator(features):
     """
     自定义 data_collator, 专门处理包含 torch_geometric.data.Data 类型的 graph 数据。
     """
+    for f in features:
+        if 'graph' not in f:
+            raise ValueError(f"Missing 'graph' in sample: {f}")
+
     graphs = [f['graph'] for f in features] 
     other_data = [{k: v for k, v in f.items() if k != 'graph'} for f in features] 
 
@@ -158,8 +164,12 @@ def sdg_train():
         se_dim_in=dataset.struct_encodes.size(1),
         proj_path=model_args.struct_proj_path,
         gpsemlp_path=model_args.gpsemlp_path,
-        has_gpsemlp=False, 
+        semantic_path=model_args.semantic_path,
+        sims_path=model_args.sims_path,
+        # has_gpsemlp=False, 
         has_struct_proj=False,
+        # has_semantic_proj=False,
+        has_sims_proj=True,
         **pretrained_config.to_dict()
     )
     print('sdg_config done')
@@ -187,8 +197,10 @@ def sdg_train():
     #         new_key = key.replace("model.struct_projector.", "")
     #         struct_proj_sd[new_key] = value
 
-    # model.model.set_struct_projector(proj_path=model_args.struct_proj_path, state_dict=struct_proj_sd)
-    # model.set_gpsemlp(model_args.gpsemlp_path, state_dict=gpsemlp_sd)
+    # model.model.set_struct_projector(proj_path='./struct_projector_1024.pt')
+    # # model.model.set_semantic_projector(path=model_args.semantic_path)
+    # model.set_gpsemlp(gpsemlp_path=model_args.gpsemlp_path)
+
     print('model done')
 
     model.is_parallelizable = True
@@ -197,7 +209,7 @@ def sdg_train():
 
     if model_args.freeze_llm_backbone:
         for n, param in model.named_parameters():
-            if 'struct_projector' in n or 'gpsemlp' or 'semantic_projector' in n:
+            if 'struct_projector' in n or 'gpsemlp' in n or 'semantic_projector' in n:
                 param.requires_grad = True
             else: param.requires_grad = False
 
@@ -212,6 +224,7 @@ def sdg_train():
             task_type="CAUSAL_LM" 
         )
         model = get_peft_model(model, lora_config)
+        print(model)
         if training_args.bf16:
             model.to(torch.bfloat16)
         if training_args.fp16:
