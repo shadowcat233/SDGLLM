@@ -93,36 +93,36 @@ def train(module, dataset, node_sims, epochs, device):
             print('-----------------------------------------------------------------------------------------------')
             print(f'epoch {i} loss: {loss.item():.6f}, s_loss = {s_loss.item():.6f}, c_loss = {c_loss.item():.6f}')
             print('-----------------------------------------------------------------------------------------------')
-
+    torch.save(output, './cora_output_temp.pt')
 
 def eval(module, dataset, device, node_sims=None):
-    # module.to(device)
-    # module.eval()
-    # pretrain_m_dim_in = 20
-    # data = dataset[0].to(device)
-    # rand = np.random.normal(loc=0, scale=1.0, size=(len(data.x), pretrain_m_dim_in))
-    # data.x = torch.from_numpy(rand.astype('float32')).to(device)
-    # data.x[-1] = 0
-    # output = module(data)
-    # # torch.save(output, './output_cora_tag_pt_module.pt')
+    module.to(device)
+    module.eval()
+    pretrain_m_dim_in = 20
+    data = dataset[0].to(device)
+    rand = np.random.normal(loc=0, scale=1.0, size=(len(data.x), pretrain_m_dim_in))
+    data.x = torch.from_numpy(rand.astype('float32')).to(device)
+    data.x[-1] = 0
+    output = module(data)
+    torch.save(output, './output_pubmed_tag_pt_module.pt')
 
-    data = dataset[0]
-    num_nodes = len(data.x)
-    A = torch.zeros((num_nodes, num_nodes))  
-    A[data.edge_index[0], data.edge_index[1]] = 1  
-    A[data.edge_index[1], data.edge_index[0]] = 1
-    # sims = sim(output, output)
+    # data = dataset[0]
+    # num_nodes = len(data.x)
+    # A = torch.zeros((num_nodes, num_nodes))  
+    # A[data.edge_index[0], data.edge_index[1]] = 1  
+    # A[data.edge_index[1], data.edge_index[0]] = 1
+    # # sims = sim(output, output)
 
-    texts = torch.load('/home/wangjingchu/code/SDGLM/TAGDataset/pubmed/task/ST/node_features.pt')
-    node_sims = sim(texts, texts)
+    # texts = torch.load('/home/wangjingchu/code/SDGLM/TAGDataset/pubmed/task/ST/node_features.pt')
+    # node_sims = sim(texts, texts)
 
-    print('=================================================')
-    print(f'structure repersentation sims:')
-    # compute_k_neigh_sim(A, sims, 5)
-    print('=================================================')
-    print(f'text repersentation sims:')
-    if node_sims is not None:
-        compute_k_neigh_sim(A, node_sims, 5)
+    # print('=================================================')
+    # print(f'structure repersentation sims:')
+    # # compute_k_neigh_sim(A, sims, 5)
+    # print('=================================================')
+    # print(f'text repersentation sims:')
+    # if node_sims is not None:
+    #     compute_k_neigh_sim(A, node_sims, 5)
 
     # subgraph_nodes = torch.load('/home/wangjingchu/code/SDGLM/TAGDataset/cora/subgraph_nodes.pt')
     # print(subgraph_nodes[0])
@@ -138,13 +138,13 @@ def main():
     node_features = torch.load('./TAGDataset/cora/task/ST/node_features.pt').to(device)
     node_sims = get_node_sim_matrix(node_features)
     gpse = GPSE.from_pretrained('molpcba').to(device)
-    module = GPSE_MLP(gpse, 512, 1024, 1024, 4).to(device)
+    module = GPSE_MLP(gpse, 512, 256, 256, 4).to(device)
     print('-----------------------------')
     train(module, dataset, node_sims, 500, device)
-    torch.save(module, './cora_tag_pt_module.pt')
-    module = torch.load('./cora_tag_pt_module.pt')
-    dataset = Pubmed()
-    eval(module, dataset, device)
+    # torch.save(module, './cora_tag_pt_module.pt')
+    # module = torch.load('./cora_tag_pt_module.pt')
+    # dataset = Pubmed()
+    # eval(module, dataset, device)
 
 if __name__ == '__main__':
     main()
