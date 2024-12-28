@@ -14,17 +14,17 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 upper_dir = os.path.dirname(current_dir)
 sys.path.append(upper_dir)
 
-from sdg_dataset import SDGDataset
-from sdgllama_modeling3 import SDGLlamaForCausalLM, SDGConfig
+from sdg_dataset import SDGDataset, MergedSDGDataset
+from sdgllama_modeling4 import SDGLlamaForCausalLM, SDGConfig
 
 new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_projector', 'graph_token_embedding', 'text_token_embedding']
 
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default='../saved_models/struct_projector_1024.pt')
-    gpsemlp_path: Optional[str] = field(default='../saved_models/gpsemlp.pt')
-    semantic_path: Optional[str] = field(default='../saved_models/semantic_projector.pt')
+    struct_proj_path: Optional[str] = field(default=None)
+    gpsemlp_path: Optional[str] = field(default='./models_and_data/cora_gpse_256.pt')
+    semantic_path: Optional[str] = field(default=None)
     # sims_path: Optional[str] = field(default='../structure_encoder/sims_proj.pt')
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
@@ -35,11 +35,11 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="../cora_sdg_dataset.pt")
+    data_path: str = field(default="../merged_sdg_dataset_cora&products.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./ckpt_tuning_gpse10")
+    output_dir: str = field(default="./ckpt_tuning_gpse17")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -163,14 +163,14 @@ def sdg_train():
     pretrained_config = LlamaConfig.from_pretrained(model_args.model_name_or_path)
     dataset = torch.load(data_args.data_path)
     sdg_config = SDGConfig(
-        se_dim_in=dataset.struct_encodes.size(1),
+        se_dim_in=256,
         proj_path=model_args.struct_proj_path,
         gpsemlp_path=model_args.gpsemlp_path,
         semantic_path=model_args.semantic_path,
-        sims_path=model_args.sims_path,
+        # sims_path=model_args.sims_path,
         # has_gpsemlp=False, 
         # has_struct_proj=False,
-        has_semantic_proj=False,
+        # has_semantic_proj=False,
         # has_sims_proj=True,
         **pretrained_config.to_dict()
     )
@@ -232,20 +232,22 @@ def sdg_train():
         if training_args.fp16:
             model.to(torch.float16)
 
-    from torch.utils.data import Subset
+    # from torch.utils.data import Subset
 
-    split = dataset.split 
-    train_indices = list(range(0, split))
-    eval_indices = list(range(split, len(dataset)))
+    # split = dataset.split 
+    # train_indices = list(range(0, split))
+    # eval_indices = list(range(split, len(dataset)))
 
-    train_dataset = Subset(dataset, train_indices)
-    eval_dataset = Subset(dataset, eval_indices)
+    # train_dataset = Subset(dataset, train_indices)
+    # eval_dataset = Subset(dataset, eval_indices)
+
+    train_dataset = dataset
 
     trainer = SDGTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        # eval_dataset=eval_dataset,
         data_collator=custom_data_collator
     )
     trainer.args.save_only_model = True
