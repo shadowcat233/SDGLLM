@@ -17,12 +17,12 @@ sys.path.append(upper_dir)
 from sdg_dataset import SDGDataset, MergedSDGDataset
 from sdgllama_modeling4 import SDGLlamaForCausalLM, SDGConfig
 
-new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_projector', 'graph_token_embedding', 'text_token_embedding']
+new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_projector', 'graph_token_embedding', 'text_token_embedding', 'sba_temp']
 
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default=None)
+    struct_proj_path: Optional[str] = field(default='./models_and_data/struct_proj_256.pt')
     gpsemlp_path: Optional[str] = field(default='./models_and_data/cora_gpse_256.pt')
     semantic_path: Optional[str] = field(default=None)
     # sims_path: Optional[str] = field(default='../structure_encoder/sims_proj.pt')
@@ -35,11 +35,11 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="../merged_sdg_dataset_cora&products.pt")
+    data_path: str = field(default="../merged_few_shot_sdg_apw.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./ckpt_tuning_gpse17")
+    output_dir: str = field(default="./ckpt_tuning_gpse28")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)

@@ -37,6 +37,7 @@ class SDGLlamaModel(LlamaModel):
 
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
+        self.sba_temp = nn.Parameter(torch.tensor(0.4, dtype=torch.float32))
         self.struct_projector = None
         if config.has_struct_proj:
             self.set_struct_projector(config.proj_path, config.se_dim_in, config.hidden_size)
@@ -62,6 +63,7 @@ class SDGLlamaModel(LlamaModel):
             self.semantic_projector = nn.Linear(dim, dim)
             
     def sim(self, z1, z2):
+        # print(z1.shape)
         z1 = F.normalize(z1) 
         z2 = F.normalize(z2) 
         return torch.mm(z1, z2.t()) 
@@ -73,6 +75,7 @@ class SDGLlamaModel(LlamaModel):
         sg_nodes: 子图filter, [i, j]为1表示点j在点i的子图中, [batch_size, batch_size]
         temp: 温度缩放，控制相似度值的平滑程度
         '''
+        temp = temp if temp >= 0.05 else 0.05
         f = lambda x: torch.exp(x/temp)
         filtered_sims = f(sims) * sg_nodes
         sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
@@ -112,28 +115,16 @@ class SDGLlamaModel(LlamaModel):
 
         # if self.device == torch.device('cuda:0'):
         # print(self.struct_projector.state_dict())
-        attention_mask = attention_mask.squeeze(0)
-        input_ids = input_ids.squeeze(0)
-        struct_encode = struct_encode.squeeze(0) if struct_encode is not None else None
-        subgraph_nodes = subgraph_nodes.squeeze(0) if subgraph_nodes is not None else None 
-        valid_nodes_mask = valid_nodes_mask.squeeze(0) if valid_nodes_mask is not None else None
-        sims = sims.squeeze(0) if sims is not None else None
-        node_info_mask = node_info_mask.squeeze(0) if node_info_mask is not None else None
-
-        if sims is None:
-            if struct_encode is None:
-                batch_size = len(input_ids)
-                sims = torch.eye(batch_size, device=self.device)
-            elif use_struct_projector: 
-                if self.struct_projector is None:
-                    raise ValueError("struct_projector is None")
-                struct_encode = self.struct_projector(struct_encode)
-                sims = self.sim(struct_encode, struct_encode)
-            else:
-                sims = self.sim(struct_encode, struct_encode)
+        if True or (input_ids.dim() == 4 and input_ids.size(0) == 1):
+            input_ids = input_ids.squeeze(0)
+            attention_mask = attention_mask.squeeze(0)
+            struct_encode = struct_encode.squeeze(0) if struct_encode is not None else None
+            subgraph_nodes = subgraph_nodes.squeeze(0) if subgraph_nodes is not None else None 
+            valid_nodes_mask = valid_nodes_mask.squeeze(0) if valid_nodes_mask is not None else None
+            sims = sims.squeeze(0) if sims is not None else None
+            node_info_mask = node_info_mask.squeeze(0) if node_info_mask is not None else None
           
-
-        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((se.size(0), se.size(0)))
+        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((struct_encode.size(0), struct_encode.size(0)))
 
         # retrieve input_ids and inputs_embeds
         if input_ids is not None and inputs_embeds is not None:
@@ -221,31 +212,47 @@ class SDGLlamaModel(LlamaModel):
             hidden_states = layer_outputs[0]
 
             if i == 15:
-                if node_info_mask is None or len(node_info_mask) != seq_length:
+                use_sims = True
+                if node_info_mask is None or len(node_info_mask) != seq_length or batch_size == 1:
                     node_info_mask = torch.zeros(seq_length, dtype=torch.bool).to(self.device)
-                node_info_mask = node_info_mask.bool()
-                node_info_mask = node_info_mask.unsqueeze(0).expand(hidden_states.size(0), -1)
-                node_info = hidden_states[node_info_mask].view(hidden_states.size(0), -1, hidden_states.size(-1))
-                neigh_info = self.structure_attention(node_info, sims, subgraph_nodes)
-                (batch_size, info_len, hid_dim) = node_info.size()
-                # even_pairs = info_len // 2  
-                # node_info_even = node_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
-                # node_info_last = node_info[:, even_pairs * 2:, :]
-                # node_info_compressed = torch.cat([node_info_even, node_info_last], dim=1)
+                    use_sims = False
+                if use_sims:
+                    if sims is None:
+                        if struct_encode is None:
+                            batch_size = len(input_ids)
+                            sims = torch.eye(batch_size, device=self.device)
+                        elif use_struct_projector: 
+                            if self.struct_projector is None:
+                                raise ValueError("struct_projector is None")
+                            struct_encode = self.struct_projector(struct_encode)
+                            sims = self.sim(struct_encode, struct_encode)
+                        else:
+                            sims = self.sim(struct_encode, struct_encode)
+                    node_info_mask = node_info_mask.bool()
+                    # print(node_info_mask)
+                    node_info_mask = node_info_mask.unsqueeze(0).expand(hidden_states.size(0), -1)
+                    node_info = hidden_states[node_info_mask].view(hidden_states.size(0), -1, hidden_states.size(-1))
+                    # print(node_info.shape)
+                    neigh_info = self.structure_attention(node_info, sims, subgraph_nodes, self.sba_temp)
+                    (batch_size, info_len, hid_dim) = node_info.size()
+                    # even_pairs = info_len // 2  
+                    # node_info_even = node_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
+                    # node_info_last = node_info[:, even_pairs * 2:, :]
+                    # node_info_compressed = torch.cat([node_info_even, node_info_last], dim=1)
 
-                # neigh_info_compressed = neigh_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
-                # if seq_length == 1:
-                #     node_info_compressed = (node_info + neigh_info) / 2
+                    # neigh_info_compressed = neigh_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
+                    # if seq_length == 1:
+                    #     node_info_compressed = (node_info + neigh_info) / 2
 
-                # update_info = torch.cat([node_info_compressed, neigh_info_compressed], dim=1)
-                update_info = neigh_info
-                if use_semantic_proj:
-                    if self.semantic_projector is None:
-                        raise ValueError("semantic_projector is None")
-                    update_info = self.semantic_projector(update_info)
-                
-                expanded_mask = node_info_mask.unsqueeze(-1).expand(-1, -1, hidden_states.size(-1)) 
-                hidden_states.masked_scatter_(expanded_mask, update_info.view(-1, hid_dim))
+                    # update_info = torch.cat([node_info_compressed, neigh_info_compressed], dim=1)
+                    update_info = neigh_info
+                    if use_semantic_proj:
+                        if self.semantic_projector is None:
+                            raise ValueError("semantic_projector is None")
+                        update_info = self.semantic_projector(update_info)
+                    
+                    expanded_mask = node_info_mask.unsqueeze(-1).expand(-1, -1, hidden_states.size(-1)) 
+                    hidden_states.masked_scatter_(expanded_mask, update_info.view(-1, hid_dim))
 
 
             if use_cache:
@@ -309,7 +316,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         use_gpsemlp: Optional[bool] = True,
         return_all_hidden_states: Optional[bool] = False,
         use_semantic_proj: Optional[bool] = True,
-        use_sims_proj: Optional[bool] = True,
+        use_sims_proj: Optional[bool] = False,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -401,7 +408,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
 
     def prepare_inputs_for_generation(
-        self, input_ids, struct_encode=None, subgraph_nodes=None, valid_nodes_mask=None, node_info_mask=None, sims=None, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
+        self, input_ids, struct_encode=None, subgraph_nodes=None, graph=None, valid_nodes_mask=None, node_info_mask=None, sims=None, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
     ):
         if past_key_values:
             input_ids = input_ids[:, -1:]
@@ -426,6 +433,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
                 "use_cache": kwargs.get("use_cache"),
                 "attention_mask": attention_mask,
                 "node_info_mask": node_info_mask,
+                "graph": graph,
             }
         )
         return model_inputs

@@ -19,14 +19,26 @@ def parse_args():
 
 arg = parse_args()
 
-sdict = torch.load(f'/home/wangjingchu/code/SDGLM/llm/{arg.dir}/checkpoint-{arg.n}/pytorch_model.bin')
-for d in sdict:
-    if 'struct_proj' in  d:
-        print(sdict[d])
+sdict = torch.load(f'./{arg.dir}/checkpoint-{arg.n}/pytorch_model.bin')
+if 'model.sba_temp' in sdict:
+    print(sdict['model.sba_temp'])
+if 'model.struct_projector.weight' in sdict:
+    weight = sdict['model.struct_projector.weight']
+    print(weight, weight.shape)
+    # proj = torch.nn.Linear(256, 4096, bias=False)
+    # proj.weight.data = weight
+    # print(proj.state_dict())
+    # torch.save(proj, './struct_proj_256.pt')
+
+# for d in sdict:
+#     if 'struct' or 'semantic' in d:
+#         print(d)
+# print(sdict['model.graph_token_embedding'])
+# print(sdict['model.text_token_embedding'])
 
 
 import json
-with open(f'/home/wangjingchu/code/SDGLM/llm/{arg.dir}/checkpoint-{arg.n}/trainer_state.json', 'r') as f:
+with open(f'./{arg.dir}/checkpoint-{arg.n}/trainer_state.json', 'r') as f:
     trainer_config = json.load(f)
 
 history = trainer_config['log_history']
