@@ -9,7 +9,7 @@ data = dataset[0]
 print(data.x[0])
 print(data.label)
 
-struct_encodes = torch.load('/home/wangjingchu/code/SDGLM/structure_encoder/output_pubmed_tag_pt_module.pt')
+struct_encodes = None #torch.load('/home/wangjingchu/code/SDGLM/structure_encoder/output_pubmed_tag_pt_module.pt')
 
 task = SubgraphTextNPTask(dataset)
 
@@ -122,8 +122,8 @@ b2, v2, e2 = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, int(
 batchs = batchs + b2
 valids = valids + v2
 edges = edges + e2
-b_f_idx = [b[0] for b in batchs]
-print(b_f_idx)
+# b_f_idx = [b[0] for b in batchs]
+# print(b_f_idx)
 print('------------------------')
 print(len(batchs))
 # print('------------------------')
@@ -162,8 +162,9 @@ true_labels = [data.label[data.label_map[i]] for i in range(len(data.x))]
 # struct_encodes = torch.load("./structure_encoder/output_cora_tag_pt_module.pt").to('cpu')
 
 cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, edges, valid_nodes_masks, tokenizer, inst, split)
-batch = cora_sdg_dts[0]
+batch = cora_sdg_dts[-1]
 print(batch)
+print(batch['graph'].edge_index)
 
 torch.save(cora_sdg_dts, './pubmed_sdg_dataset.pt')
 

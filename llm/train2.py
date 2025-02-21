@@ -22,8 +22,8 @@ new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_project
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default='./models_and_data/struct_proj_256.pt')
-    gpsemlp_path: Optional[str] = field(default='./models_and_data/cora_gpse_256.pt')
+    struct_proj_path: Optional[str] = field(default='../models_and_data/struct_proj_256.pt')
+    gpsemlp_path: Optional[str] = field(default='../models_and_data/cora_gpse_256.pt')
     semantic_path: Optional[str] = field(default=None)
     # sims_path: Optional[str] = field(default='../structure_encoder/sims_proj.pt')
     version: Optional[str] = field(default="v0")
@@ -35,7 +35,7 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="../merged_few_shot_sdg_apw.pt")
+    data_path: str = field(default="../merged_sdg_dataset_arxiv&products.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):

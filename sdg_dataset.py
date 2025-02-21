@@ -103,7 +103,7 @@ class SDGDataset(Dataset):
                 if neigh in self.batchs[idx]:
                     sg_nodes[inv[self.batchs[idx][i]], inv[neigh]] = 1
 
-        struct_encode = self.struct_encodes[self.batchs[idx]]
+        struct_encode = None if self.struct_encodes is None else self.struct_encodes[self.batchs[idx]]
 
         edges = self.edges[idx]
         edges = [[inv[i] for i in e] for e in edges]
