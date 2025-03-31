@@ -20,7 +20,7 @@ from gpse_mlp import GPSE_MLP
 class SDGConfig(LlamaConfig):
     model_type = "sdg"
     def __init__(self, se_dim_in=1024, proj_path=None, gpsemlp_path=None, semantic_path=None,
-                    has_gpsemlp=True, has_struct_proj=True, has_semantic_proj=True, **kwargs):
+                    has_gpsemlp=True, has_struct_proj=True, has_semantic_proj=True, n=2, **kwargs):
         super().__init__(**kwargs)
         self.se_dim_in = se_dim_in
         self.proj_path = proj_path
@@ -29,6 +29,7 @@ class SDGConfig(LlamaConfig):
         self.has_gpsemlp = has_gpsemlp
         self.has_struct_proj = has_struct_proj
         self.has_semantic_proj = has_semantic_proj
+        self.n = n
 
 
 
@@ -37,6 +38,7 @@ class SDGLlamaModel(LlamaModel):
 
     def __init__(self, config: SDGConfig):
         super(SDGLlamaModel, self).__init__(config)
+        self.n = config.n
         self.sba_temp = nn.Parameter(torch.tensor(0.4, dtype=torch.float32))
         self.struct_projector = None
         if config.has_struct_proj:
@@ -48,19 +50,40 @@ class SDGLlamaModel(LlamaModel):
     def init_struct_proj(self):
         init.kaiming_normal_(self.struct_projector.weight)
 
-    def set_struct_projector(self, proj_path=None, dim_in=1024, dim_out=4096):
+    def set_struct_projector(self, proj_path=None, dim_in=256, dim_out=256):
+        n = self.n
+        self.struct_projector = nn.ModuleList([nn.Linear(dim_in, dim_out, bias=False) for _ in range(n)])
         if proj_path is not None:
             struct_projector = torch.load(proj_path, map_location='cpu')
-            self.struct_projector = struct_projector.to(self.device)
-        else:
-            self.struct_projector = nn.Linear(dim_in, dim_out, bias=False)
+            if isinstance(struct_projector, nn.Linear):
+                for i in range(n):
+                    self.struct_projector[i] = struct_projector.to(self.device)
+            elif isinstance(struct_projector, nn.ModuleList):
+                self.struct_projector = struct_projector.to(self.device)
+            else: 
+                raise ValueError("Can't load struct_projector")
+        self.struct_projector.to(self.device)
+        # else:
+        #     self.struct_projector = nn.Linear(dim_in, dim_out, bias=False)
 
     def set_semantic_projector(self, path=None, dim=4096):
+        n = self.n
+        self.semantic_projector = nn.ModuleList([nn.Linear(dim, dim) for _ in range(n)])
         if path is not None:
             semantic_projector = torch.load(path, map_location='cpu')
-            self.semantic_projector = semantic_projector.to(self.device)
-        else:
-            self.semantic_projector = nn.Linear(dim, dim)
+            if isinstance(semantic_projector, nn.Linear):
+                for i in range(n):
+                    self.semantic_projector[i] = semantic_projector.to(self.device)
+            elif isinstance(semantic_projector, nn.ModuleList):
+                self.semantic_projector = semantic_projector.to(self.device)
+            else: 
+                raise ValueError("Can't load semantic_projector")
+        self.semantic_projector.to(self.device)
+        # if path is not None:
+        #     semantic_projector = torch.load(path, map_location='cpu')
+        #     self.semantic_projector = semantic_projector.to(self.device)
+        # else:
+        #     self.semantic_projector = nn.Linear(dim, dim)
             
     def sim(self, z1, z2):
         # print(z1.shape)
@@ -80,6 +103,8 @@ class SDGLlamaModel(LlamaModel):
         filtered_sims = f(sims) * sg_nodes
         sims_expanded = filtered_sims.unsqueeze(-1).unsqueeze(-1) 
         weighted_t = (sims_expanded * t.unsqueeze(1))
+        # for i in range(len(weighted_t)):
+        #     weighted_t[i, i] = 0
         sim_sum = filtered_sims.sum(dim=1, keepdim=True).unsqueeze(-1) 
         sim_sum = sim_sum + (sim_sum == 0).float() 
         t_hat = (weighted_t.sum(dim=0) / sim_sum).squeeze(-1)
@@ -94,6 +119,7 @@ class SDGLlamaModel(LlamaModel):
         node_info_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
         sims: Optional[torch.Tensor] = None,
+        mode: Optional[str] = None,
         position_ids: Optional[torch.LongTensor] = None,
         past_key_values: Optional[List[torch.FloatTensor]] = None,
         inputs_embeds: Optional[torch.FloatTensor] = None,
@@ -117,14 +143,13 @@ class SDGLlamaModel(LlamaModel):
         # print(self.struct_projector.state_dict())
         if True or (input_ids.dim() == 4 and input_ids.size(0) == 1):
             input_ids = input_ids.squeeze(0)
-            attention_mask = attention_mask.squeeze(0)
+            attention_mask = attention_mask.squeeze(0) if attention_mask is not None else None
             struct_encode = struct_encode.squeeze(0) if struct_encode is not None else None
             subgraph_nodes = subgraph_nodes.squeeze(0) if subgraph_nodes is not None else None 
             valid_nodes_mask = valid_nodes_mask.squeeze(0) if valid_nodes_mask is not None else None
             sims = sims.squeeze(0) if sims is not None else None
             node_info_mask = node_info_mask.squeeze(0) if node_info_mask is not None else None
           
-        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((struct_encode.size(0), struct_encode.size(0)))
 
         # retrieve input_ids and inputs_embeds
         if input_ids is not None and inputs_embeds is not None:
@@ -186,7 +211,10 @@ class SDGLlamaModel(LlamaModel):
         all_self_attns = () if output_attentions else None
         next_decoder_cache = None
 
+        n = 0
+
         for i, decoder_layer in enumerate(self.layers):
+            # if i==10: break
             if output_hidden_states:
                 all_hidden_states += (hidden_states,)
 
@@ -211,50 +239,81 @@ class SDGLlamaModel(LlamaModel):
                 )
             hidden_states = layer_outputs[0]
 
-            if i == 15:
+            if i == 11 or i == 21:
                 use_sims = True
-                if node_info_mask is None or len(node_info_mask) != seq_length or batch_size == 1:
+                if node_info_mask is None or len(node_info_mask) != seq_length or seq_length==1:
                     node_info_mask = torch.zeros(seq_length, dtype=torch.bool).to(self.device)
                     use_sims = False
                 if use_sims:
-                    if sims is None:
-                        if struct_encode is None:
-                            batch_size = len(input_ids)
-                            sims = torch.eye(batch_size, device=self.device)
-                        elif use_struct_projector: 
-                            if self.struct_projector is None:
-                                raise ValueError("struct_projector is None")
-                            struct_encode = self.struct_projector(struct_encode)
-                            sims = self.sim(struct_encode, struct_encode)
-                        else:
-                            sims = self.sim(struct_encode, struct_encode)
-                    node_info_mask = node_info_mask.bool()
-                    # print(node_info_mask)
-                    node_info_mask = node_info_mask.unsqueeze(0).expand(hidden_states.size(0), -1)
-                    node_info = hidden_states[node_info_mask].view(hidden_states.size(0), -1, hidden_states.size(-1))
-                    # print(node_info.shape)
-                    neigh_info = self.structure_attention(node_info, sims, subgraph_nodes, self.sba_temp)
-                    (batch_size, info_len, hid_dim) = node_info.size()
-                    # even_pairs = info_len // 2  
-                    # node_info_even = node_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
-                    # node_info_last = node_info[:, even_pairs * 2:, :]
-                    # node_info_compressed = torch.cat([node_info_even, node_info_last], dim=1)
+                    # print('use_sims')
+                    if mode == 'node':
+                        if sims is None:
+                            if struct_encode is None:
+                                batch_size = len(input_ids)
+                                sims = torch.eye(batch_size, device=self.device)
+                            elif use_struct_projector: 
+                                if self.struct_projector is None:
+                                    raise ValueError("struct_projector is None")
+                                # print('use_struct')
+                                struct_encode = self.struct_projector[n](struct_encode)
+                                sims = self.sim(struct_encode, struct_encode)
+                            else:
+                                sims = self.sim(struct_encode, struct_encode)
+                        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((struct_encode.size(0), struct_encode.size(0)))
+                        node_info_mask = node_info_mask.bool()
+                        node_info_mask = node_info_mask.unsqueeze(0).expand(hidden_states.size(0), -1)
+                        node_info = hidden_states[node_info_mask].view(hidden_states.size(0), -1, hidden_states.size(-1))
+                        neigh_info = self.structure_attention(node_info, sims, subgraph_nodes, self.sba_temp)
+                        (batch_size, info_len, hid_dim) = node_info.size()
 
-                    # neigh_info_compressed = neigh_info[:, :even_pairs * 2, :].view(batch_size, even_pairs, 2, hid_dim).mean(dim=2)
-                    # if seq_length == 1:
-                    #     node_info_compressed = (node_info + neigh_info) / 2
+                        update_info = neigh_info
+                        if use_semantic_proj:
+                            if self.semantic_projector is None:
+                                raise ValueError("semantic_projector is None")
+                            # print('use_sematic')
+                            update_info = self.semantic_projector[n](update_info)
+                 
+                    elif mode=='edge':
+                        if sims is None:
+                            if struct_encode is None:
+                                batch_size = len(input_ids)
+                                sims1 = torch.eye(batch_size, device=self.device)
+                                sims2 = torch.eye(batch_size, device=self.device)
+                            elif use_struct_projector: 
+                                if self.struct_projector is None:
+                                    raise ValueError("struct_projector is None")
+                                struct_encode1 = self.struct_projector[n](struct_encode[0])
+                                struct_encode2 = self.struct_projector[n](struct_encode[1])
+                                sims1 = self.sim(struct_encode1, struct_encode1)
+                                sims2 = self.sim(struct_encode2, struct_encode2)
+                            else:
+                                sims1 = self.sim(struct_encode[0], struct_encode[0])
+                                sims2 = self.sim(struct_encode[1], struct_encode[1])
+                        subgraph_nodes = subgraph_nodes if subgraph_nodes is not None else torch.ones((2, len(input_ids), len(input_ids)))
+                        node_info_mask = node_info_mask.bool()
+                        node_info_mask = node_info_mask.unsqueeze(0).expand(hidden_states.size(0), -1)
+                        node_info = hidden_states[node_info_mask].view(hidden_states.size(0), -1, hidden_states.size(-1))
+                        node_info_len = node_info.size(1)
+                        node_info1 = node_info[:, :node_info_len//2, :]
+                        node_info2 = node_info[:, node_info_len//2:, :]
+                        neigh_info1 = self.structure_attention(node_info1, sims1, subgraph_nodes[0], self.sba_temp)
+                        neigh_info2 = self.structure_attention(node_info2, sims2, subgraph_nodes[1], self.sba_temp)
+                        (batch_size, info_len, hid_dim) = node_info1.size()
 
-                    # update_info = torch.cat([node_info_compressed, neigh_info_compressed], dim=1)
-                    update_info = neigh_info
-                    if use_semantic_proj:
-                        if self.semantic_projector is None:
-                            raise ValueError("semantic_projector is None")
-                        update_info = self.semantic_projector(update_info)
-                    
+                        update_info1 = neigh_info1
+                        update_info2 = neigh_info2
+                        if use_semantic_proj:
+                            if self.semantic_projector is None:
+                                raise ValueError("semantic_projector is None")
+                            update_info1 = self.semantic_projector[n](update_info1)
+                            update_info2 = self.semantic_projector[n](update_info2)
+                        update_info = torch.cat([update_info1, update_info2], dim=1)
+
+                    update_info = update_info + node_info
                     expanded_mask = node_info_mask.unsqueeze(-1).expand(-1, -1, hidden_states.size(-1)) 
                     hidden_states.masked_scatter_(expanded_mask, update_info.view(-1, hid_dim))
-
-
+                    n += 1 
+                    
             if use_cache:
                 next_decoder_cache = layer_outputs[2 if output_attentions else 1]
 
@@ -291,18 +350,22 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             self.set_gpsemlp(config.gpsemlp_path)
         
     def set_gpsemlp(self, gpsemlp_path):
-        self.gpsemlp = torch.load(gpsemlp_path).to(self.device)
+        self.gpsemlp = torch.load(gpsemlp_path, map_location=torch.device('cpu')).to(self.device)
 
     def forward(
         self,
         input_ids: torch.LongTensor = None,
         struct_encode: torch.LongTensor = None,
         subgraph_nodes: torch.Tensor = None,
-        graph: Data = None,
+        x: torch.Tensor = None,
+        edge_index: torch.Tensor = None,
+        edge_index2: Optional[torch.Tensor] = None,
+        graph: Optional[Data] = None,
         valid_nodes_mask: Optional[torch.Tensor] = None,
         node_info_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
         sims: Optional[torch.Tensor] = None,
+        mode: Optional[int] = 0,
         position_ids: Optional[torch.LongTensor] = None,
         past_key_values: Optional[Union[Cache, List[torch.FloatTensor]]] = None,
         inputs_embeds: Optional[torch.FloatTensor] = None,
@@ -325,20 +388,34 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
         return_dict = return_dict if return_dict is not None else True
 
+        mode = 'edge' if mode == 1 else 'node'
         if use_gpsemlp or use_struct_projector:
             sims = None
             
         g_loss = 0
-        if graph is not None and use_gpsemlp:
+        x = x.squeeze(0) if x is not None else None
+        edge_index = edge_index.squeeze(0) if edge_index is not None else None
+        edge_index2 = edge_index.squeeze(0) if edge_index is not None else None
+        if (graph is not None or x is not None) and use_gpsemlp:
             if self.gpsemlp is None:
                 raise ValueError("gpse is None, can't use gpse")
-            struct_encode = self.gpsemlp(graph)
-            g_loss += self.gpsemlp.constractive_loss(graph, struct_encode)
-
-        # print(input_ids.shape)
-
-        # if labels is None:
-        #     labels = input_ids.squeeze(0)
+            if mode=='node':
+                graph = Data(x=x, edge_index=edge_index).to(self.device)
+                struct_encode = self.gpsemlp(graph)
+                g_loss += self.gpsemlp.constractive_loss(graph, struct_encode)
+            elif mode=='edge':
+                # if isinstance(graph, list) and isinstance(graph[0], list):
+                #     g1, g2 = graph[0]
+                # elif isinstance(graph, list) and isinstance(graph[0], Data):
+                #     g1, g2 = graph
+                g1 = Data(x=x, edge_index=edge_index).to(self.device)
+                g2 = Data(x=x, edge_index=edge_index2).to(self.device)
+                # print(g1, g2)
+                s1 = self.gpsemlp(g1)
+                s2 = self.gpsemlp(g2)
+                struct_encode = [s1.tolist(), s2.tolist()]
+                struct_encode = torch.tensor(struct_encode).to(self.device)
+                g_loss += (self.gpsemlp.constractive_loss(g1, s1) + self.gpsemlp.constractive_loss(g2, s2)) / 2
 
         outputs = self.model(
             input_ids=input_ids,
@@ -348,6 +425,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             node_info_mask=node_info_mask,
             attention_mask=attention_mask,
             sims=sims,
+            mode=mode,
             past_key_values=past_key_values,
             inputs_embeds=inputs_embeds,
             use_cache=use_cache,
@@ -368,6 +446,7 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
             if valid_nodes_mask is None:
                 valid_nodes_mask = torch.ones((input_ids.size(0), input_ids.size(0)))
             valid_indices = torch.nonzero(valid_nodes_mask == 1, as_tuple=True)[0]
+            if mode=='edge': valid_indices = torch.tensor([0])
             valid_cnt = valid_nodes_mask.sum()
             node_info_mask = node_info_mask.squeeze(0) if node_info_mask is not None else torch.ones(labels.size(1), dtype=torch.bool)
 
@@ -408,7 +487,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         )
 
     def prepare_inputs_for_generation(
-        self, input_ids, struct_encode=None, subgraph_nodes=None, graph=None, valid_nodes_mask=None, node_info_mask=None, sims=None, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
+        self, input_ids, struct_encode=None, subgraph_nodes=None, graph=None, valid_nodes_mask=None, node_info_mask=None, sims=None, 
+        mode=0, x=None, edge_index=None, edge_index2=None, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
     ):
         if past_key_values:
             input_ids = input_ids[:, -1:]
@@ -434,6 +514,10 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
                 "attention_mask": attention_mask,
                 "node_info_mask": node_info_mask,
                 "graph": graph,
+                "mode": mode,
+                "x": x,
+                "edge_index": edge_index,
+                "edge_index2": edge_index2,
             }
         )
         return model_inputs

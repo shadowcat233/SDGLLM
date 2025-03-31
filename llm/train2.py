@@ -14,7 +14,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 upper_dir = os.path.dirname(current_dir)
 sys.path.append(upper_dir)
 
-from sdg_dataset import SDGDataset, MergedSDGDataset
+from sdg_dataset import SDGDataset, MergedSDGDataset, SDGEdgeDataset
 from sdgllama_modeling4 import SDGLlamaForCausalLM, SDGConfig
 
 new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_projector', 'graph_token_embedding', 'text_token_embedding', 'sba_temp']
@@ -22,9 +22,9 @@ new_params = ['gpsemlp', 'struct_projector', 'semantic_projector', 'sims_project
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="./Llama-2-7b-chat-hf")
-    struct_proj_path: Optional[str] = field(default='./models_and_data/struct_proj_256.pt')
-    gpsemlp_path: Optional[str] = field(default='./models_and_data/cora_gpse_256.pt')
-    semantic_path: Optional[str] = field(default=None)
+    struct_proj_path: Optional[str] = field(default='../models_and_data/struct_proj_n2_c_all.pt')
+    gpsemlp_path: Optional[str] = field(default='../models_and_data/gpsemlp_c_all.pt')
+    semantic_path: Optional[str] = field(default='../models_and_data/semantic_proj_c_all.pt')
     # sims_path: Optional[str] = field(default='../structure_encoder/sims_proj.pt')
     version: Optional[str] = field(default="v0")
     freeze_llm_backbone: bool = field(default=True)
@@ -35,11 +35,11 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="../merged_few_shot_sdg_apw.pt")
+    data_path: str = field(default="../cora_merged_sdg.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    output_dir: str = field(default="./ckpt_tuning_gpse28")
+    output_dir: str = field(default="./ckpt_tuning_gpse50")
     deepspeed: str = field(default="./deepspeed_config.json")
     per_device_train_batch_size: int = field(default=1)
     gradient_accumulation_steps: int = field(default=1)
@@ -50,7 +50,8 @@ class TrainingArguments(transformers.TrainingArguments):
     learning_rate: float = field(default=2e-3)
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
-    # save_steps: int = field(default=10)
+    save_steps: int = field(default=500)
+    num_train_epochs: int = field(default=5)
 
 from transformers import Trainer
 import os
@@ -64,18 +65,30 @@ def custom_data_collator(features):
     """
     自定义 data_collator, 专门处理包含 torch_geometric.data.Data 类型的 graph 数据。
     """
-    for f in features:
-        if 'graph' not in f:
-            raise ValueError(f"Missing 'graph' in sample: {f}")
+    # for f in features:
+    #     if 'graph' not in f:
+    #         raise ValueError(f"Missing 'graph' in sample: {f}")
 
-    graphs = [f['graph'] for f in features] 
-    other_data = [{k: v for k, v in f.items() if k != 'graph'} for f in features] 
-
-    batched_graphs = Batch.from_data_list(graphs)
-
+    # graphs = [f['graph'] for f in features] 
+    # if isinstance(graphs, list) and isinstance(graphs[0], Data):
+    #     graphs = Batch.from_data_list(graphs)
+    other_data = [{k: v for k, v in f.items()} for f in features] 
     batched_other_data = torch_default_data_collator(other_data)
 
-    batched_other_data['graph'] = batched_graphs
+    # batched_graphs = Batch.from_data_list(graphs)
+    # batched_other_data = {}
+    # keys = other_data[0].keys()
+    # for key in keys:
+    #     print(key)
+    #     values = [data[key] for data in other_data]
+    #     try:
+    #         batched_other_data[key] = torch.tensor(values)
+    #     except ValueError:
+    #         # 如果无法转换为张量，保留为列表
+    #         batched_other_data[key] = values
+
+    # batched_other_data['graph'] = batched_graphs
+    # batched_other_data['graph'] = graphs
     return batched_other_data
 
 
@@ -199,8 +212,8 @@ def sdg_train():
     #         new_key = key.replace("model.struct_projector.", "")
     #         struct_proj_sd[new_key] = value
 
-    # model.model.set_struct_projector(proj_path='./struct_projector_1024.pt')
-    # # model.model.set_semantic_projector(path=model_args.semantic_path)
+    # model.model.set_struct_projector(proj_path=model_args.struct_proj_path)
+    # model.model.set_semantic_projector(path=model_args.semantic_path)
     # model.set_gpsemlp(gpsemlp_path=model_args.gpsemlp_path)
 
     print('model done')
@@ -232,9 +245,10 @@ def sdg_train():
         if training_args.fp16:
             model.to(torch.float16)
 
-    # from torch.utils.data import Subset
+    from torch.utils.data import Subset
 
     # split = dataset.split 
+    # split = 10
     # train_indices = list(range(0, split))
     # eval_indices = list(range(split, len(dataset)))
 
@@ -242,6 +256,7 @@ def sdg_train():
     # eval_dataset = Subset(dataset, eval_indices)
 
     train_dataset = dataset
+    training_args.save_steps = len(train_dataset)
 
     trainer = SDGTrainer(
         model=model,
@@ -252,7 +267,7 @@ def sdg_train():
     )
     trainer.args.save_only_model = True
     # for n, param in trainer.model.named_parameters():
-    #     if param.requires_grad:
+    #     if param.requires_grad and ('semantic' in n):
     #         param.register_hook(lambda grad, n=n, p=param: print(f"Model Grad for {n} {p.shape}: {grad}, p = {p}"))
 
     print(f'is_model_parallizable: {trainer.is_model_parallel}')

@@ -20,10 +20,14 @@ def parse_args():
 arg = parse_args()
 
 sdict = torch.load(f'./{arg.dir}/checkpoint-{arg.n}/pytorch_model.bin')
+print(sdict.keys())
 if 'model.sba_temp' in sdict:
     print(sdict['model.sba_temp'])
 if 'model.struct_projector.weight' in sdict:
     weight = sdict['model.struct_projector.weight']
+    print(weight, weight.shape)
+if 'model.semantic_projector.weight' in sdict:
+    weight = sdict['model.semantic_projector.weight']
     print(weight, weight.shape)
     # proj = torch.nn.Linear(256, 4096, bias=False)
     # proj.weight.data = weight
@@ -59,17 +63,18 @@ for i in range(len(loss)):
 
 print(loss_per_epoch)
 
-# k=105
-# num_batches = len(loss) // k
-# if len(loss) % k != 0:
-#     loss = loss[:num_batches * k]
 
-# loss = loss.reshape((k, -1))
+k=1
+num_batches = len(loss) // k
+if len(loss) % k != 0:
+    loss = loss[:num_batches * k]
 
-# loss = loss.mean(0)
+loss_per_10k_steps = loss.reshape((-1, k))
+loss_per_10k_steps = loss_per_10k_steps.mean(1)
 
 
 import matplotlib.pyplot as plt
+import numpy as np
 plt.figure(figsize=(12, 6))
 plt.plot(loss_per_epoch, marker='o', linestyle='-', color='b', label='loss')
 
@@ -86,3 +91,17 @@ plt.savefig(output_path, dpi=300, bbox_inches='tight')
 print(f"图像已保存到: {output_path}")
 
 plt.show()
+
+plt.figure(figsize=(8, 6))
+plt.plot(np.arange(10*k, len(loss_per_10k_steps) * 10*k+10*k, 10*k), loss_per_10k_steps, marker='o', linestyle='-', color='b', label='loss')
+
+plt.title(f'training loss')
+plt.xlabel('training steps')
+plt.ylabel('loss')
+
+plt.legend()
+plt.grid(True)
+
+output_path = f'loss_per_10k_steps_of_{arg.dir}.png'
+plt.savefig(output_path, dpi=300, bbox_inches='tight')
+print(f"图像已保存到: {output_path}")
