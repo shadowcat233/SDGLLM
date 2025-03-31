@@ -35,7 +35,7 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
-    data_path: str = field(default="../cora_merged_sdg.pt")
+    data_path: str = field(default="../merged_few_shot_sdg_apw.pt")
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):

@@ -20,6 +20,7 @@ print(data)
 print(data.label, len(data.label))
 
 struct_encodes = None #torch.load('/home/wangjingchu/code/SDGLM/structure_encoder/output_pubmed_tag_pt_module.pt')
+struct_encodes = None #torch.load('/home/wangjingchu/code/SDGLM/structure_encoder/output_pubmed_tag_pt_module.pt')
 
 # task = SubgraphTextNPTask(dataset)
 # task.hop = 1
@@ -126,45 +127,38 @@ subgraph_edge_index = torch.load(f'./TAGDataset/{name}/subgraph_edge_index_h1.pt
 #             # 扩展集合
 #             new_set, new_valid, edge_set = expand_set(start_node, threshold)      
 
-#             for node in new_valid:
-#                 visited[node] = True
-#             if len(new_valid) <= 0.5*threshold:
-#                 # 合并到最后一个集合
-#                 if sets and len(valids[-1]) + len(new_valid) <= threshold * 1.5 and len(new_set) + len(sets[-1]) <= 15:
-#                     sets[-1] = list(set(sets[-1]) | new_set)
-#                     valids[-1] = list(set(valids[-1]) | set(new_valid))
-#                     pe = e_idxs[-1]
-#                     pe_tuple = set([(pe[0][i], pe[1][i]) for i in range(len(pe[0]))])
-#                     new_e_set = pe_tuple | edge_set
-#                     e_idx = [[e[0] for e in new_e_set], [e[1] for e in new_e_set]]
-#                     e_idxs[-1] = e_idx
-#             else:
-#                 # 将集合转换为列表并添加到结果中
-#                 sets.append(list(new_set))
-#                 valids.append(new_valid)
-#                 e_idx = [[e[0] for e in edge_set], [e[1] for e in edge_set]]
-#                 e_idxs.append(e_idx)
-            
-#             for i in new_set:
-#                 if i in valid_batchs: 
-#                     if i in new_valid:
-#                         valid_batchs[i] = len(sets) - 1
-#                 else:
-#                     valid_batchs[i] = len(sets) - 1
+            for node in new_valid:
+                visited[node] = True
+            if len(new_valid) < 0.5*threshold:
+                # 合并到最后一个集合
+                if sets and len(valids[-1]) + len(new_valid) <= threshold * 1.5:
+                    sets[-1] = list(set(sets[-1]) | new_set)
+                    valids[-1] = list(set(valids[-1]) | set(new_valid))
+                    pe = e_idxs[-1]
+                    pe_tuple = set([(pe[0][i].item(), pe[1][i].item()) for i in range(len(pe[0]))])
+                    new_e_set = pe_tuple | edge_set
+                    e_idx = [[e[0] for e in edge_set], [e[1] for e in new_e_set]]
+                    e_idxs[-1] = e_idx
+            else:
+                # 将集合转换为列表并添加到结果中
+                sets.append(list(new_set))
+                valids.append(new_valid)
+                e_idx = [[e[0] for e in edge_set], [e[1] for e in edge_set]]
+                e_idxs.append(e_idx)
                 
-#     return sets, valids, e_idxs, visited, valid_batchs
+    return sets, valids, e_idxs
 
-# dlen = len(data.x)
-# batchs, valids, edges, visited, valid_batchs = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, 0, int(0.8*dlen))
-# split = len(batchs)
-# print(split)
-# print(edges[0])
-# b2, v2, e2, _ = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, int(0.8*dlen), dlen, 1, visited)
-# batchs = batchs + b2
-# valids = valids + v2
-# edges = edges + e2
-# b_f_idx = [b[0] for b in batchs]
-# print(b_f_idx)
+dlen = len(data.x)
+batchs, valids, edges = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, 0, int(0.8*dlen))
+split = len(batchs)
+print(split)
+print(edges[0])
+b2, v2, e2 = divide_nodes_by_subgraphs(subgraph_nodes, subgraph_edge_index, int(0.8*dlen), 2708)
+batchs = batchs + b2
+valids = valids + v2
+edges = edges + e2
+b_f_idx = [b[0] for b in batchs]
+print(b_f_idx)
 print('------------------------')
 # print(len(batchs))
 # print('------------------------')
@@ -213,46 +207,9 @@ if mode == 'node':
 
     # struct_encodes = torch.load("./structure_encoder/output_cora_tag_pt_module.pt").to('cpu')
 
-    sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, edges, valid_nodes_masks, tokenizer, inst, 0)
-    batch = sdg_dts[-1]
-    print(batch)
-    # print(batch['graph'].edge_index)
-    print(batch['input_ids'].size())
+cora_sdg_dts = SDGDataset(data.x, true_labels, struct_encodes, batchs, subgraph_nodes, edges, valid_nodes_masks, tokenizer, inst, split)
+batch = cora_sdg_dts[0]
+print(batch)
 
-    torch.save(sdg_dts, f'./{name}_sdg_dataset.pt')
+torch.save(cora_sdg_dts, './pubmed_sdg_dataset.pt')
 
-elif mode == 'edge':
-    relations = ['citation link', 'citation link', 'citation link', 'web link', 'co - purchase tie']
-    relation = relations[num]
-    inst = {}
-    inst['head'] = f"<<SYS>>\nA chat between a curious user and an artificial intelligence assistant. The assistant gives helpful \
-    answers to the user's questions.\n<<\SYS>>\
-    <s>[INST] Here's two titles and abstracts (or content) of two {obj}s, tell me whether a {relation} exists between them.\n The first {obj}:\n"
-    inst['mid'] = f"\nThe second {obj}:\n"
-    inst['tail'] = f"\nPlease answer Yes or No. Don't add any other replies.[\INST]\n Does a {relation} exists?"
-
-    for i in tqdm(range(len(data.node_map)), desc="Processing nodes", unit="node"):
-        if i not in valid_batchs:
-            batchs.append([i])
-            edges.append([[i], [i]])
-            valid_batchs[i] = len(batchs) - 1
-    print(len(valid_batchs))
-
-    labels = ['Yes', 'No']
-    edge_index = data.edge_index
-    split = edge_index.size(1)
-    not_edge_index = torch.load(f'./TAGDataset/{name}/not_edge_index.pt')
-    s = edge_index[0, 0]
-    d = edge_index[1, 0]
-    edge_index = torch.cat([edge_index, not_edge_index], dim=1)
-    sdg_edge_dts = SDGEdgeDataset(data.x, labels, struct_encodes, batchs, subgraph_nodes, edges, valid_batchs, tokenizer, inst, split, edge_index)
-    print(sdg_edge_dts[70]['input_ids'].size())
-    print(len(sdg_edge_dts))
-    print(len(sdg_edge_dts.edge_set))
-    # for i in range(100):
-    #     n = random.randint(0, 21387)
-    #     src = sdg_edge_dts.edge_index[0, n].item()
-    #     dst = sdg_edge_dts.edge_index[1, n].item()
-    #     print(n, sdg_edge_dts.has_edge(src, dst))
-    # print(sdg_edge_dts.has_edge(1774, 933))
-    torch.save(sdg_edge_dts, f'./{name}_edge_sdg.pt')
