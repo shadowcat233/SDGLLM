@@ -85,7 +85,8 @@ class SDGLlamaForCausalLM(LlamaForCausalLM):
         valid_nodes_mask = valid_nodes_mask.squeeze(0)
         print(attention_mask.shape, input_ids.shape, struct_encode.shape, subgraph_nodes.shape, valid_nodes_mask.shape)
 
-        labels = input_ids.squeeze(0)
+        if labels is None:
+            labels = input_ids.squeeze(0)
         
         outputs = self.model(
             input_ids=input_ids,
